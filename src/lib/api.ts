@@ -26,6 +26,7 @@ export async function generateImage({
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        "Accept": "application/json"
       },
       body: JSON.stringify({
         inputs: prompt,
@@ -40,8 +41,8 @@ export async function generateImage({
   );
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error || "Failed to generate image");
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.error || "Failed to generate image");
   }
 
   const blob = await response.blob();
