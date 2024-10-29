@@ -22,33 +22,35 @@ export function SocialLinks() {
   ];
 
   return (
-    <div className="fixed bottom-4 right-4 flex gap-2">
-      <TooltipProvider>
-        {socialLinks.map((link) => (
-          <Tooltip key={link.label}>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full"
-                asChild
-              >
-                <a
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={link.label}
+    <footer className="w-full py-6 mt-8 border-t">
+      <div className="container flex justify-center items-center gap-4">
+        <TooltipProvider>
+          {socialLinks.map((link) => (
+            <Tooltip key={link.label}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full"
+                  asChild
                 >
-                  <link.icon className="h-4 w-4" />
-                </a>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{link.label}</p>
-            </TooltipContent>
-          </Tooltip>
-        ))}
-      </TooltipProvider>
-    </div>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={link.label}
+                  >
+                    <link.icon className="h-4 w-4" />
+                  </a>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{link.label}</p>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </TooltipProvider>
+      </div>
+    </footer>
   );
 }
