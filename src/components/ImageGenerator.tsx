@@ -12,11 +12,11 @@ const resolutions = [
   { value: "1:1", width: 1024, height: 1024, label: "Square" },
   { value: "16:9", width: 1024, height: 576, label: "Landscape" },
   { value: "9:16", width: 576, height: 1024, label: "Portrait" },
-] as const;
+];
 
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
-  const [resolution, setResolution] = useState<typeof resolutions[number]["value"]>("1:1");
+  const [resolution, setResolution] = useState("1:1");
   const [negativePrompt, setNegativePrompt] = useState("");
   const [seed, setSeed] = useState("");
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -56,16 +56,8 @@ export function ImageGenerator() {
         description: error instanceof Error ? error.message : "Failed to generate image",
         variant: "destructive",
       });
-      setGeneratedImage(null);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleSeedChange = (value: string) => {
-    // Only allow numbers and empty string
-    if (value === "" || /^\d+$/.test(value)) {
-      setSeed(value);
     }
   };
 
@@ -120,7 +112,7 @@ export function ImageGenerator() {
                 <select
                   id="resolution"
                   value={resolution}
-                  onChange={(e) => setResolution(e.target.value as typeof resolution)}
+                  onChange={(e) => setResolution(e.target.value)}
                   className="w-full h-10 px-3 rounded-md border border-input bg-background"
                 >
                   {resolutions.map((res) => (
@@ -135,12 +127,10 @@ export function ImageGenerator() {
                 <Label htmlFor="seed">Seed (Optional)</Label>
                 <Input
                   id="seed"
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
+                  type="number"
                   placeholder="Random seed..."
                   value={seed}
-                  onChange={(e) => handleSeedChange(e.target.value)}
+                  onChange={(e) => setSeed(e.target.value)}
                 />
               </div>
             </div>
@@ -166,9 +156,9 @@ export function ImageGenerator() {
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden min-h-[400px]">
+        <Card className="relative overflow-hidden">
           {(generatedImage || isLoading) && (
-            <div className="absolute inset-0 bg-background/95 backdrop-blur-sm">
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm">
               {isLoading ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center space-y-4">
@@ -178,11 +168,11 @@ export function ImageGenerator() {
                     </p>
                   </div>
                 </div>
-              ) : generatedImage && (
+              ) : (
                 <div className="h-full p-4">
                   <img
-                    src={generatedImage}
-                    alt="Generated artwork"
+                    src={generatedImage!}
+                    alt="Generated"
                     className="w-full h-full object-contain rounded-lg"
                   />
                 </div>
@@ -190,7 +180,7 @@ export function ImageGenerator() {
             </div>
           )}
           {!generatedImage && !isLoading && (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
+            <div className="flex items-center justify-center h-full min-h-[400px] text-muted-foreground">
               <div className="text-center space-y-4">
                 <ImageIcon className="w-12 h-12 mx-auto opacity-50" />
                 <p>Your generated image will appear here</p>
