@@ -18,7 +18,7 @@ export async function generateImage({
     {
       method: "POST",
       headers: {
-        "Authorization": "Bearer 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",
+        "Authorization": "Bearer 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",
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
