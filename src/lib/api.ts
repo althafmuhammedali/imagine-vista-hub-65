@@ -26,6 +26,7 @@ export async function generateImage({
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        "Accept": "image/png"
       },
       body: JSON.stringify({
         inputs: prompt,
@@ -33,6 +34,8 @@ export async function generateImage({
           negative_prompt: negativePrompt,
           width,
           height,
+          guidance_scale: 7.5,
+          num_inference_steps: 50,
           seed: seed || Math.floor(Math.random() * 1000000),
         }
       }),
@@ -44,7 +47,7 @@ export async function generateImage({
     try {
       const errorData = JSON.parse(errorText);
       if (errorData.error?.includes("token")) {
-        throw new Error("Invalid API key. Please follow these steps:\n1. Go to https://huggingface.co/settings/tokens\n2. Create a new token\n3. Copy the token\n4. Add it to your .env file as VITE_HUGGINGFACE_API_KEY=your_token");
+        throw new Error("Invalid API key. Please check your Hugging Face API token.");
       }
       throw new Error(errorData.error || "Failed to generate image");
     } catch (e) {
