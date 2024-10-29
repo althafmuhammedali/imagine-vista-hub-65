@@ -1,8 +1,5 @@
-import { toast } from "@/components/ui/use-toast";
-
 export interface GenerateImageParams {
   prompt: string;
-  model?: string;
   width?: number;
   height?: number;
   negativePrompt?: string;
@@ -11,33 +8,36 @@ export interface GenerateImageParams {
 
 export async function generateImage({
   prompt,
-  model = "FLUX.1",
   width = 512,
   height = 512,
   negativePrompt = "",
   seed,
 }: GenerateImageParams): Promise<string> {
-  const apiKey = import.meta.env.VITE_DEZGO_API_KEY;
+  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
   
   if (!apiKey) {
-    throw new Error("API key not found");
+    throw new Error("Hugging Face API key not found");
   }
 
-  const response = await fetch("https://api.dezgo.com/text2image", {
-    method: "POST",
-    headers: {
-      "X-Dezgo-Key": apiKey,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt,
-      model: "FLUX.1",
-      width,
-      height,
-      negative_prompt: negativePrompt,
-      seed,
-    }),
-  });
+  const response = await fetch(
+    "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: {
+          negative_prompt: negativePrompt,
+          width,
+          height,
+          seed: seed || Math.floor(Math.random() * 1000000),
+        }
+      }),
+    }
+  );
 
   if (!response.ok) {
     const error = await response.text();
