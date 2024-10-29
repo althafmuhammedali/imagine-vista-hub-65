@@ -61,7 +61,13 @@ export async function generateImage({
       
       try {
         const errorData = JSON.parse(errorText);
-        if (errorData.error?.includes("token seems invalid")) {
+        
+        // Handle model loading state
+        if (response.status === 503 && errorData.error?.includes("is currently loading")) {
+          const estimatedTime = errorData.estimated_time || 0;
+          const timeInSeconds = Math.ceil(estimatedTime);
+          errorMessage = `The AI model is currently loading. Please try again in about ${timeInSeconds} seconds.`;
+        } else if (errorData.error?.includes("token seems invalid")) {
           errorMessage = "Your API key appears to be invalid. Please check your Hugging Face API token in the .env file and ensure you have accepted the model's terms of use at huggingface.co";
         } else {
           errorMessage = errorData.error || errorMessage;
