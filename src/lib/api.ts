@@ -20,13 +20,12 @@ export async function generateImage({
   }
 
   const response = await fetch(
-    "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
+    "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
     {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "Accept": "image/png"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         inputs: prompt,
@@ -34,8 +33,7 @@ export async function generateImage({
           negative_prompt: negativePrompt,
           width,
           height,
-          guidance_scale: 7.5,
-          num_inference_steps: 50,
+          num_inference_steps: 30,
           seed: seed || Math.floor(Math.random() * 1000000),
         }
       }),
@@ -46,12 +44,8 @@ export async function generateImage({
     const errorText = await response.text();
     try {
       const errorData = JSON.parse(errorText);
-      if (errorData.error?.includes("token")) {
-        throw new Error("Invalid API key. Please check your Hugging Face API token.");
-      }
       throw new Error(errorData.error || "Failed to generate image");
     } catch (e) {
-      if (e instanceof Error) throw e;
       throw new Error("Failed to connect to the image generation service. Please try again later.");
     }
   }
