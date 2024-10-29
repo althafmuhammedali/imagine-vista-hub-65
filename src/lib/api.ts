@@ -13,20 +13,26 @@ export async function generateImage({
   negativePrompt = "",
   seed,
 }: GenerateImageParams): Promise<string> {
-  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
+  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY?.trim();
   
   if (!apiKey) {
     throw new Error("Hugging Face API key is not configured. Please add your API key to the .env file.");
   }
 
+  // Validate API key format
+  if (!apiKey.startsWith('hf_')) {
+    throw new Error("Invalid API key format. Hugging Face API keys should start with 'hf_'");
+  }
+
   try {
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+      "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
       {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Accept": "application/json"
         },
         body: JSON.stringify({
           inputs: prompt,
@@ -43,15 +49,21 @@ export async function generateImage({
 
     if (!response.ok) {
       const errorText = await response.text();
+      let errorMessage = "Failed to generate image";
+      
       try {
         const errorData = JSON.parse(errorText);
         if (errorData.error?.includes("token seems invalid")) {
-          throw new Error("Invalid API key. Please check your Hugging Face API token in the .env file.");
+          errorMessage = "Your API key appears to be invalid. Please check your Hugging Face API token in the .env file and ensure you have accepted the model's terms of use at huggingface.co";
+        } else {
+          errorMessage = errorData.error || errorMessage;
         }
-        throw new Error(errorData.error || "Failed to generate image");
       } catch (e) {
-        throw new Error("Failed to connect to the image generation service. Please check your API key and try again.");
+        // If JSON parsing fails, use the raw error text
+        errorMessage = errorText || errorMessage;
       }
+      
+      throw new Error(errorMessage);
     }
 
     const blob = await response.blob();
