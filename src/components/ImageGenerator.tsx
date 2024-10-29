@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { generateImage } from "@/lib/api";
 import { GeneratorForm } from "./image-generator/GeneratorForm";
@@ -18,20 +18,44 @@ export function ImageGenerator() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Cleanup generated image URL on unmount
+  useEffect(() => {
+    return () => {
+      if (generatedImage) {
+        URL.revokeObjectURL(generatedImage);
+      }
+    };
+  }, [generatedImage]);
+
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
-        description: "Please enter a prompt",
+        description: "Please enter a prompt to generate an image",
         variant: "destructive",
       });
       return;
     }
 
     setIsLoading(true);
-    const selectedResolution = resolutions.find((r) => r.value === resolution)!;
+    const selectedResolution = resolutions.find((r) => r.value === resolution);
+
+    if (!selectedResolution) {
+      toast({
+        title: "Error",
+        description: "Invalid resolution selected",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
 
     try {
+      // Cleanup previous image URL if it exists
+      if (generatedImage) {
+        URL.revokeObjectURL(generatedImage);
+      }
+
       const imageUrl = await generateImage({
         prompt: prompt.trim(),
         width: selectedResolution.width,
@@ -39,6 +63,7 @@ export function ImageGenerator() {
         negativePrompt: negativePrompt.trim(),
         seed: seed ? parseInt(seed) : undefined,
       });
+      
       setGeneratedImage(imageUrl);
       toast({
         title: "Success",

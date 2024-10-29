@@ -27,6 +27,11 @@ export async function generateImage({
     throw new Error("Invalid API key format. Hugging Face API keys should start with 'hf_'");
   }
 
+  // Validate dimensions
+  if (width < 128 || width > 1024 || height < 128 || height > 1024) {
+    throw new Error("Image dimensions must be between 128 and 1024 pixels");
+  }
+
   try {
     const response = await fetch(
       "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
@@ -41,8 +46,8 @@ export async function generateImage({
           inputs: prompt,
           parameters: {
             negative_prompt: negativePrompt,
-            width: Math.min(Math.max(width, 128), 1024), // Ensure width is between 128 and 1024
-            height: Math.min(Math.max(height, 128), 1024), // Ensure height is between 128 and 1024
+            width: Math.min(Math.max(width, 128), 1024),
+            height: Math.min(Math.max(height, 128), 1024),
             num_inference_steps: 30,
             seed: seed || Math.floor(Math.random() * 1000000),
           }
