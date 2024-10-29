@@ -13,16 +13,13 @@ export async function generateImage({
   negativePrompt = "",
   seed,
 }: GenerateImageParams): Promise<string> {
-  if (!prompt.trim()) {
-    throw new Error("Prompt cannot be empty");
-  }
-
   const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY?.trim();
   
   if (!apiKey) {
     throw new Error("Hugging Face API key is not configured. Please add your API key to the .env file.");
   }
 
+  // Validate API key format
   if (!apiKey.startsWith('hf_')) {
     throw new Error("Invalid API key format. Hugging Face API keys should start with 'hf_'");
   }
@@ -41,8 +38,8 @@ export async function generateImage({
           inputs: prompt,
           parameters: {
             negative_prompt: negativePrompt,
-            width: Math.min(Math.max(width, 128), 1024), // Ensure width is between 128 and 1024
-            height: Math.min(Math.max(height, 128), 1024), // Ensure height is between 128 and 1024
+            width,
+            height,
             num_inference_steps: 30,
             seed: seed || Math.floor(Math.random() * 1000000),
           }
@@ -62,6 +59,7 @@ export async function generateImage({
           errorMessage = errorData.error || errorMessage;
         }
       } catch (e) {
+        // If JSON parsing fails, use the raw error text
         errorMessage = errorText || errorMessage;
       }
       
