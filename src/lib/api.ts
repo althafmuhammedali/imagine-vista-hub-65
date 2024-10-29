@@ -20,7 +20,7 @@ export async function generateImage({
   }
 
   const response = await fetch(
-    "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4",
+    "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
     {
       method: "POST",
       headers: {
