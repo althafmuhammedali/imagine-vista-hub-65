@@ -13,12 +13,18 @@ export async function generateImage({
   negativePrompt = "",
   seed,
 }: GenerateImageParams): Promise<string> {
+  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("Hugging Face API key is not configured");
+  }
+
   const response = await fetch(
     "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
     {
       method: "POST",
       headers: {
-        "Authorization": "Bearer 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",
+        "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
