@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { generateImage, GenerateImageParams } from "@/lib/api";
-import { Loader2, Wand2, Image as ImageIcon, RefreshCw } from "lucide-react";
+import { Loader2, Wand2, Image as ImageIcon } from "lucide-react";
 
 const resolutions = [
   { value: "1:1", width: 1024, height: 1024, label: "Square" },
@@ -65,10 +65,10 @@ export function ImageGenerator() {
     <div className="container max-w-6xl py-8 space-y-8">
       <div className="space-y-2 text-center">
         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl bg-gradient-to-r from-gradient-start to-gradient-end bg-clip-text text-transparent">
-          AI Image Generator
+          ComicForge AI
         </h1>
         <p className="text-gray-500 md:text-lg max-w-2xl mx-auto">
-          Transform your ideas into stunning images with our advanced AI model
+          Transform your ideas into stunning comic-style images with our advanced AI model
         </p>
       </div>
 
