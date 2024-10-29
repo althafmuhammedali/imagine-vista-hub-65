@@ -27,11 +27,6 @@ export async function generateImage({
     throw new Error("Invalid API key format. Hugging Face API keys should start with 'hf_'");
   }
 
-  // Validate dimensions
-  if (width < 128 || width > 1024 || height < 128 || height > 1024) {
-    throw new Error("Image dimensions must be between 128 and 1024 pixels");
-  }
-
   try {
     const response = await fetch(
       "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
@@ -46,8 +41,8 @@ export async function generateImage({
           inputs: prompt,
           parameters: {
             negative_prompt: negativePrompt,
-            width: Math.min(Math.max(width, 128), 1024),
-            height: Math.min(Math.max(height, 128), 1024),
+            width: Math.min(Math.max(width, 128), 1024), // Ensure width is between 128 and 1024
+            height: Math.min(Math.max(height, 128), 1024), // Ensure height is between 128 and 1024
             num_inference_steps: 30,
             seed: seed || Math.floor(Math.random() * 1000000),
           }
@@ -61,13 +56,7 @@ export async function generateImage({
       
       try {
         const errorData = JSON.parse(errorText);
-        
-        // Handle model loading state
-        if (response.status === 503 && errorData.error?.includes("is currently loading")) {
-          const estimatedTime = errorData.estimated_time || 0;
-          const timeInSeconds = Math.ceil(estimatedTime);
-          errorMessage = `The AI model is currently loading. Please try again in about ${timeInSeconds} seconds.`;
-        } else if (errorData.error?.includes("token seems invalid")) {
+        if (errorData.error?.includes("token seems invalid")) {
           errorMessage = "Your API key appears to be invalid. Please check your Hugging Face API token in the .env file and ensure you have accepted the model's terms of use at huggingface.co";
         } else {
           errorMessage = errorData.error || errorMessage;
