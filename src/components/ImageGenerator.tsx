@@ -2,19 +2,11 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { generateImage, GenerateImageParams } from "@/lib/api";
 import { Loader2 } from "lucide-react";
-
-const styles = [
-  { value: "anime_v2", label: "Anime V2" },
-  { value: "realistic", label: "Realistic" },
-  { value: "portrait", label: "Portrait" },
-  { value: "cyberpunk", label: "Cyberpunk" },
-];
 
 const resolutions = [
   { value: "1:1", width: 512, height: 512 },
@@ -24,7 +16,6 @@ const resolutions = [
 
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
-  const [style, setStyle] = useState("anime_v2");
   const [resolution, setResolution] = useState("1:1");
   const [negativePrompt, setNegativePrompt] = useState("");
   const [seed, setSeed] = useState("");
@@ -47,7 +38,6 @@ export function ImageGenerator() {
     try {
       const params: GenerateImageParams = {
         prompt: prompt.trim(),
-        style,
         width: selectedResolution.width,
         height: selectedResolution.height,
         negativePrompt: negativePrompt.trim(),
@@ -75,10 +65,10 @@ export function ImageGenerator() {
     <div className="container max-w-4xl py-8 space-y-8">
       <div className="space-y-2 text-center">
         <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-          AI Image Generator
+          FLUX.1 Image Generator
         </h1>
         <p className="text-gray-500 md:text-lg">
-          Transform your ideas into stunning images with our AI-powered generator
+          Transform your ideas into stunning images with FLUX.1 AI model
         </p>
       </div>
 
@@ -95,38 +85,6 @@ export function ImageGenerator() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label>Style</Label>
-            <Select value={style} onValueChange={setStyle}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {styles.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>
-                    {s.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Resolution</Label>
-            <Select value={resolution} onValueChange={setResolution}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {resolutions.map((r) => (
-                  <SelectItem key={r.value} value={r.value}>
-                    {r.value} ({r.width}x{r.height})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="negative-prompt">Negative Prompt (Optional)</Label>
             <Input

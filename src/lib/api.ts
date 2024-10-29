@@ -2,7 +2,7 @@ import { toast } from "@/components/ui/use-toast";
 
 export interface GenerateImageParams {
   prompt: string;
-  style?: string;
+  model?: string;
   width?: number;
   height?: number;
   negativePrompt?: string;
@@ -11,7 +11,7 @@ export interface GenerateImageParams {
 
 export async function generateImage({
   prompt,
-  style = "anime_v2",
+  model = "FLUX.1",
   width = 512,
   height = 512,
   negativePrompt = "",
@@ -31,7 +31,7 @@ export async function generateImage({
     },
     body: JSON.stringify({
       prompt,
-      style,
+      model: "FLUX.1",
       width,
       height,
       negative_prompt: negativePrompt,
