@@ -23,33 +23,38 @@ export function SocialLinks() {
 
   return (
     <footer className="w-full py-6 mt-8 border-t">
-      <div className="container flex justify-center items-center gap-4">
-        <TooltipProvider>
-          {socialLinks.map((link) => (
-            <Tooltip key={link.label}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full"
-                  asChild
-                >
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={link.label}
+      <div className="container flex flex-col items-center gap-6">
+        <p className="text-sm text-muted-foreground">
+          Built and maintained by Muhammed Adnan
+        </p>
+        <div className="flex justify-center items-center gap-4">
+          <TooltipProvider>
+            {socialLinks.map((link) => (
+              <Tooltip key={link.label}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full"
+                    asChild
                   >
-                    <link.icon className="h-4 w-4" />
-                  </a>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{link.label}</p>
-              </TooltipContent>
-            </Tooltip>
-          ))}
-        </TooltipProvider>
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={link.label}
+                    >
+                      <link.icon className="h-4 w-4" />
+                    </a>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{link.label}</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </TooltipProvider>
+        </div>
       </div>
     </footer>
   );
