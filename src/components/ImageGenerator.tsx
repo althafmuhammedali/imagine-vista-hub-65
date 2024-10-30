@@ -44,6 +44,11 @@ export function ImageGenerator() {
         seed: seed ? parseInt(seed) : undefined,
       };
 
+      // Clean up previous image URL if it exists
+      if (generatedImage) {
+        URL.revokeObjectURL(generatedImage);
+      }
+
       const imageUrl = await generateImage(params);
       setGeneratedImage(imageUrl);
       toast({

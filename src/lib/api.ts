@@ -19,59 +19,67 @@ export async function generateImage({
     throw new Error("Hugging Face API key is not configured. Please add your API key to the .env file.");
   }
 
-  // Validate API key format
   if (!apiKey.startsWith('hf_')) {
     throw new Error("Invalid API key format. Hugging Face API keys should start with 'hf_'");
   }
 
-  try {
-    const response = await fetch(
-      "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({
-          inputs: prompt,
-          parameters: {
-            negative_prompt: negativePrompt,
-            width,
-            height,
-            num_inference_steps: 30,
-            seed: seed || Math.floor(Math.random() * 1000000),
-          }
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage = "Failed to generate image";
-      
-      try {
-        const errorData = JSON.parse(errorText);
-        if (errorData.error?.includes("token seems invalid")) {
-          errorMessage = "Your API key appears to be invalid. Please check your Hugging Face API token in the .env file and ensure you have accepted the model's terms of use at huggingface.co";
-        } else {
-          errorMessage = errorData.error || errorMessage;
+  const response = await fetch(
+    "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: {
+          negative_prompt: negativePrompt,
+          width,
+          height,
+          num_inference_steps: 30,
+          seed: seed || Math.floor(Math.random() * 1000000),
         }
-      } catch (e) {
-        // If JSON parsing fails, use the raw error text
-        errorMessage = errorText || errorMessage;
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorMessage = "Failed to generate image";
+    
+    try {
+      const errorData = JSON.parse(errorText);
+      
+      // Handle model loading state
+      if (response.status === 503 && errorData.error?.includes("is currently loading")) {
+        const estimatedTime = Math.ceil(errorData.estimated_time || 60);
+        throw new Error(`Model is currently loading. Please try again in ${estimatedTime} seconds.`);
       }
       
-      throw new Error(errorMessage);
+      // Handle invalid token
+      if (errorData.error?.includes("token seems invalid")) {
+        throw new Error("Your API key appears to be invalid. Please check your Hugging Face API token and ensure you have accepted the model's terms of use at huggingface.co");
+      }
+      
+      errorMessage = errorData.error || errorMessage;
+    } catch (e) {
+      if (e instanceof Error) {
+        throw e;
+      }
+      throw new Error(errorText || errorMessage);
     }
-
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("An unexpected error occurred while generating the image.");
+    
+    throw new Error(errorMessage);
   }
+
+  const blob = await response.blob();
+  const imageUrl = URL.createObjectURL(blob);
+  
+  // Clean up the object URL when it's no longer needed
+  setTimeout(() => {
+    URL.revokeObjectURL(imageUrl);
+  }, 60000); // Clean up after 1 minute
+  
+  return imageUrl;
 }
