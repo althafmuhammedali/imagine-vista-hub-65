@@ -1,4 +1,4 @@
-import { Heart, Instagram, Linkedin, Phone } from "lucide-react";
+import { Heart, Instagram, Linkedin, Phone, Facebook } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
@@ -19,6 +19,11 @@ export function SocialLinks() {
   const { toast } = useToast();
 
   const socialLinks = [
+    {
+      icon: Facebook,
+      href: "https://www.facebook.com/profile.php?id=100084139741037",
+      label: "Facebook",
+    },
     {
       icon: Instagram,
       href: "https://www.instagram.com/ai.adnanvv/",
