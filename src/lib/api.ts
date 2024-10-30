@@ -7,9 +7,9 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "CompVis/stable-diffusion-v1-4",
+  PRIMARY: "stabilityai/stable-diffusion-2-1",  // Using the highest quality model as primary
   FALLBACK: "runwayml/stable-diffusion-v1-5",
-  LAST_RESORT: "stabilityai/stable-diffusion-2-1"
+  LAST_RESORT: "CompVis/stable-diffusion-v1-4"
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -85,12 +85,12 @@ export async function generateImage({
             negative_prompt: negativePrompt,
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 20,
-            guidance_scale: 7.0,
+            num_inference_steps: 50,  // Increased from 20 to 50 for better quality
+            guidance_scale: 8.5,      // Increased from 7.0 to 8.5 for stronger prompt adherence
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler",
-            use_karras_sigmas: false,
+            scheduler: "DPMSolverMultistepScheduler",  // Changed to a higher quality scheduler
+            use_karras_sigmas: true,  // Enabled for better sampling
             clip_skip: 1
           }
         }),
