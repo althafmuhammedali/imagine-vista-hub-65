@@ -34,7 +34,8 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
       }
 
       if (response.status === 429) {
-        const waitTime = 65000;
+        const data = await response.json();
+        const waitTime = 65000; // Wait slightly more than a minute
         toast({
           title: "Rate Limit Reached",
           description: "Please wait a minute before trying again. Using backup model...",
