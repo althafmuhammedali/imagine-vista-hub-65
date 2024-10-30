@@ -1,12 +1,18 @@
 import { Heart, Instagram, Linkedin, Phone } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 declare global {
   interface Window {
     Razorpay: any;
   }
+}
+
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
 }
 
 export function SocialLinks() {
@@ -31,39 +37,67 @@ export function SocialLinks() {
   ];
 
   const handleDonateClick = () => {
+    if (!window.Razorpay) {
+      toast({
+        title: "Error",
+        description: "Razorpay SDK not loaded. Please refresh the page.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const options = {
       key: "rzp_live_5JYQnqKRnKhB5y",
       amount: 100 * 100, // Amount in paise (₹100)
       currency: "INR",
       name: "ComicForge AI",
       description: "Support our AI service",
-      handler: function(response: any) {
-        toast({
-          title: "Thank you!",
-          description: `Payment successful! Payment ID: ${response.razorpay_payment_id}`,
-          duration: 5000,
-        });
+      handler: function(response: RazorpayResponse) {
+        if (response.razorpay_payment_id) {
+          toast({
+            title: "Thank you for your support!",
+            description: `Payment successful! ID: ${response.razorpay_payment_id}`,
+          });
+        }
       },
       prefill: {
         name: "",
         email: "",
+        contact: "",
       },
       theme: {
         color: "#F59E0B",
       },
+      modal: {
+        ondismiss: function() {
+          toast({
+            title: "Payment Cancelled",
+            description: "You cancelled the payment. Feel free to try again!",
+          });
+        }
+      }
     };
 
-    const rzp = new window.Razorpay(options);
-    
-    rzp.on('payment.failed', function (response: any) {
+    try {
+      const rzp = new window.Razorpay(options);
+      
+      rzp.on('payment.failed', function (response: any) {
+        toast({
+          title: "Payment Failed",
+          description: response.error.description || "Something went wrong with your payment. Please try again.",
+          variant: "destructive",
+        });
+      });
+
+      rzp.open();
+    } catch (error) {
       toast({
-        title: "Payment Failed",
-        description: "Something went wrong with your payment. Please try again.",
+        title: "Error",
+        description: "Failed to initialize payment. Please try again.",
         variant: "destructive",
       });
-    });
-
-    rzp.open();
+      console.error("Razorpay error:", error);
+    }
   };
 
   return (
