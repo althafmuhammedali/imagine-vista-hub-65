@@ -9,13 +9,13 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-2-base",    // Using a more reliable model
+  PRIMARY: "stabilityai/stable-diffusion-2-base",
   FALLBACK: "CompVis/stable-diffusion-v1-4",
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 5): Promise<Response> {
+async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Promise<Response> {
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fn();
@@ -25,8 +25,8 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 5): Pr
         if (data.error?.includes("is currently loading")) {
           const waitTime = Math.min((data.estimated_time || 20) * 1000 + 2000, 30000);
           toast({
-            title: "Please wait",
-            description: `Model is loading, retrying in ${Math.ceil(waitTime/1000)} seconds...`,
+            title: "Model Loading",
+            description: `Please wait ${Math.ceil(waitTime/1000)} seconds...`,
           });
           await delay(waitTime);
           continue;
@@ -34,10 +34,11 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 5): Pr
       }
       
       if (response.status === 429) {
-        const waitTime = Math.min((i + 1) * 10000, 30000); // Increased wait time
+        // For rate limits, wait at least 65 seconds (slightly more than the 1 minute requirement)
+        const waitTime = 65000 + (i * 5000); // Add 5s per retry
         toast({
-          title: "Rate limit reached",
-          description: `Waiting ${waitTime/1000} seconds before retrying...`,
+          title: "Rate Limit Reached",
+          description: `Waiting ${Math.ceil(waitTime/1000)} seconds before retrying...`,
         });
         await delay(waitTime);
         continue;
@@ -46,7 +47,7 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 5): Pr
       return response;
     } catch (error) {
       if (i === maxRetries - 1) throw error;
-      const waitTime = Math.pow(2, i) * 2000;
+      const waitTime = Math.pow(2, i) * 5000; // Increased base wait time
       await delay(waitTime);
     }
   }
@@ -94,9 +95,14 @@ export async function generateImage({
       }
     );
 
-    let lastError = null;
+    // Try each model with its own retry cycle
     for (const modelId of [MODELS.PRIMARY, MODELS.FALLBACK]) {
       try {
+        toast({
+          title: "Generating Image",
+          description: "Attempting to generate your image...",
+        });
+
         const response = await retryWithBackoff(() => makeRequest(modelId));
         
         if (!response.ok) {
@@ -108,11 +114,14 @@ export async function generateImage({
         return URL.createObjectURL(blob);
       } catch (error) {
         console.error(`Failed with model ${modelId}:`, error);
-        lastError = error;
+        // Only show toast for the last model attempt
+        if (modelId === MODELS.FALLBACK) {
+          throw error;
+        }
       }
     }
 
-    throw lastError || new Error("All models failed to generate the image");
+    throw new Error("All models failed to generate the image");
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
