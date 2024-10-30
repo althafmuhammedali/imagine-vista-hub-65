@@ -1,8 +1,11 @@
-import { Instagram, Linkedin, Phone } from "lucide-react";
+import { Heart, Instagram, Linkedin, Phone } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
 
 export function SocialLinks() {
+  const { toast } = useToast();
+
   const socialLinks = [
     {
       icon: Instagram,
@@ -20,6 +23,14 @@ export function SocialLinks() {
       label: "WhatsApp",
     },
   ];
+
+  const handleDonateClick = () => {
+    toast({
+      title: "Support Our Service",
+      description: "We need your support to maintain our servers and models. Please donate to UPI ID: adnanmuhammad4393@okicici",
+      duration: 10000,
+    });
+  };
 
   return (
     <footer className="w-full py-6 mt-8 border-t">
@@ -53,6 +64,21 @@ export function SocialLinks() {
                 </TooltipContent>
               </Tooltip>
             ))}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full"
+                  onClick={handleDonateClick}
+                >
+                  <Heart className="h-4 w-4 text-red-500" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Donate</p>
+              </TooltipContent>
+            </Tooltip>
           </TooltipProvider>
         </div>
       </div>
