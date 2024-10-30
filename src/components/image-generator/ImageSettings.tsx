@@ -47,7 +47,7 @@ export function ImageSettings({
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="prompt" className="text-gray-300">Prompt</Label>
+            <Label htmlFor="prompt" className="text-white">Prompt</Label>
             <Textarea
               id="prompt"
               placeholder="Describe what you want to see..."
@@ -58,7 +58,7 @@ export function ImageSettings({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="negative-prompt" className="text-gray-300">Negative Prompt (Optional)</Label>
+            <Label htmlFor="negative-prompt" className="text-white">Negative Prompt (Optional)</Label>
             <Input
               id="negative-prompt"
               placeholder="What to exclude from the image..."
@@ -70,7 +70,7 @@ export function ImageSettings({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="resolution" className="text-gray-300">Resolution</Label>
+              <Label htmlFor="resolution" className="text-white">Resolution</Label>
               <select
                 id="resolution"
                 value={resolution}
@@ -86,7 +86,7 @@ export function ImageSettings({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="seed" className="text-gray-300">Seed (Optional)</Label>
+              <Label htmlFor="seed" className="text-white">Seed (Optional)</Label>
               <Input
                 id="seed"
                 type="number"
