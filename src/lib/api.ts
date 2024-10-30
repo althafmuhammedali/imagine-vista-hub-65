@@ -6,6 +6,11 @@ export interface GenerateImageParams {
   seed?: number;
 }
 
+const MODELS = {
+  PRIMARY: "CompVis/stable-diffusion-v1-4",  // Lighter model
+  FALLBACK: "stabilityai/stable-diffusion-xl-base-0.9",
+};
+
 export async function generateImage({
   prompt,
   width = 512,
@@ -23,13 +28,12 @@ export async function generateImage({
     throw new Error("Invalid API key format. Hugging Face API keys should start with 'hf_'");
   }
 
-  // Create an AbortController with a longer timeout (3 minutes)
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 180000);
 
-  try {
+  async function tryGenerateWithModel(modelId: string) {
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
+      `https://api-inference.huggingface.co/models/${modelId}`,
       {
         method: "POST",
         headers: {
@@ -40,9 +44,9 @@ export async function generateImage({
           inputs: prompt,
           parameters: {
             negative_prompt: negativePrompt,
-            width,
-            height,
-            num_inference_steps: 30,
+            width: Math.min(width, 768), // Limit size to prevent CUDA memory issues
+            height: Math.min(height, 768),
+            num_inference_steps: 25, // Reduced steps
             seed: seed || Math.floor(Math.random() * 1000000),
           }
         }),
@@ -52,44 +56,44 @@ export async function generateImage({
 
     if (!response.ok) {
       const errorText = await response.text();
-      let errorMessage = "Failed to generate image";
-      
+      let errorData;
       try {
-        const errorData = JSON.parse(errorText);
-        
-        // Handle rate limit error (429)
-        if (response.status === 429) {
-          throw new Error("You've reached the maximum number of requests. Please wait a minute before trying again.");
-        }
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = { error: errorText };
+      }
 
-        // Handle "Model too busy" error specifically
-        if (errorData.error?.includes("Model too busy")) {
-          throw new Error("The AI model is currently experiencing high traffic. Please try again in a minute.");
+      // Handle specific error cases
+      if (response.status === 429) {
+        throw new Error("Rate limit reached. Please wait a minute before trying again.");
+      }
+      if (response.status === 503) {
+        throw new Error("Model is currently loading. Please try again in a moment.");
+      }
+      if (response.status === 500) {
+        if (errorData.warnings?.some((w: string) => w.includes("CUDA out of memory"))) {
+          throw new Error("MEMORY_ERROR");
         }
-        
-        // Handle model loading error (503)
-        if (response.status === 503 && errorData.error?.includes("is currently loading")) {
-          const estimatedTime = Math.ceil(errorData.estimated_time || 60);
-          throw new Error(`The model is currently loading. Please try again in ${estimatedTime} seconds.`);
-        }
-        
-        if (errorData.error?.includes("token seems invalid")) {
-          throw new Error("Your API key appears to be invalid. Please check your Hugging Face API token and ensure you have accepted the model's terms of use at huggingface.co");
-        }
-        
-        errorMessage = errorData.error || errorMessage;
-      } catch (e) {
-        if (e instanceof Error && (
-          e.message.includes("The model is currently loading") ||
-          e.message.includes("The AI model is currently experiencing high traffic") ||
-          e.message.includes("You've reached the maximum number of requests")
-        )) {
-          throw e;
-        }
-        throw new Error(errorText || errorMessage);
+        throw new Error("Server error occurred. Please try again.");
       }
       
-      throw new Error(errorMessage);
+      throw new Error(errorData.error || "Failed to generate image");
+    }
+
+    return response;
+  }
+
+  try {
+    let response;
+    try {
+      response = await tryGenerateWithModel(MODELS.PRIMARY);
+    } catch (error) {
+      if (error instanceof Error && error.message === "MEMORY_ERROR") {
+        // If primary model fails due to memory, try fallback
+        response = await tryGenerateWithModel(MODELS.FALLBACK);
+      } else {
+        throw error;
+      }
     }
 
     const blob = await response.blob();
@@ -97,11 +101,11 @@ export async function generateImage({
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        throw new Error('Request timed out after 3 minutes. The server might be experiencing high load. Please try again later.');
+        throw new Error('Request timed out. Please try again.');
       }
       throw error;
     }
-    throw new Error('An unexpected error occurred while generating the image.');
+    throw new Error('An unexpected error occurred.');
   } finally {
     clearTimeout(timeoutId);
   }
