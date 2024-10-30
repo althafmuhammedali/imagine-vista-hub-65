@@ -6,33 +6,27 @@ export interface GenerateImageParams {
   seed?: number;
 }
 
+// Smaller, more efficient models as fallbacks
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-2-1",  // Using the highest quality model as primary
-  FALLBACK: "runwayml/stable-diffusion-v1-5",
-  LAST_RESORT: "CompVis/stable-diffusion-v1-4"
+  PRIMARY: "CompVis/stable-diffusion-v1-4",      // Less memory intensive model
+  FALLBACK: "runwayml/stable-diffusion-v1-5",    // Alternative model
+  SMALL: "stabilityai/stable-diffusion-xl-base-0.9" // Smaller variant
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3, isModelLoading = false): Promise<Response> {
+async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Promise<Response> {
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fn();
       
-      if (response.status === 503) {
-        const responseData = await response.json();
-        if (responseData.error?.includes("is currently loading")) {
-          const waitTime = Math.min(responseData.estimated_time * 1000 || 10000, 20000);
-          await delay(waitTime);
-          continue;
-        }
+      if (response.status === 503 || response.status === 500) {
+        const waitTime = Math.min((i + 1) * 5000, 15000); // Progressive delay
+        await delay(waitTime);
+        continue;
       }
       
       if (response.status === 429) {
-        const responseData = await response.json();
-        if (responseData.error?.includes("Max requests")) {
-          throw new Error("You've reached the maximum number of requests. Please wait a minute before trying again.");
-        }
         const waitTime = Math.pow(2, i) * 2000;
         await delay(waitTime);
         continue;
@@ -40,31 +34,24 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3, isM
       
       return response;
     } catch (error) {
-      if (error instanceof Error && error.message.includes("maximum number of requests")) {
-        throw error;
-      }
       if (i === maxRetries - 1) throw error;
       await delay(Math.pow(2, i) * 1000);
     }
   }
-  throw new Error(isModelLoading ? "Model is still loading after multiple retries. Please try again later." : "Max retries reached");
+  throw new Error("Max retries reached");
 }
 
 export async function generateImage({
   prompt,
-  width = 512,
-  height = 512,
+  width = 512,  // Reduced default size
+  height = 512, // Reduced default size
   negativePrompt = "",
   seed,
 }: GenerateImageParams): Promise<string> {
   const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
   
   if (!apiKey) {
-    throw new Error("Please add your Hugging Face API key to the .env file as VITE_HUGGINGFACE_API_KEY");
-  }
-
-  if (typeof apiKey !== 'string' || !apiKey.startsWith('hf_')) {
-    throw new Error("Invalid Hugging Face API key format. Please ensure your API key starts with 'hf_' and is properly set in the .env file");
+    throw new Error("Missing Hugging Face API key");
   }
 
   const controller = new AbortController();
@@ -83,23 +70,20 @@ export async function generateImage({
           inputs: prompt,
           parameters: {
             negative_prompt: negativePrompt,
-            width: Math.min(width, 1024),
-            height: Math.min(height, 1024),
-            num_inference_steps: 50,  // Increased from 20 to 50 for better quality
-            guidance_scale: 8.5,      // Increased from 7.0 to 8.5 for stronger prompt adherence
+            width: Math.min(width, 768),  // Reduced maximum size
+            height: Math.min(height, 768), // Reduced maximum size
+            num_inference_steps: 30,       // Reduced steps
+            guidance_scale: 7.5,
             seed: seed || Math.floor(Math.random() * 1000000),
-            num_images_per_prompt: 1,
-            scheduler: "DPMSolverMultistepScheduler",  // Changed to a higher quality scheduler
-            use_karras_sigmas: true,  // Enabled for better sampling
-            clip_skip: 1
+            num_images_per_prompt: 1
           }
         }),
         signal: controller.signal
       }
     );
 
-    const response = await retryWithBackoff(makeRequest, 3, true);
-
+    const response = await retryWithBackoff(makeRequest);
+    
     if (!response.ok) {
       const errorText = await response.text();
       let errorData;
@@ -109,17 +93,16 @@ export async function generateImage({
         errorData = { error: errorText };
       }
 
+      // Check for specific CUDA memory errors
+      if (errorData.body && errorData.body.includes("CUDA out of memory")) {
+        throw new Error("GPU_MEMORY_ERROR");
+      }
+
       if (response.status === 401) {
-        throw new Error("Invalid API key. Please check your Hugging Face API key in the .env file");
+        throw new Error("Invalid API key");
       }
       if (response.status === 429) {
-        throw new Error("Rate limit reached. Please wait a minute before trying again.");
-      }
-      if (response.status === 503) {
-        throw new Error("MODEL_LOADING");
-      }
-      if (response.status === 500) {
-        throw new Error("SERVER_ERROR");
+        throw new Error("Rate limit reached");
       }
       
       throw new Error(errorData.error || "Failed to generate image");
@@ -130,7 +113,7 @@ export async function generateImage({
 
   try {
     let response;
-    const models = [MODELS.PRIMARY, MODELS.FALLBACK, MODELS.LAST_RESORT];
+    const models = [MODELS.PRIMARY, MODELS.FALLBACK, MODELS.SMALL];
     let lastError = null;
 
     for (const model of models) {
@@ -140,11 +123,11 @@ export async function generateImage({
       } catch (error) {
         lastError = error;
         if (error instanceof Error && 
-            !error.message.includes("SERVER_ERROR") && 
-            !error.message.includes("MODEL_LOADING")) {
-          throw error;
+            (error.message === "GPU_MEMORY_ERROR" || 
+             error.message.includes("SERVER_ERROR"))) {
+          continue;
         }
-        continue;
+        throw error;
       }
     }
 
