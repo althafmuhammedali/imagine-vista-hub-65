@@ -9,8 +9,8 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
-  FALLBACK: "runwayml/stable-diffusion-v1-5",
+  PRIMARY: "stabilityai/stable-diffusion-2-1-base",  // Changed to a lighter model
+  FALLBACK: "CompVis/stable-diffusion-v1-4",  // Changed to a lighter fallback
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -80,7 +80,7 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 180000);
+  const timeoutId = setTimeout(() => controller.abort(), 60000); // Reduced timeout
 
   try {
     const makeRequest = (modelId: string) => fetch(
@@ -92,24 +92,24 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", professional photography, 8k uhd, hyperrealistic, photorealistic, ultra detailed, masterpiece, sharp focus, high quality, cinematic lighting, dramatic lighting, award winning photo",
+          inputs: prompt + ", professional quality, detailed",  // Simplified prompt
           parameters: {
-            negative_prompt: negativePrompt + ", illustration, painting, drawing, art, sketch, anime, cartoon, graphic, text, blurry, low quality, bad anatomy, watermark, signature, deformed, unrealistic",
-            width: Math.min(width, 1024),
-            height: Math.min(height, 1024),
-            num_inference_steps: 30,
-            guidance_scale: 7.5,
+            negative_prompt: negativePrompt + ", low quality, blurry",  // Simplified negative prompt
+            width: Math.min(width, 768),  // Reduced max dimensions
+            height: Math.min(height, 768),
+            num_inference_steps: 20,  // Reduced steps
+            guidance_scale: 7.0,  // Slightly reduced guidance scale
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "DPMSolverMultistep",
-            use_karras_sigmas: true,
-            clip_skip: 2,
+            scheduler: "EulerAncestralDiscreteScheduler",  // Faster scheduler
+            use_karras_sigmas: false,  // Disabled for speed
+            clip_skip: 1,
             tiling: false,
             use_safetensors: true,
             options: {
-              wait_for_model: true,
+              wait_for_model: false,  // Don't wait for model loading
               use_gpu: true,
-              priority: "high"
+              priority: "performance"
             }
           }
         }),
@@ -120,8 +120,8 @@ export async function generateImage({
     try {
       toast({
         title: "Starting Image Generation",
-        description: "Creating your photorealistic image...",
-        duration: 5000,
+        description: "Creating your image...",
+        duration: 3000,
       });
 
       const response = await retryWithBackoff(() => makeRequest(MODELS.PRIMARY));
@@ -137,7 +137,7 @@ export async function generateImage({
       
       toast({
         title: "Using Backup Model",
-        description: "Switching to alternative model...",
+        description: "Switching to faster alternative...",
         duration: 3000,
       });
 
