@@ -20,8 +20,17 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
     try {
       const response = await fn();
       
-      if (response.status === 503 || response.status === 500) {
-        const waitTime = Math.min((i + 1) * 5000, 15000); // Progressive delay
+      if (response.status === 503) {
+        const data = await response.json();
+        if (data.error?.includes("is currently loading")) {
+          const waitTime = Math.min(data.estimated_time * 1000 || 20000, 30000);
+          await delay(waitTime);
+          continue;
+        }
+      }
+      
+      if (response.status === 500) {
+        const waitTime = Math.min((i + 1) * 5000, 15000);
         await delay(waitTime);
         continue;
       }
@@ -93,7 +102,10 @@ export async function generateImage({
         errorData = { error: errorText };
       }
 
-      // Check for specific CUDA memory errors
+      if (errorData.error?.includes("is currently loading")) {
+        throw new Error("MODEL_LOADING");
+      }
+
       if (errorData.body && errorData.body.includes("CUDA out of memory")) {
         throw new Error("GPU_MEMORY_ERROR");
       }
@@ -123,7 +135,8 @@ export async function generateImage({
       } catch (error) {
         lastError = error;
         if (error instanceof Error && 
-            (error.message === "GPU_MEMORY_ERROR" || 
+            (error.message === "MODEL_LOADING" || 
+             error.message === "GPU_MEMORY_ERROR" || 
              error.message.includes("SERVER_ERROR"))) {
           continue;
         }
