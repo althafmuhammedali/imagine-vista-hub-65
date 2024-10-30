@@ -80,16 +80,16 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", professional photography, 8k uhd, highly detailed, photorealistic, masterpiece, sharp focus, high resolution, realistic lighting, professional color grading",
+          inputs: prompt + ", professional photography, 8k uhd, photorealistic, masterpiece, sharp focus",
           parameters: {
-            negative_prompt: negativePrompt + ", blurry, low quality, bad anatomy, watermark, signature, deformed, unrealistic, low resolution, oversaturated, bad lighting, amateur, cartoonish",
+            negative_prompt: negativePrompt + ", blurry, low quality, bad anatomy, watermark, deformed, unrealistic",
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 50,
-            guidance_scale: 9.5,
+            num_inference_steps: 35, // Reduced from 50 for faster generation while maintaining quality
+            guidance_scale: 8.5, // Slightly reduced for faster generation
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "DPMSolverMultistep",
+            scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
           }
         }),
         signal: controller.signal
@@ -99,7 +99,7 @@ export async function generateImage({
     try {
       toast({
         title: "Starting Image Generation",
-        description: "Initializing high-quality image generation...",
+        description: "Optimizing for quality and speed...",
         duration: 5000,
       });
 
@@ -115,7 +115,7 @@ export async function generateImage({
     } catch (error) {
       console.error(`Failed with primary model:`, error);
       
-      await delay(5000);
+      await delay(3000); // Reduced delay before fallback
       
       toast({
         title: "Switching to Backup Model",
