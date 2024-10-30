@@ -9,8 +9,8 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-2-1", // Changed to more stable model
-  FALLBACK: "runwayml/stable-diffusion-v1-5", // Added reliable fallback
+  PRIMARY: "stabilityai/stable-diffusion-2-1",
+  FALLBACK: "runwayml/stable-diffusion-v1-5",
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -91,13 +91,13 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", professional photography, 8k uhd, photorealistic, masterpiece, sharp focus",
+          inputs: prompt + ", professional photography, 8k uhd, hyperrealistic, photorealistic, ultra detailed, masterpiece, sharp focus, high quality, cinematic lighting, dramatic lighting, award winning photo",
           parameters: {
-            negative_prompt: negativePrompt + ", blurry, low quality, bad anatomy, watermark, deformed, unrealistic",
+            negative_prompt: negativePrompt + ", illustration, painting, drawing, art, sketch, anime, cartoon, graphic, text, blurry, low quality, bad anatomy, watermark, signature, deformed, unrealistic",
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 25,
-            guidance_scale: 7.0,
+            num_inference_steps: 50,
+            guidance_scale: 8.5,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
           }
@@ -109,7 +109,7 @@ export async function generateImage({
     try {
       toast({
         title: "Starting Image Generation",
-        description: "Creating your image...",
+        description: "Creating your photorealistic image...",
         duration: 5000,
       });
 
