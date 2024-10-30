@@ -74,7 +74,7 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000); // Reduced timeout to 60s
+  const timeoutId = setTimeout(() => controller.abort(), 90000); // Increased timeout for higher quality
 
   try {
     const makeRequest = (modelId: string) => fetch(
@@ -86,13 +86,13 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", high quality, detailed",
+          inputs: prompt + ", hyperrealistic, photorealistic, 8k uhd, high quality, detailed, masterpiece, professional photography, sharp focus",
           parameters: {
-            negative_prompt: negativePrompt + ", blur, lowres, bad quality, out of focus",
+            negative_prompt: negativePrompt + ", blur, lowres, bad quality, out of focus, cartoon, anime, illustration, painting, drawing, artificial, fake looking, unrealistic",
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 30, // Reduced from 100 for faster generation
-            guidance_scale: 7.5, // Reduced from 12 for better speed/quality balance
+            num_inference_steps: 50, // Increased for better quality
+            guidance_scale: 9, // Increased for more realistic adherence to prompt
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
             scheduler: "DPMSolverMultistepScheduler",
@@ -103,7 +103,7 @@ export async function generateImage({
             options: {
               wait_for_model: true,
               use_gpu: true,
-              priority: "balanced" // Changed from "quality" to "balanced"
+              priority: "quality" // Changed back to quality for maximum realism
             }
           }
         }),
