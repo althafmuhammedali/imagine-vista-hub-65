@@ -1,4 +1,3 @@
-```typescript
 export interface GenerateImageParams {
   prompt: string;
   width?: number;
@@ -78,7 +77,7 @@ export async function generateImage({
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           inputs: prompt,
@@ -92,10 +91,10 @@ export async function generateImage({
             num_images_per_prompt: 1,
             scheduler: "EulerAncestralDiscreteScheduler",
             use_karras_sigmas: false,
-            clip_skip: 1,
+            clip_skip: 1
           }
         }),
-        signal: controller.signal,
+        signal: controller.signal
       }
     );
 
@@ -167,4 +166,3 @@ export async function generateImage({
     clearTimeout(timeoutId);
   }
 }
-```
