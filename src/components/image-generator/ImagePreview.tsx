@@ -2,13 +2,15 @@ import { Loader2, ImageIcon, Sparkles, Download } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ImagePreviewProps {
   generatedImage: string | null;
   isLoading: boolean;
+  error?: string;
 }
 
-export function ImagePreview({ generatedImage, isLoading }: ImagePreviewProps) {
+export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewProps) {
   const handleDownload = async () => {
     if (!generatedImage) return;
     
@@ -38,7 +40,13 @@ export function ImagePreview({ generatedImage, isLoading }: ImagePreviewProps) {
   };
 
   return (
-    <Card className="relative overflow-hidden backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl min-h-[400px] group">
+    <Card className="relative overflow-hidden backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl min-h-[300px] md:min-h-[400px] group">
+      {error && (
+        <Alert variant="destructive" className="m-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
       {(generatedImage || isLoading) && (
         <div className="absolute inset-0 bg-black/40 backdrop-blur-sm">
           {isLoading ? (
@@ -48,10 +56,11 @@ export function ImagePreview({ generatedImage, isLoading }: ImagePreviewProps) {
                   <Loader2 className="w-8 h-8 animate-spin mx-auto text-amber-400" />
                   <Sparkles className="w-4 h-4 absolute -top-1 -right-1 text-amber-300 animate-pulse" />
                 </div>
-                <p className="text-sm text-gray-400">
-                  Creating your masterpiece...
-                </p>
-                <p className="text-xs text-gray-500">This may take a moment</p>
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-400">Creating your masterpiece...</p>
+                  <p className="text-xs text-gray-500">This may take a moment</p>
+                  <p className="text-xs text-gray-500">We're using advanced AI models to generate your image</p>
+                </div>
               </div>
             </div>
           ) : (
@@ -62,7 +71,7 @@ export function ImagePreview({ generatedImage, isLoading }: ImagePreviewProps) {
                 className="w-full h-full object-contain rounded-lg transition-transform duration-300 group-hover:scale-[1.02]"
               />
               <Button
-                className="absolute bottom-6 right-6 bg-amber-500 hover:bg-amber-600"
+                className="absolute bottom-6 right-6 bg-amber-500 hover:bg-amber-600 transition-all duration-300 transform hover:scale-105"
                 onClick={handleDownload}
               >
                 <Download className="w-4 h-4 mr-2" />
@@ -72,16 +81,16 @@ export function ImagePreview({ generatedImage, isLoading }: ImagePreviewProps) {
           )}
         </div>
       )}
-      {!generatedImage && !isLoading && (
-        <div className="flex items-center justify-center h-full min-h-[400px] text-gray-400">
-          <div className="text-center space-y-4">
+      {!generatedImage && !isLoading && !error && (
+        <div className="flex items-center justify-center h-full min-h-[300px] md:min-h-[400px] text-gray-400">
+          <div className="text-center space-y-4 p-4">
             <div className="relative inline-block">
               <ImageIcon className="w-12 h-12 mx-auto opacity-50" />
               <Sparkles className="w-4 h-4 absolute -top-1 -right-1 text-amber-300 animate-pulse" />
             </div>
             <div>
               <p className="text-lg font-medium text-amber-400">Your Canvas Awaits</p>
-              <p className="text-sm text-gray-500">Your generated artwork will appear here</p>
+              <p className="text-sm text-gray-500 max-w-md mx-auto">Enter your prompt and let our AI bring your vision to life</p>
             </div>
           </div>
         </div>

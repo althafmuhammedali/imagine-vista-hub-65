@@ -17,6 +17,7 @@ export function ImageGenerator() {
   const [seed, setSeed] = useState("");
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
     return () => {
@@ -37,6 +38,7 @@ export function ImageGenerator() {
     }
 
     setIsLoading(true);
+    setError(undefined);
     const selectedResolution = resolutions.find((r) => r.value === resolution)!;
 
     try {
@@ -59,9 +61,11 @@ export function ImageGenerator() {
         description: "Image generated successfully!",
       });
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate image";
+      setError(errorMessage);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to generate image",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -70,8 +74,8 @@ export function ImageGenerator() {
   };
 
   return (
-    <div className="container max-w-6xl py-8 space-y-8">
-      <div className="grid gap-8 md:grid-cols-[1fr,1fr]">
+    <div className="container max-w-6xl py-4 md:py-8 space-y-4 md:space-y-8 px-4 md:px-8">
+      <div className="grid gap-4 md:gap-8 md:grid-cols-[1fr,1fr]">
         <ImageSettings
           prompt={prompt}
           setPrompt={setPrompt}
@@ -88,6 +92,7 @@ export function ImageGenerator() {
         <ImagePreview
           generatedImage={generatedImage}
           isLoading={isLoading}
+          error={error}
         />
       </div>
     </div>
