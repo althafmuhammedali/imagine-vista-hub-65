@@ -9,8 +9,8 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-2-base",
-  FALLBACK: "CompVis/stable-diffusion-v1-4",
+  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",  // Using SDXL for better quality
+  FALLBACK: "stabilityai/stable-diffusion-2-1",  // Better fallback model
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -80,15 +80,16 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt,
+          inputs: prompt + ", highly detailed, realistic, 8k uhd, high quality, masterpiece",
           parameters: {
-            negative_prompt: negativePrompt,
-            width: Math.min(width, 768),
-            height: Math.min(height, 768),
-            num_inference_steps: 20,
-            guidance_scale: 7.0,
+            negative_prompt: negativePrompt + ", blurry, low quality, bad anatomy, watermark, signature, deformed",
+            width: Math.min(width, 1024),  // Increased max size
+            height: Math.min(height, 1024), // Increased max size
+            num_inference_steps: 30,        // Increased steps for better quality
+            guidance_scale: 8.5,            // Adjusted for more realistic results
             seed: seed || Math.floor(Math.random() * 1000000),
-            num_images_per_prompt: 1
+            num_images_per_prompt: 1,
+            scheduler: "DPMSolverMultistep",  // Faster scheduler
           }
         }),
         signal: controller.signal
@@ -100,7 +101,7 @@ export async function generateImage({
       try {
         toast({
           title: "Generating Image",
-          description: "Attempting to generate your image...",
+          description: "Creating your high-quality masterpiece...",
         });
 
         const response = await retryWithBackoff(() => makeRequest(modelId));
@@ -114,7 +115,6 @@ export async function generateImage({
         return URL.createObjectURL(blob);
       } catch (error) {
         console.error(`Failed with model ${modelId}:`, error);
-        // Only show toast for the last model attempt
         if (modelId === MODELS.FALLBACK) {
           throw error;
         }
