@@ -71,15 +71,6 @@ export function ImageGenerator() {
 
   return (
     <div className="container max-w-6xl py-8 space-y-8">
-      <div className="space-y-2 text-center">
-        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl bg-gradient-to-r from-gradient-start to-gradient-end bg-clip-text text-transparent">
-          ComicForge AI
-        </h1>
-        <p className="text-gray-500 md:text-lg max-w-2xl mx-auto">
-          Transform your ideas into stunning comic-style images with our advanced AI model
-        </p>
-      </div>
-
       <div className="grid gap-8 md:grid-cols-[1fr,1fr]">
         <ImageSettings
           prompt={prompt}
