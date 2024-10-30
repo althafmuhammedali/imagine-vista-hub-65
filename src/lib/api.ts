@@ -28,15 +28,22 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3, isM
         }
       }
       
-      // Handle rate limits
+      // Handle rate limits with longer waits
       if (response.status === 429) {
-        const waitTime = Math.pow(2, i) * 1000;
+        const responseData = await response.json();
+        if (responseData.error?.includes("Max requests")) {
+          throw new Error("You've reached the maximum number of requests. Please wait a minute before trying again.");
+        }
+        const waitTime = Math.pow(2, i) * 2000; // Increased wait time for rate limits
         await delay(waitTime);
         continue;
       }
       
       return response;
     } catch (error) {
+      if (error instanceof Error && error.message.includes("maximum number of requests")) {
+        throw error;
+      }
       if (i === maxRetries - 1) throw error;
       await delay(Math.pow(2, i) * 1000);
     }
