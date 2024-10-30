@@ -57,14 +57,20 @@ export async function generateImage({
       try {
         const errorData = JSON.parse(errorText);
         
+        // Handle rate limit error (429)
+        if (response.status === 429) {
+          throw new Error("You've reached the maximum number of requests. Please wait a minute before trying again.");
+        }
+
         // Handle "Model too busy" error specifically
         if (errorData.error?.includes("Model too busy")) {
           throw new Error("The AI model is currently experiencing high traffic. Please try again in a minute.");
         }
         
+        // Handle model loading error (503)
         if (response.status === 503 && errorData.error?.includes("is currently loading")) {
           const estimatedTime = Math.ceil(errorData.estimated_time || 60);
-          throw new Error(`Model is currently loading. Please try again in ${estimatedTime} seconds.`);
+          throw new Error(`The model is currently loading. Please try again in ${estimatedTime} seconds.`);
         }
         
         if (errorData.error?.includes("token seems invalid")) {
@@ -74,8 +80,9 @@ export async function generateImage({
         errorMessage = errorData.error || errorMessage;
       } catch (e) {
         if (e instanceof Error && (
-          e.message.includes("Model is currently loading") ||
-          e.message.includes("The AI model is currently experiencing high traffic")
+          e.message.includes("The model is currently loading") ||
+          e.message.includes("The AI model is currently experiencing high traffic") ||
+          e.message.includes("You've reached the maximum number of requests")
         )) {
           throw e;
         }
