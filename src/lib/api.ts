@@ -7,8 +7,9 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
+  PRIMARY: "CompVis/stable-diffusion-v1-4", // Changed to a more stable model
   FALLBACK: "runwayml/stable-diffusion-v1-5",
+  LAST_RESORT: "stabilityai/stable-diffusion-2-1"
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -84,8 +85,8 @@ export async function generateImage({
             negative_prompt: negativePrompt,
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 50,
-            guidance_scale: 7.5,
+            num_inference_steps: 30, // Reduced for better stability
+            guidance_scale: 7.0,
             seed: seed || Math.floor(Math.random() * 1000000),
           }
         }),
@@ -93,7 +94,7 @@ export async function generateImage({
       }
     );
 
-    const response = await retryWithBackoff(makeRequest, 5, true);
+    const response = await retryWithBackoff(makeRequest, 3, true);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -111,14 +112,10 @@ export async function generateImage({
         throw new Error("Rate limit reached. Please wait a minute before trying again.");
       }
       if (response.status === 503) {
-        const estimatedTime = Math.ceil((errorData.estimated_time || 0) / 60);
-        throw new Error(`Model is currently loading. Estimated wait time: ${estimatedTime} minutes. Please try again later.`);
+        throw new Error("MODEL_LOADING");
       }
       if (response.status === 500) {
-        if (errorData.warnings?.some((w: string) => w.includes("CUDA out of memory"))) {
-          throw new Error("MEMORY_ERROR");
-        }
-        throw new Error("Server error occurred. Please try again.");
+        throw new Error("SERVER_ERROR");
       }
       
       throw new Error(errorData.error || "Failed to generate image");
@@ -129,14 +126,27 @@ export async function generateImage({
 
   try {
     let response;
-    try {
-      response = await tryGenerateWithModel(MODELS.PRIMARY);
-    } catch (error) {
-      if (error instanceof Error && error.message === "MEMORY_ERROR") {
-        response = await tryGenerateWithModel(MODELS.FALLBACK);
-      } else {
-        throw error;
+    const models = [MODELS.PRIMARY, MODELS.FALLBACK, MODELS.LAST_RESORT];
+    let lastError = null;
+
+    for (const model of models) {
+      try {
+        response = await tryGenerateWithModel(model);
+        break;
+      } catch (error) {
+        lastError = error;
+        if (error instanceof Error && 
+            !error.message.includes("SERVER_ERROR") && 
+            !error.message.includes("MODEL_LOADING")) {
+          throw error;
+        }
+        // Continue to next model if it's a server error
+        continue;
       }
+    }
+
+    if (!response) {
+      throw lastError || new Error("All models failed to generate the image");
     }
 
     const blob = await response.blob();
