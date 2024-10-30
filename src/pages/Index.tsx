@@ -3,7 +3,7 @@ import { SocialLinks } from "@/components/SocialLinks";
 import { AuthButtons } from "@/components/AuthButtons";
 import { ChatBot } from "@/components/chat/ChatBot";
 import { FAQ } from "@/components/FAQ";
-import { Sparkles, Heart, Flag } from "lucide-react";
+import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
   return (
@@ -21,10 +21,7 @@ const Index = () => {
             </div>
             <div className="flex items-center justify-center gap-2">
               <Heart className="w-5 h-5 text-red-500 animate-pulse" />
-              <span className="text-sm text-gray-400 flex items-center gap-2">
-                Standing with Palestine
-                <Flag className="w-5 h-5" fill="#007A3D" stroke="white" />
-              </span>
+              <span className="text-sm text-gray-400">Standing with Palestine</span>
             </div>
             <p className="text-gray-400 md:text-lg max-w-2xl mx-auto font-light">
               Transform your imagination into stunning masterpieces with our state-of-the-art AI technology
