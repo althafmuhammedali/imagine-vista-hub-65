@@ -9,7 +9,7 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",  // Using SDXL for higher quality
+  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",  // Using SDXL for highest quality
   FALLBACK: "runwayml/stable-diffusion-v1-5",  // High quality fallback
 };
 
@@ -74,7 +74,7 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000); // Increased timeout for higher quality
+  const timeoutId = setTimeout(() => controller.abort(), 120000); // Increased timeout for higher quality
 
   try {
     const makeRequest = (modelId: string) => fetch(
@@ -86,22 +86,22 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", professional photography, 8k uhd, highly detailed, photorealistic, masterpiece quality, sharp focus, realistic lighting, natural colors",
+          inputs: prompt + ", masterpiece, best quality, extremely detailed, ultra realistic, photorealistic, 8k uhd, high resolution, professional photography, sharp focus, perfect lighting",
           parameters: {
-            negative_prompt: negativePrompt + ", cartoon, anime, illustration, painting, drawing, artificial, fake, low quality, blurry, grainy, oversaturated, unrealistic lighting",
-            width: Math.min(width, 1024),  // Increased max dimensions
-            height: Math.min(height, 1024),
-            num_inference_steps: 50,  // Increased steps for better quality
-            guidance_scale: 8.5,  // Increased for more prompt adherence
+            negative_prompt: negativePrompt + ", blur, lowres, bad quality, artificial, fake, low quality, blurry, grainy, text, watermark, signature, out of focus, poorly drawn, deformed",
+            width: Math.min(width, 1024),  // Maximum supported dimension
+            height: Math.min(height, 1024), // Maximum supported dimension
+            num_inference_steps: 100,       // Maximum steps for best quality
+            guidance_scale: 10,             // Increased for better prompt adherence
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "DPMSolverMultistepScheduler",  // Better quality scheduler
-            use_karras_sigmas: true,  // Enable for better quality
+            scheduler: "EulerAncestralDiscreteScheduler", // Best quality scheduler
+            use_karras_sigmas: true,        // Enable for better quality
             clip_skip: 1,
             tiling: false,
             use_safetensors: true,
             options: {
-              wait_for_model: true,  // Wait for best model
+              wait_for_model: true,
               use_gpu: true,
               priority: "quality"
             }
