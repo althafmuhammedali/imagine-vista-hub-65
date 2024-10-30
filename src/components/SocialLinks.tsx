@@ -33,7 +33,7 @@ export function SocialLinks() {
   const handleDonateClick = () => {
     const options = {
       key: "rzp_live_5JYQnqKRnKhB5y",
-      amount: 100 * 100, // Amount in paise (₹100)
+      amount: 40 * 100, // Amount in paise (₹40)
       currency: "INR",
       name: "ComicForge AI",
       description: "Support our AI service",
@@ -110,7 +110,7 @@ export function SocialLinks() {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Donate ₹100</p>
+                <p>Donate ₹40</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
