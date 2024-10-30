@@ -24,6 +24,13 @@ const promptExamples = [
   "A serene Japanese garden with cherry blossoms, watercolor style",
   "A magical treehouse in a mystical forest at sunset",
   "A cute robot playing with butterflies in a meadow, digital art",
+  "A majestic dragon soaring through crystal caves, fantasy art",
+  "A cozy cafe in Paris during autumn, impressionist style",
+  "An underwater city with bioluminescent buildings",
+  "A steampunk airship floating through clouds at golden hour",
+  "A mystical library with floating books and magical lights",
+  "A cyberpunk street market at night with neon lights",
+  "A peaceful mountain landscape with northern lights"
 ];
 
 export function ImageSettings({
@@ -62,16 +69,27 @@ export function ImageSettings({
                     Need inspiration?
                   </Button>
                 </HoverCardTrigger>
-                <HoverCardContent className="w-80 bg-black/80 border-gray-800">
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-semibold text-amber-400">Example Prompts:</h4>
-                    <ul className="text-sm space-y-2 text-gray-300">
+                <HoverCardContent className="w-96 bg-black/90 border-gray-800">
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-semibold text-amber-400">✨ Example Prompts:</h4>
+                    <div className="grid grid-cols-1 gap-3">
                       {promptExamples.map((example, i) => (
-                        <li key={i} className="cursor-pointer hover:text-amber-400" onClick={() => setPrompt(example)}>
-                          {example}
-                        </li>
+                        <div
+                          key={i}
+                          className="p-2 rounded-md hover:bg-white/5 cursor-pointer transition-colors"
+                          onClick={() => setPrompt(example)}
+                        >
+                          <p className="text-sm text-white hover:text-amber-400 transition-colors">
+                            {example}
+                          </p>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
+                    <div className="pt-2 border-t border-gray-800">
+                      <p className="text-xs text-gray-400">
+                        Click any prompt to use it as your starting point. Feel free to modify and combine ideas!
+                      </p>
+                    </div>
                   </div>
                 </HoverCardContent>
               </HoverCard>
@@ -81,7 +99,7 @@ export function ImageSettings({
               placeholder="Describe your dream image in detail... (e.g., 'A magical treehouse in a mystical forest at sunset')"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500"
+              className="h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
             />
           </div>
 
@@ -95,7 +113,7 @@ export function ImageSettings({
               placeholder="Specify what you don't want in the image... (e.g., 'blurry, low quality, dark')"
               value={negativePrompt}
               onChange={(e) => setNegativePrompt(e.target.value)}
-              className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500"
+              className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
             />
           </div>
 
@@ -106,10 +124,10 @@ export function ImageSettings({
                 id="resolution"
                 value={resolution}
                 onChange={(e) => setResolution(e.target.value)}
-                className="w-full h-10 px-3 rounded-md border border-gray-800 bg-black/20 text-gray-300 focus:border-amber-500 focus:ring-amber-500/20"
+                className="w-full h-10 px-3 rounded-md border border-gray-800 bg-black/20 text-white focus:border-amber-500 focus:ring-amber-500/20"
               >
                 {resolutions.map((res) => (
-                  <option key={res.value} value={res.value}>
+                  <option key={res.value} value={res.value} className="bg-gray-900">
                     {res.label} ({res.width}x{res.height})
                   </option>
                 ))}
@@ -127,7 +145,7 @@ export function ImageSettings({
                 placeholder="For reproducible results..."
                 value={seed}
                 onChange={(e) => setSeed(e.target.value)}
-                className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500"
+                className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
               />
             </div>
           </div>
