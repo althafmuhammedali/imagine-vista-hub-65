@@ -13,21 +13,35 @@ const MODELS = {
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Promise<Response> {
+async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3, isModelLoading = false): Promise<Response> {
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fn();
+      
+      // If model is loading, wait longer and retry
+      if (response.status === 503) {
+        const responseData = await response.json();
+        if (responseData.error?.includes("is currently loading")) {
+          const waitTime = Math.min(responseData.estimated_time * 1000 || 10000, 20000);
+          await delay(waitTime);
+          continue;
+        }
+      }
+      
+      // Handle rate limits
       if (response.status === 429) {
-        const waitTime = Math.pow(2, i) * 1000; // exponential backoff: 1s, 2s, 4s
+        const waitTime = Math.pow(2, i) * 1000;
         await delay(waitTime);
         continue;
       }
+      
       return response;
     } catch (error) {
       if (i === maxRetries - 1) throw error;
+      await delay(Math.pow(2, i) * 1000);
     }
   }
-  throw new Error("Max retries reached");
+  throw new Error(isModelLoading ? "Model is still loading after multiple retries. Please try again later." : "Max retries reached");
 }
 
 export async function generateImage({
@@ -73,7 +87,7 @@ export async function generateImage({
       }
     );
 
-    const response = await retryWithBackoff(makeRequest);
+    const response = await retryWithBackoff(makeRequest, 5, true);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -88,7 +102,8 @@ export async function generateImage({
         throw new Error("Rate limit reached. Please wait a minute before trying again.");
       }
       if (response.status === 503) {
-        throw new Error("Model is currently loading. Please try again in a moment.");
+        const estimatedTime = Math.ceil((errorData.estimated_time || 0) / 60);
+        throw new Error(`Model is currently loading. Estimated wait time: ${estimatedTime} minutes. Please try again later.`);
       }
       if (response.status === 500) {
         if (errorData.warnings?.some((w: string) => w.includes("CUDA out of memory"))) {
