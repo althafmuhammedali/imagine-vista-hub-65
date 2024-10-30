@@ -18,7 +18,6 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3, isM
     try {
       const response = await fn();
       
-      // If model is loading, wait longer and retry
       if (response.status === 503) {
         const responseData = await response.json();
         if (responseData.error?.includes("is currently loading")) {
@@ -28,13 +27,12 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3, isM
         }
       }
       
-      // Handle rate limits with longer waits
       if (response.status === 429) {
         const responseData = await response.json();
         if (responseData.error?.includes("Max requests")) {
           throw new Error("You've reached the maximum number of requests. Please wait a minute before trying again.");
         }
-        const waitTime = Math.pow(2, i) * 2000; // Increased wait time for rate limits
+        const waitTime = Math.pow(2, i) * 2000;
         await delay(waitTime);
         continue;
       }
@@ -58,14 +56,14 @@ export async function generateImage({
   negativePrompt = "",
   seed,
 }: GenerateImageParams): Promise<string> {
-  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY?.trim();
+  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
   
   if (!apiKey) {
-    throw new Error("Hugging Face API key is not configured. Please add your API key to the .env file.");
+    throw new Error("Please add your Hugging Face API key to the .env file as VITE_HUGGINGFACE_API_KEY");
   }
 
-  if (!apiKey.startsWith('hf_')) {
-    throw new Error("Invalid API key format. Hugging Face API keys should start with 'hf_'");
+  if (typeof apiKey !== 'string' || !apiKey.startsWith('hf_')) {
+    throw new Error("Invalid Hugging Face API key format. Please ensure your API key starts with 'hf_' and is properly set in the .env file");
   }
 
   const controller = new AbortController();
@@ -106,6 +104,9 @@ export async function generateImage({
         errorData = { error: errorText };
       }
 
+      if (response.status === 401) {
+        throw new Error("Invalid API key. Please check your Hugging Face API key in the .env file");
+      }
       if (response.status === 429) {
         throw new Error("Rate limit reached. Please wait a minute before trying again.");
       }
