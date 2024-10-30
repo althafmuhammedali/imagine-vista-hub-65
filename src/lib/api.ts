@@ -6,11 +6,11 @@ export interface GenerateImageParams {
   seed?: number;
 }
 
-// Smaller, more efficient models as fallbacks
+// Using smaller, more efficient models
 const MODELS = {
-  PRIMARY: "CompVis/stable-diffusion-v1-4",      // Less memory intensive model
-  FALLBACK: "runwayml/stable-diffusion-v1-5",    // Alternative model
-  SMALL: "stabilityai/stable-diffusion-xl-base-0.9" // Smaller variant
+  PRIMARY: "runwayml/stable-diffusion-v1-5",    // More stable model
+  FALLBACK: "CompVis/stable-diffusion-v1-4",    // Alternative model
+  SMALL: "stabilityai/stable-diffusion-2-base"  // Smaller variant
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -23,20 +23,24 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
       if (response.status === 503) {
         const data = await response.json();
         if (data.error?.includes("is currently loading")) {
-          const waitTime = Math.min(data.estimated_time * 1000 || 20000, 30000);
+          // Wait for the estimated loading time plus a small buffer
+          const waitTime = Math.min((data.estimated_time || 20) * 1000 + 5000, 60000);
+          console.log(`Model is loading, waiting ${waitTime/1000} seconds before retry...`);
           await delay(waitTime);
           continue;
         }
       }
       
       if (response.status === 500) {
-        const waitTime = Math.min((i + 1) * 5000, 15000);
+        console.log(`Server error, attempt ${i + 1}/${maxRetries}. Retrying...`);
+        const waitTime = Math.min((i + 1) * 8000, 24000);
         await delay(waitTime);
         continue;
       }
       
       if (response.status === 429) {
-        const waitTime = Math.pow(2, i) * 2000;
+        console.log(`Rate limit reached, attempt ${i + 1}/${maxRetries}. Retrying...`);
+        const waitTime = Math.pow(2, i) * 3000;
         await delay(waitTime);
         continue;
       }
@@ -52,8 +56,8 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
 
 export async function generateImage({
   prompt,
-  width = 512,  // Reduced default size
-  height = 512, // Reduced default size
+  width = 512,
+  height = 512,
   negativePrompt = "",
   seed,
 }: GenerateImageParams): Promise<string> {
@@ -79,9 +83,9 @@ export async function generateImage({
           inputs: prompt,
           parameters: {
             negative_prompt: negativePrompt,
-            width: Math.min(width, 768),  // Reduced maximum size
-            height: Math.min(height, 768), // Reduced maximum size
-            num_inference_steps: 30,       // Reduced steps
+            width: Math.min(width, 768),
+            height: Math.min(height, 768),
+            num_inference_steps: 25,
             guidance_scale: 7.5,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1
@@ -100,14 +104,6 @@ export async function generateImage({
         errorData = JSON.parse(errorText);
       } catch {
         errorData = { error: errorText };
-      }
-
-      if (errorData.error?.includes("is currently loading")) {
-        throw new Error("MODEL_LOADING");
-      }
-
-      if (errorData.body && errorData.body.includes("CUDA out of memory")) {
-        throw new Error("GPU_MEMORY_ERROR");
       }
 
       if (response.status === 401) {
@@ -130,17 +126,14 @@ export async function generateImage({
 
     for (const model of models) {
       try {
+        console.log(`Attempting to generate image with model: ${model}`);
         response = await tryGenerateWithModel(model);
+        console.log(`Successfully generated image with model: ${model}`);
         break;
       } catch (error) {
+        console.log(`Failed with model ${model}, trying next model...`);
         lastError = error;
-        if (error instanceof Error && 
-            (error.message === "MODEL_LOADING" || 
-             error.message === "GPU_MEMORY_ERROR" || 
-             error.message.includes("SERVER_ERROR"))) {
-          continue;
-        }
-        throw error;
+        continue;
       }
     }
 
