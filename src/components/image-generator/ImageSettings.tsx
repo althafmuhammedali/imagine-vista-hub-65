@@ -47,15 +47,16 @@ export function ImageSettings({
   resolutions,
 }: ImageSettingsProps) {
   return (
-    <Card className="backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl">
-      <CardContent className="p-6 space-y-6">
+    <Card className="backdrop-blur-xl bg-black/30 border-gray-800 shadow-2xl relative overflow-hidden group">
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-amber-600/10 group-hover:opacity-75 transition-opacity duration-500"></div>
+      <CardContent className="p-6 space-y-6 relative">
         <CardHeader className="p-0">
           <CardTitle className="flex items-center gap-2 text-2xl text-amber-300">
-            <Sparkles className="w-6 h-6" />
+            <Sparkles className="w-6 h-6 animate-pulse" />
             Create Your Masterpiece
           </CardTitle>
           <CardDescription className="text-gray-400">
-            Let your imagination run wild and create stunning artwork
+            Let your imagination run wild and create stunning photorealistic artwork
           </CardDescription>
         </CardHeader>
 
@@ -65,18 +66,18 @@ export function ImageSettings({
               <Label htmlFor="prompt" className="text-white">Your Vision</Label>
               <HoverCard>
                 <HoverCardTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-gray-400 hover:text-amber-400">
+                  <Button variant="ghost" size="sm" className="text-gray-400 hover:text-amber-400 transition-all duration-300">
                     Need inspiration?
                   </Button>
                 </HoverCardTrigger>
-                <HoverCardContent className="w-96 bg-black/90 border-gray-800">
+                <HoverCardContent className="w-96 bg-black/95 border-gray-800 backdrop-blur-xl">
                   <div className="space-y-4">
                     <h4 className="text-sm font-semibold text-amber-400">✨ Example Prompts:</h4>
                     <div className="grid grid-cols-1 gap-3">
                       {promptExamples.map((example, i) => (
                         <div
                           key={i}
-                          className="p-2 rounded-md hover:bg-white/5 cursor-pointer transition-colors"
+                          className="p-2 rounded-md hover:bg-white/10 cursor-pointer transition-all duration-300"
                           onClick={() => setPrompt(example)}
                         >
                           <p className="text-sm text-white hover:text-amber-400 transition-colors">
@@ -84,11 +85,6 @@ export function ImageSettings({
                           </p>
                         </div>
                       ))}
-                    </div>
-                    <div className="pt-2 border-t border-gray-800">
-                      <p className="text-xs text-gray-400">
-                        Click any prompt to use it as your starting point. Feel free to modify and combine ideas!
-                      </p>
                     </div>
                   </div>
                 </HoverCardContent>
@@ -99,7 +95,7 @@ export function ImageSettings({
               placeholder="Describe your dream image in detail... (e.g., 'A magical treehouse in a mystical forest at sunset')"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
+              className="h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white transition-all duration-300"
             />
           </div>
 
@@ -113,7 +109,7 @@ export function ImageSettings({
               placeholder="Specify what you don't want in the image... (e.g., 'blurry, low quality, dark')"
               value={negativePrompt}
               onChange={(e) => setNegativePrompt(e.target.value)}
-              className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
+              className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white transition-all duration-300"
             />
           </div>
 
@@ -124,7 +120,7 @@ export function ImageSettings({
                 id="resolution"
                 value={resolution}
                 onChange={(e) => setResolution(e.target.value)}
-                className="w-full h-10 px-3 rounded-md border border-gray-800 bg-black/20 text-white focus:border-amber-500 focus:ring-amber-500/20"
+                className="w-full h-10 px-3 rounded-md border border-gray-800 bg-black/20 text-white focus:border-amber-500 focus:ring-amber-500/20 transition-all duration-300"
               >
                 {resolutions.map((res) => (
                   <option key={res.value} value={res.value} className="bg-gray-900">
@@ -145,18 +141,18 @@ export function ImageSettings({
                 placeholder="For reproducible results..."
                 value={seed}
                 onChange={(e) => setSeed(e.target.value)}
-                className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
+                className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white transition-all duration-300"
               />
             </div>
           </div>
 
           <Button
-            className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg group relative overflow-hidden"
+            className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-xl group relative overflow-hidden transition-all duration-500"
             size="lg"
             onClick={onGenerate}
             disabled={isLoading}
           >
-            <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-colors" />
+            <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-colors duration-500" />
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
