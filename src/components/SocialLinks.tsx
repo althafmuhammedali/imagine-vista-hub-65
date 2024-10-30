@@ -33,9 +33,9 @@ export function SocialLinks() {
   };
 
   return (
-    <footer className="w-full py-6 mt-8 border-t">
+    <footer className="w-full py-8 mt-12 border-t border-gray-800">
       <div className="container flex flex-col items-center gap-6">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-gray-400">
           Built and maintained by Muhammed Adnan
         </p>
         <div className="flex justify-center items-center gap-4">
@@ -46,7 +46,7 @@ export function SocialLinks() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-full"
+                    className="rounded-full border-gray-800 bg-black/20 hover:bg-amber-500/20 hover:border-amber-500"
                     asChild
                   >
                     <a
@@ -55,7 +55,7 @@ export function SocialLinks() {
                       rel="noopener noreferrer"
                       aria-label={link.label}
                     >
-                      <link.icon className="h-4 w-4" />
+                      <link.icon className="h-4 w-4 text-gray-400 hover:text-amber-400" />
                     </a>
                   </Button>
                 </TooltipTrigger>
@@ -69,7 +69,7 @@ export function SocialLinks() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="rounded-full"
+                  className="rounded-full border-gray-800 bg-black/20 hover:bg-amber-500/20 hover:border-amber-500"
                   onClick={handleDonateClick}
                 >
                   <Heart className="h-4 w-4 text-red-500" />

@@ -8,14 +8,14 @@ interface ImagePreviewProps {
 
 export function ImagePreview({ generatedImage, isLoading }: ImagePreviewProps) {
   return (
-    <Card className="relative overflow-hidden">
+    <Card className="relative overflow-hidden backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl min-h-[400px]">
       {(generatedImage || isLoading) && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm">
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center space-y-4">
-                <Loader2 className="w-8 h-8 animate-spin mx-auto" />
-                <p className="text-sm text-muted-foreground">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto text-amber-400" />
+                <p className="text-sm text-gray-400">
                   Creating your masterpiece...
                 </p>
               </div>
@@ -32,7 +32,7 @@ export function ImagePreview({ generatedImage, isLoading }: ImagePreviewProps) {
         </div>
       )}
       {!generatedImage && !isLoading && (
-        <div className="flex items-center justify-center h-full min-h-[400px] text-muted-foreground">
+        <div className="flex items-center justify-center h-full min-h-[400px] text-gray-400">
           <div className="text-center space-y-4">
             <ImageIcon className="w-12 h-12 mx-auto opacity-50" />
             <p>Your generated image will appear here</p>
