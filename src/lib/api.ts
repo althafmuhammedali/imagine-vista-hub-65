@@ -34,18 +34,32 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
       }
 
       if (response.status === 429) {
-        const waitTime = 70000 + (i * 5000);
+        const data = await response.json();
+        const waitTime = 65000; // Set a fixed 65-second wait time for rate limits
+        
+        // Show a more informative toast message
         toast({
           title: "Rate Limit Reached",
-          description: `Please wait ${Math.ceil(waitTime / 1000)} seconds. The AI model needs a brief break.`,
+          description: "The AI model is busy. Please wait 65 seconds before trying again. This is a limitation of the free API.",
           duration: waitTime,
         });
-        await delay(waitTime);
-        continue;
+        
+        // If this is not the last retry, wait and try again
+        if (i < maxRetries - 1) {
+          await delay(waitTime);
+          continue;
+        }
+        
+        // If this is the last retry, throw a user-friendly error
+        throw new Error("Rate limit exceeded. Please wait a minute before generating another image.");
       }
 
       return response;
     } catch (error) {
+      if (error instanceof Error && error.message.includes("Rate limit")) {
+        throw error; // Re-throw rate limit errors
+      }
+      
       if (i === maxRetries - 1) throw error;
       const waitTime = Math.pow(2, i) * 5000;
       await delay(waitTime);
@@ -85,11 +99,11 @@ export async function generateImage({
             negative_prompt: negativePrompt + ", blurry, low quality, bad anatomy, watermark, deformed, unrealistic",
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 35, // Reduced from 50 for faster generation while maintaining quality
-            guidance_scale: 8.5, // Slightly reduced for faster generation
+            num_inference_steps: 30, // Further reduced for faster generation
+            guidance_scale: 7.5, // Reduced for faster generation
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
+            scheduler: "EulerAncestralDiscreteScheduler",
           }
         }),
         signal: controller.signal
@@ -99,7 +113,7 @@ export async function generateImage({
     try {
       toast({
         title: "Starting Image Generation",
-        description: "Optimizing for quality and speed...",
+        description: "Please wait while we create your image...",
         duration: 5000,
       });
 
@@ -113,9 +127,11 @@ export async function generateImage({
       const blob = await response.blob();
       return URL.createObjectURL(blob);
     } catch (error) {
+      if (error instanceof Error && error.message.includes("Rate limit")) {
+        throw error; // Re-throw rate limit errors to be handled by the UI
+      }
+
       console.error(`Failed with primary model:`, error);
-      
-      await delay(3000); // Reduced delay before fallback
       
       toast({
         title: "Switching to Backup Model",
