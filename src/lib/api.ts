@@ -9,8 +9,8 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",  // Using SDXL for highest quality
-  FALLBACK: "runwayml/stable-diffusion-v1-5",  // High quality fallback
+  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
+  FALLBACK: "runwayml/stable-diffusion-v1-5",
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -74,7 +74,7 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120000);
+  const timeoutId = setTimeout(() => controller.abort(), 60000); // Reduced timeout to 60s
 
   try {
     const makeRequest = (modelId: string) => fetch(
@@ -86,13 +86,13 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", ultra realistic, photorealistic, 8k uhd, high resolution, professional photography, sharp focus, perfect lighting, hyperrealistic, masterpiece, best quality, extremely detailed, cinematic lighting, high detail face, high detail eyes, detailed skin texture, detailed cloth texture, intricate details",
+          inputs: prompt + ", high quality, detailed",
           parameters: {
-            negative_prompt: negativePrompt + ", blur, lowres, bad quality, artificial, fake, low quality, blurry, grainy, text, watermark, signature, out of focus, poorly drawn, deformed, cartoon, anime, illustration, painting, drawing, art, rendered, 3d, unreal engine, synthetic",
+            negative_prompt: negativePrompt + ", blur, lowres, bad quality, out of focus",
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 100,
-            guidance_scale: 12,
+            num_inference_steps: 30, // Reduced from 100 for faster generation
+            guidance_scale: 7.5, // Reduced from 12 for better speed/quality balance
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
             scheduler: "DPMSolverMultistepScheduler",
@@ -103,7 +103,7 @@ export async function generateImage({
             options: {
               wait_for_model: true,
               use_gpu: true,
-              priority: "quality"
+              priority: "balanced" // Changed from "quality" to "balanced"
             }
           }
         }),
