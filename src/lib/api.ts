@@ -9,8 +9,8 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",  // Using SDXL for better quality
-  FALLBACK: "stabilityai/stable-diffusion-2-1",  // Better fallback model
+  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
+  FALLBACK: "stabilityai/stable-diffusion-2-1",
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -19,33 +19,31 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fn();
-      
+
       if (response.status === 503) {
         const data = await response.json();
         if (data.error?.includes("is currently loading")) {
           const waitTime = Math.min((data.estimated_time || 20) * 1000 + 2000, 30000);
           toast({
             title: "Model Loading",
-            description: `Please wait ${Math.ceil(waitTime/1000)} seconds...`,
+            description: `Please wait ${Math.ceil(waitTime / 1000)} seconds...`,
           });
           await delay(waitTime);
           continue;
         }
       }
-      
-      // Enhanced rate limit handling
+
       if (response.status === 429) {
-        // Wait for 70 seconds (slightly more than the 1-minute rate limit window)
-        const waitTime = 70000 + (i * 5000); // Add 5s per retry
+        const waitTime = 70000 + (i * 5000);
         toast({
           title: "Rate Limit Reached",
-          description: `Please wait ${Math.ceil(waitTime/1000)} seconds. The AI model needs a brief break.`,
-          duration: waitTime, // Keep toast visible during wait
+          description: `Please wait ${Math.ceil(waitTime / 1000)} seconds. The AI model needs a brief break.`,
+          duration: waitTime,
         });
         await delay(waitTime);
         continue;
       }
-      
+
       return response;
     } catch (error) {
       if (i === maxRetries - 1) throw error;
@@ -82,13 +80,13 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", highly detailed, realistic, 8k uhd, high quality, masterpiece",
+          inputs: prompt + ", professional photography, 8k uhd, highly detailed, photorealistic, masterpiece, sharp focus, high resolution, realistic lighting, professional color grading",
           parameters: {
-            negative_prompt: negativePrompt + ", blurry, low quality, bad anatomy, watermark, signature, deformed",
+            negative_prompt: negativePrompt + ", blurry, low quality, bad anatomy, watermark, signature, deformed, unrealistic, low resolution, oversaturated, bad lighting, amateur, cartoonish",
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 30,
-            guidance_scale: 8.5,
+            num_inference_steps: 50,
+            guidance_scale: 9.5,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
             scheduler: "DPMSolverMultistep",
@@ -98,11 +96,10 @@ export async function generateImage({
       }
     );
 
-    // Try primary model first
     try {
       toast({
         title: "Starting Image Generation",
-        description: "Initializing the AI model...",
+        description: "Initializing high-quality image generation...",
         duration: 5000,
       });
 
@@ -118,8 +115,7 @@ export async function generateImage({
     } catch (error) {
       console.error(`Failed with primary model:`, error);
       
-      // Try fallback model with a delay
-      await delay(5000); // Wait 5s before trying fallback
+      await delay(5000);
       
       toast({
         title: "Switching to Backup Model",
