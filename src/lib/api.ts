@@ -9,7 +9,7 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-2-1",
+  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
   FALLBACK: "runwayml/stable-diffusion-v1-5",
 };
 
@@ -96,10 +96,20 @@ export async function generateImage({
             negative_prompt: negativePrompt + ", illustration, painting, drawing, art, sketch, anime, cartoon, graphic, text, blurry, low quality, bad anatomy, watermark, signature, deformed, unrealistic",
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 50,
-            guidance_scale: 8.5,
+            num_inference_steps: 30,
+            guidance_scale: 7.5,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
+            scheduler: "DPMSolverMultistep",
+            use_karras_sigmas: true,
+            clip_skip: 2,
+            tiling: false,
+            use_safetensors: true,
+            options: {
+              wait_for_model: true,
+              use_gpu: true,
+              priority: "high"
+            }
           }
         }),
         signal: controller.signal
