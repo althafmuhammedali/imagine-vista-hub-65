@@ -7,7 +7,7 @@ import { MessageCircle, Send, Loader2 } from "lucide-react";
 import { ChatMessage } from "./ChatMessage";
 import { toast } from "@/components/ui/use-toast";
 
-const INITIAL_MESSAGE = "Hi! I'm your AI assistant. I can help you with image generation. What would you like to know?";
+const INITIAL_MESSAGE = "Hi! I'm ForgeAI, your personal assistant. I can help you with image generation. What would you like to know?";
 
 async function getChatResponse(message: string): Promise<string> {
   const response = await fetch(
@@ -78,7 +78,7 @@ export function ChatBot() {
       </SheetTrigger>
       <SheetContent className="w-[90vw] sm:w-[440px] h-[96vh] sm:h-[600px] flex flex-col p-0">
         <SheetHeader className="p-4 border-b">
-          <SheetTitle>AI Assistant</SheetTitle>
+          <SheetTitle>ForgeAI Assistant</SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-4">
