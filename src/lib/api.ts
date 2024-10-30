@@ -74,7 +74,7 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120000); // Increased timeout for higher quality
+  const timeoutId = setTimeout(() => controller.abort(), 120000);
 
   try {
     const makeRequest = (modelId: string) => fetch(
@@ -86,17 +86,17 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", masterpiece, best quality, extremely detailed, ultra realistic, photorealistic, 8k uhd, high resolution, professional photography, sharp focus, perfect lighting",
+          inputs: prompt + ", ultra realistic, photorealistic, 8k uhd, high resolution, professional photography, sharp focus, perfect lighting, hyperrealistic, masterpiece, best quality, extremely detailed, cinematic lighting, high detail face, high detail eyes, detailed skin texture, detailed cloth texture, intricate details",
           parameters: {
-            negative_prompt: negativePrompt + ", blur, lowres, bad quality, artificial, fake, low quality, blurry, grainy, text, watermark, signature, out of focus, poorly drawn, deformed",
-            width: Math.min(width, 1024),  // Maximum supported dimension
-            height: Math.min(height, 1024), // Maximum supported dimension
-            num_inference_steps: 100,       // Maximum steps for best quality
-            guidance_scale: 10,             // Increased for better prompt adherence
+            negative_prompt: negativePrompt + ", blur, lowres, bad quality, artificial, fake, low quality, blurry, grainy, text, watermark, signature, out of focus, poorly drawn, deformed, cartoon, anime, illustration, painting, drawing, art, rendered, 3d, unreal engine, synthetic",
+            width: Math.min(width, 1024),
+            height: Math.min(height, 1024),
+            num_inference_steps: 100,
+            guidance_scale: 12,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler", // Best quality scheduler
-            use_karras_sigmas: true,        // Enable for better quality
+            scheduler: "DPMSolverMultistepScheduler",
+            use_karras_sigmas: true,
             clip_skip: 1,
             tiling: false,
             use_safetensors: true,
