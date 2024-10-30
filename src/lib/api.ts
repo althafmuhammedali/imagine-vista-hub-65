@@ -7,9 +7,28 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "CompVis/stable-diffusion-v1-4",  // Lighter model
+  PRIMARY: "CompVis/stable-diffusion-v1-4",
   FALLBACK: "stabilityai/stable-diffusion-xl-base-0.9",
 };
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Promise<Response> {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fn();
+      if (response.status === 429) {
+        const waitTime = Math.pow(2, i) * 1000; // exponential backoff: 1s, 2s, 4s
+        await delay(waitTime);
+        continue;
+      }
+      return response;
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+    }
+  }
+  throw new Error("Max retries reached");
+}
 
 export async function generateImage({
   prompt,
@@ -32,7 +51,7 @@ export async function generateImage({
   const timeoutId = setTimeout(() => controller.abort(), 180000);
 
   async function tryGenerateWithModel(modelId: string) {
-    const response = await fetch(
+    const makeRequest = () => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
       {
         method: "POST",
@@ -44,15 +63,17 @@ export async function generateImage({
           inputs: prompt,
           parameters: {
             negative_prompt: negativePrompt,
-            width: Math.min(width, 768), // Limit size to prevent CUDA memory issues
+            width: Math.min(width, 768),
             height: Math.min(height, 768),
-            num_inference_steps: 25, // Reduced steps
+            num_inference_steps: 25,
             seed: seed || Math.floor(Math.random() * 1000000),
           }
         }),
         signal: controller.signal,
       }
     );
+
+    const response = await retryWithBackoff(makeRequest);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -63,7 +84,6 @@ export async function generateImage({
         errorData = { error: errorText };
       }
 
-      // Handle specific error cases
       if (response.status === 429) {
         throw new Error("Rate limit reached. Please wait a minute before trying again.");
       }
@@ -89,7 +109,6 @@ export async function generateImage({
       response = await tryGenerateWithModel(MODELS.PRIMARY);
     } catch (error) {
       if (error instanceof Error && error.message === "MEMORY_ERROR") {
-        // If primary model fails due to memory, try fallback
         response = await tryGenerateWithModel(MODELS.FALLBACK);
       } else {
         throw error;
