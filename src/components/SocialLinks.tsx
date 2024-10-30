@@ -3,6 +3,12 @@ import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 export function SocialLinks() {
   const { toast } = useToast();
 
@@ -25,11 +31,39 @@ export function SocialLinks() {
   ];
 
   const handleDonateClick = () => {
-    toast({
-      title: "Support Our Service",
-      description: "We need your support to maintain our servers and models. Please donate to UPI ID: adnanmuhammad4393@okicici",
-      duration: 10000,
+    const options = {
+      key: "rzp_live_5JYQnqKRnKhB5y",
+      amount: 100 * 100, // Amount in paise (₹100)
+      currency: "INR",
+      name: "ComicForge AI",
+      description: "Support our AI service",
+      handler: function(response: any) {
+        toast({
+          title: "Thank you!",
+          description: `Payment successful! Payment ID: ${response.razorpay_payment_id}`,
+          duration: 5000,
+        });
+      },
+      prefill: {
+        name: "",
+        email: "",
+      },
+      theme: {
+        color: "#F59E0B",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    
+    rzp.on('payment.failed', function (response: any) {
+      toast({
+        title: "Payment Failed",
+        description: "Something went wrong with your payment. Please try again.",
+        variant: "destructive",
+      });
     });
+
+    rzp.open();
   };
 
   return (
@@ -76,7 +110,7 @@ export function SocialLinks() {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Donate</p>
+                <p>Donate ₹100</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
