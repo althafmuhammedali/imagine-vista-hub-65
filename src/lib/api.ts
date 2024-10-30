@@ -33,12 +33,14 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
         }
       }
       
+      // Enhanced rate limit handling
       if (response.status === 429) {
-        // For rate limits, wait at least 65 seconds (slightly more than the 1 minute requirement)
-        const waitTime = 65000 + (i * 5000); // Add 5s per retry
+        // Wait for 70 seconds (slightly more than the 1-minute rate limit window)
+        const waitTime = 70000 + (i * 5000); // Add 5s per retry
         toast({
           title: "Rate Limit Reached",
-          description: `Waiting ${Math.ceil(waitTime/1000)} seconds before retrying...`,
+          description: `Please wait ${Math.ceil(waitTime/1000)} seconds. The AI model needs a brief break.`,
+          duration: waitTime, // Keep toast visible during wait
         });
         await delay(waitTime);
         continue;
@@ -47,7 +49,7 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
       return response;
     } catch (error) {
       if (i === maxRetries - 1) throw error;
-      const waitTime = Math.pow(2, i) * 5000; // Increased base wait time
+      const waitTime = Math.pow(2, i) * 5000;
       await delay(waitTime);
     }
   }
@@ -83,45 +85,58 @@ export async function generateImage({
           inputs: prompt + ", highly detailed, realistic, 8k uhd, high quality, masterpiece",
           parameters: {
             negative_prompt: negativePrompt + ", blurry, low quality, bad anatomy, watermark, signature, deformed",
-            width: Math.min(width, 1024),  // Increased max size
-            height: Math.min(height, 1024), // Increased max size
-            num_inference_steps: 30,        // Increased steps for better quality
-            guidance_scale: 8.5,            // Adjusted for more realistic results
+            width: Math.min(width, 1024),
+            height: Math.min(height, 1024),
+            num_inference_steps: 30,
+            guidance_scale: 8.5,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "DPMSolverMultistep",  // Faster scheduler
+            scheduler: "DPMSolverMultistep",
           }
         }),
         signal: controller.signal
       }
     );
 
-    // Try each model with its own retry cycle
-    for (const modelId of [MODELS.PRIMARY, MODELS.FALLBACK]) {
-      try {
-        toast({
-          title: "Generating Image",
-          description: "Creating your high-quality masterpiece...",
-        });
+    // Try primary model first
+    try {
+      toast({
+        title: "Starting Image Generation",
+        description: "Initializing the AI model...",
+        duration: 5000,
+      });
 
-        const response = await retryWithBackoff(() => makeRequest(modelId));
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText);
-        }
-
-        const blob = await response.blob();
-        return URL.createObjectURL(blob);
-      } catch (error) {
-        console.error(`Failed with model ${modelId}:`, error);
-        if (modelId === MODELS.FALLBACK) {
-          throw error;
-        }
+      const response = await retryWithBackoff(() => makeRequest(MODELS.PRIMARY));
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
       }
-    }
 
-    throw new Error("All models failed to generate the image");
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
+    } catch (error) {
+      console.error(`Failed with primary model:`, error);
+      
+      // Try fallback model with a delay
+      await delay(5000); // Wait 5s before trying fallback
+      
+      toast({
+        title: "Switching to Backup Model",
+        description: "First attempt failed, trying alternative model...",
+        duration: 5000,
+      });
+
+      const response = await retryWithBackoff(() => makeRequest(MODELS.FALLBACK));
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
+    }
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
