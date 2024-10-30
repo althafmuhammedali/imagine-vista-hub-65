@@ -23,8 +23,9 @@ export async function generateImage({
     throw new Error("Invalid API key format. Hugging Face API keys should start with 'hf_'");
   }
 
+  // Create an AbortController with a longer timeout (2 minutes)
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+  const timeoutId = setTimeout(() => controller.abort(), 120000);
 
   try {
     const response = await fetch(
@@ -67,7 +68,7 @@ export async function generateImage({
         
         errorMessage = errorData.error || errorMessage;
       } catch (e) {
-        if (e instanceof Error) {
+        if (e instanceof Error && e.message.includes("Model is currently loading")) {
           throw e;
         }
         throw new Error(errorText || errorMessage);
@@ -81,11 +82,11 @@ export async function generateImage({
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        throw new Error('Request timed out. Please try again.');
+        throw new Error('Request timed out after 2 minutes. The server might be experiencing high load. Please try again.');
       }
       throw error;
     }
-    throw new Error('An unexpected error occurred.');
+    throw new Error('An unexpected error occurred while generating the image.');
   } finally {
     clearTimeout(timeoutId);
   }
