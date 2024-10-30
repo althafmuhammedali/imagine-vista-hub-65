@@ -3,47 +3,60 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageCircle, Send } from "lucide-react";
+import { MessageCircle, Send, Loader2 } from "lucide-react";
 import { ChatMessage } from "./ChatMessage";
+import { toast } from "@/components/ui/use-toast";
 
 const INITIAL_MESSAGE = "Hi! I'm your AI assistant. I can help you with image generation. What would you like to know?";
 
-const helpfulResponses: Record<string, string> = {
-  default: "I'm here to help! You can ask me about image generation, prompts, or any other features.",
-  prompt: "To create better images, try being specific in your prompts. Include details about style (e.g., 'watercolor', 'digital art'), mood, lighting, and composition.",
-  resolution: "You can choose between different resolutions: Square (1:1), Landscape (16:9), or Portrait (9:16). Pick the one that best suits your needs!",
-  error: "If you're seeing an error, try refreshing the page or adjusting your prompt. Avoid using explicit or offensive content.",
-  download: "You can download your generated images by clicking the download button that appears below each generated image.",
-  quality: "For better quality, try adding descriptive terms like 'high quality', 'detailed', 'sharp', or specify the artistic style you want.",
-};
+async function getChatResponse(message: string): Promise<string> {
+  const response = await fetch(
+    "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
+    {
+      headers: {
+        Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ inputs: message }),
+    }
+  );
 
-function getResponse(message: string): string {
-  const lowerMessage = message.toLowerCase();
-  if (lowerMessage.includes("prompt") || lowerMessage.includes("write")) return helpfulResponses.prompt;
-  if (lowerMessage.includes("resolution") || lowerMessage.includes("size")) return helpfulResponses.resolution;
-  if (lowerMessage.includes("error") || lowerMessage.includes("not working")) return helpfulResponses.error;
-  if (lowerMessage.includes("download") || lowerMessage.includes("save")) return helpfulResponses.download;
-  if (lowerMessage.includes("quality") || lowerMessage.includes("better")) return helpfulResponses.quality;
-  return helpfulResponses.default;
+  if (!response.ok) {
+    throw new Error("Failed to get response from AI");
+  }
+
+  const result = await response.json();
+  return result[0].generated_text;
 }
 
 export function ChatBot() {
   const [messages, setMessages] = useState([{ text: INITIAL_MESSAGE, isBot: true }]);
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
     setMessages((prev) => [...prev, { text: userMessage, isBot: false }]);
     setInput("");
+    setIsLoading(true);
 
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponse = getResponse(userMessage);
+    try {
+      const botResponse = await getChatResponse(userMessage);
       setMessages((prev) => [...prev, { text: botResponse, isBot: true }]);
-    }, 500);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to get AI response. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Chat error:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -86,9 +99,18 @@ export function ChatBot() {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               className="flex-1"
+              disabled={isLoading}
             />
-            <Button size="icon" onClick={handleSend} disabled={!input.trim()}>
-              <Send className="h-4 w-4" />
+            <Button 
+              size="icon" 
+              onClick={handleSend} 
+              disabled={!input.trim() || isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>
