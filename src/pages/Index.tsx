@@ -1,11 +1,13 @@
 import { ImageGenerator } from "@/components/ImageGenerator";
 import { SocialLinks } from "@/components/SocialLinks";
+import { AuthButtons } from "@/components/AuthButtons";
 import { Sparkles } from "lucide-react";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d]">
       <div className="min-h-screen bg-black/5 backdrop-blur-sm">
+        <AuthButtons />
         <div className="container max-w-6xl py-12">
           <div className="space-y-4 text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
