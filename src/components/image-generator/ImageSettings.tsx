@@ -46,7 +46,7 @@ export function ImageSettings({
         </CardHeader>
 
         <div className="space-y-6">
-          <div className="space-y-2">
+          <div className="space-y-2 text-left">
             <Label htmlFor="prompt" className="text-white">Prompt</Label>
             <Textarea
               id="prompt"
@@ -57,7 +57,7 @@ export function ImageSettings({
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 text-left">
             <Label htmlFor="negative-prompt" className="text-white">Negative Prompt (Optional)</Label>
             <Input
               id="negative-prompt"
@@ -69,7 +69,7 @@ export function ImageSettings({
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
+            <div className="space-y-2 text-left">
               <Label htmlFor="resolution" className="text-white">Resolution</Label>
               <select
                 id="resolution"
@@ -85,7 +85,7 @@ export function ImageSettings({
               </select>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 text-left">
               <Label htmlFor="seed" className="text-white">Seed (Optional)</Label>
               <Input
                 id="seed"
