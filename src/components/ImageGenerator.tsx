@@ -22,6 +22,20 @@ export function ImageGenerator() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Cleanup function for image URLs
+  const cleanupImageUrl = (url: string | null) => {
+    if (url) {
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  // Cleanup on component unmount
+  React.useEffect(() => {
+    return () => {
+      cleanupImageUrl(generatedImage);
+    };
+  }, []);
+
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
@@ -36,6 +50,9 @@ export function ImageGenerator() {
     const selectedResolution = resolutions.find((r) => r.value === resolution)!;
 
     try {
+      // Clean up previous image URL
+      cleanupImageUrl(generatedImage);
+
       const params: GenerateImageParams = {
         prompt: prompt.trim(),
         width: selectedResolution.width,
@@ -43,11 +60,6 @@ export function ImageGenerator() {
         negativePrompt: negativePrompt.trim(),
         seed: seed ? parseInt(seed) : undefined,
       };
-
-      // Clean up previous image URL if it exists
-      if (generatedImage) {
-        URL.revokeObjectURL(generatedImage);
-      }
 
       const imageUrl = await generateImage(params);
       setGeneratedImage(imageUrl);
