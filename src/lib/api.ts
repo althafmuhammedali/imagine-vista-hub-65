@@ -23,9 +23,9 @@ export async function generateImage({
     throw new Error("Invalid API key format. Hugging Face API keys should start with 'hf_'");
   }
 
-  // Create an AbortController with a longer timeout (2 minutes)
+  // Create an AbortController with a longer timeout (3 minutes)
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120000);
+  const timeoutId = setTimeout(() => controller.abort(), 180000);
 
   try {
     const response = await fetch(
@@ -57,6 +57,11 @@ export async function generateImage({
       try {
         const errorData = JSON.parse(errorText);
         
+        // Handle "Model too busy" error specifically
+        if (errorData.error?.includes("Model too busy")) {
+          throw new Error("The AI model is currently experiencing high traffic. Please try again in a minute.");
+        }
+        
         if (response.status === 503 && errorData.error?.includes("is currently loading")) {
           const estimatedTime = Math.ceil(errorData.estimated_time || 60);
           throw new Error(`Model is currently loading. Please try again in ${estimatedTime} seconds.`);
@@ -68,7 +73,10 @@ export async function generateImage({
         
         errorMessage = errorData.error || errorMessage;
       } catch (e) {
-        if (e instanceof Error && e.message.includes("Model is currently loading")) {
+        if (e instanceof Error && (
+          e.message.includes("Model is currently loading") ||
+          e.message.includes("The AI model is currently experiencing high traffic")
+        )) {
           throw e;
         }
         throw new Error(errorText || errorMessage);
@@ -82,7 +90,7 @@ export async function generateImage({
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        throw new Error('Request timed out after 2 minutes. The server might be experiencing high load. Please try again.');
+        throw new Error('Request timed out after 3 minutes. The server might be experiencing high load. Please try again later.');
       }
       throw error;
     }
