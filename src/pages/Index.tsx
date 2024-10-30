@@ -2,28 +2,28 @@ import { ImageGenerator } from "@/components/ImageGenerator";
 import { SocialLinks } from "@/components/SocialLinks";
 import { AuthButtons } from "@/components/AuthButtons";
 import { ChatBot } from "@/components/chat/ChatBot";
-import { Sparkles, Wand2 } from "lucide-react";
+import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-black to-black">
-      <div className="min-h-screen backdrop-blur-sm">
+    <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d]">
+      <div className="min-h-screen bg-black/5 backdrop-blur-sm">
         <AuthButtons />
         <div className="container max-w-6xl py-12">
-          <div className="space-y-6 text-center mb-12">
-            <div className="relative inline-block">
-              <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative flex items-center justify-center gap-2 mb-4">
-                <Wand2 className="w-10 h-10 text-amber-400 animate-pulse" />
-                <h1 className="text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">
-                  ComicForge AI
-                </h1>
-                <Sparkles className="w-10 h-10 text-amber-400 animate-pulse" />
-              </div>
+          <div className="space-y-4 text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Sparkles className="w-8 h-8 text-amber-400" />
+              <h1 className="text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl bg-gradient-to-r from-amber-200 to-amber-400 bg-clip-text text-transparent">
+                ComicForge AI
+              </h1>
+              <Sparkles className="w-8 h-8 text-amber-400" />
             </div>
-            <p className="text-gray-400 md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
-              Transform your imagination into stunning masterpieces with our state-of-the-art AI technology. 
-              Create unique, photorealistic artwork in seconds.
+            <div className="flex items-center justify-center gap-2">
+              <Heart className="w-5 h-5 text-red-500 animate-pulse" />
+              <span className="text-sm text-gray-400">Standing with Palestine</span>
+            </div>
+            <p className="text-gray-400 md:text-lg max-w-2xl mx-auto font-light">
+              Transform your imagination into stunning masterpieces with our state-of-the-art AI technology
             </p>
           </div>
           <ImageGenerator />
