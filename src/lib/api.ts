@@ -9,8 +9,8 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
-  FALLBACK: "stabilityai/stable-diffusion-2-1",
+  PRIMARY: "stabilityai/stable-diffusion-2-1", // Changed to more stable model
+  FALLBACK: "runwayml/stable-diffusion-v1-5", // Added reliable fallback
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -19,7 +19,7 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fn();
-
+      
       if (response.status === 503) {
         const data = await response.json();
         if (data.error?.includes("is currently loading")) {
@@ -34,34 +34,31 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
       }
 
       if (response.status === 429) {
-        const data = await response.json();
-        const waitTime = 65000; // Set a fixed 65-second wait time for rate limits
-        
-        // Show a more informative toast message
+        const waitTime = 65000;
         toast({
           title: "Rate Limit Reached",
-          description: "The AI model is busy. Please wait 65 seconds before trying again. This is a limitation of the free API.",
-          duration: waitTime,
+          description: "Please wait a minute before trying again. Using backup model...",
+          duration: 5000,
         });
-        
-        // If this is not the last retry, wait and try again
-        if (i < maxRetries - 1) {
-          await delay(waitTime);
-          continue;
-        }
-        
-        // If this is the last retry, throw a user-friendly error
-        throw new Error("Rate limit exceeded. Please wait a minute before generating another image.");
+        throw new Error("rate_limit");
       }
 
       return response;
     } catch (error) {
-      if (error instanceof Error && error.message.includes("Rate limit")) {
-        throw error; // Re-throw rate limit errors
+      if (error instanceof Error) {
+        if (error.message === "rate_limit") throw error;
+        if (error.message.includes("Failed to fetch")) {
+          toast({
+            title: "Connection Error",
+            description: "Trying backup model...",
+            duration: 3000,
+          });
+          throw new Error("connection_error");
+        }
       }
       
       if (i === maxRetries - 1) throw error;
-      const waitTime = Math.pow(2, i) * 5000;
+      const waitTime = Math.pow(2, i) * 3000;
       await delay(waitTime);
     }
   }
@@ -99,11 +96,10 @@ export async function generateImage({
             negative_prompt: negativePrompt + ", blurry, low quality, bad anatomy, watermark, deformed, unrealistic",
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 30, // Further reduced for faster generation
-            guidance_scale: 7.5, // Reduced for faster generation
+            num_inference_steps: 25,
+            guidance_scale: 7.0,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler",
           }
         }),
         signal: controller.signal
@@ -113,37 +109,31 @@ export async function generateImage({
     try {
       toast({
         title: "Starting Image Generation",
-        description: "Please wait while we create your image...",
+        description: "Creating your image...",
         duration: 5000,
       });
 
       const response = await retryWithBackoff(() => makeRequest(MODELS.PRIMARY));
       
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
+        throw new Error("Primary model failed");
       }
 
       const blob = await response.blob();
       return URL.createObjectURL(blob);
     } catch (error) {
-      if (error instanceof Error && error.message.includes("Rate limit")) {
-        throw error; // Re-throw rate limit errors to be handled by the UI
-      }
-
-      console.error(`Failed with primary model:`, error);
+      console.error("Primary model error:", error);
       
       toast({
-        title: "Switching to Backup Model",
-        description: "First attempt failed, trying alternative model...",
-        duration: 5000,
+        title: "Using Backup Model",
+        description: "Switching to alternative model...",
+        duration: 3000,
       });
 
       const response = await retryWithBackoff(() => makeRequest(MODELS.FALLBACK));
       
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
+        throw new Error("Both models failed to generate image");
       }
 
       const blob = await response.blob();
@@ -156,7 +146,7 @@ export async function generateImage({
       }
       throw error;
     }
-    throw new Error('An unexpected error occurred.');
+    throw new Error('Failed to generate image. Please try again.');
   } finally {
     clearTimeout(timeoutId);
   }
