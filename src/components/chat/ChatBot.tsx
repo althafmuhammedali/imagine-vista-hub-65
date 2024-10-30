@@ -10,15 +10,26 @@ import { toast } from "@/components/ui/use-toast";
 const INITIAL_MESSAGE = "Hi! I'm ForgeAI, your personal assistant. I can help you with image generation. What would you like to know?";
 
 async function getChatResponse(message: string): Promise<string> {
+  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("Missing Hugging Face API key");
+  }
+
   const response = await fetch(
     "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
     {
       headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       method: "POST",
-      body: JSON.stringify({ inputs: message }),
+      body: JSON.stringify({ 
+        inputs: message,
+        options: {
+          wait_for_model: true
+        }
+      }),
     }
   );
 
