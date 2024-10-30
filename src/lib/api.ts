@@ -1,3 +1,4 @@
+```typescript
 export interface GenerateImageParams {
   prompt: string;
   width?: number;
@@ -85,13 +86,13 @@ export async function generateImage({
             negative_prompt: negativePrompt,
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 50, // Increased from 30 for better quality
-            guidance_scale: 8.5, // Increased from 7.0 for better quality
+            num_inference_steps: 20,
+            guidance_scale: 7.0,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "DPMSolverMultistep", // Added for better quality
-            use_karras_sigmas: true, // Added for enhanced detail
-            clip_skip: 2, // Added for better artistic results
+            scheduler: "EulerAncestralDiscreteScheduler",
+            use_karras_sigmas: false,
+            clip_skip: 1,
           }
         }),
         signal: controller.signal,
@@ -144,7 +145,6 @@ export async function generateImage({
             !error.message.includes("MODEL_LOADING")) {
           throw error;
         }
-        // Continue to next model if it's a server error
         continue;
       }
     }
@@ -167,3 +167,4 @@ export async function generateImage({
     clearTimeout(timeoutId);
   }
 }
+```
