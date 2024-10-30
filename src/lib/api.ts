@@ -1,3 +1,5 @@
+import { toast } from "@/components/ui/use-toast";
+
 export interface GenerateImageParams {
   prompt: string;
   width?: number;
@@ -6,16 +8,14 @@ export interface GenerateImageParams {
   seed?: number;
 }
 
-// Using smaller, more efficient models
 const MODELS = {
-  PRIMARY: "runwayml/stable-diffusion-v1-5",    // More stable model
-  FALLBACK: "CompVis/stable-diffusion-v1-4",    // Alternative model
-  SMALL: "stabilityai/stable-diffusion-2-base"  // Smaller variant
+  PRIMARY: "stabilityai/stable-diffusion-2-base",    // Using a more reliable model
+  FALLBACK: "CompVis/stable-diffusion-v1-4",
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Promise<Response> {
+async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 5): Promise<Response> {
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fn();
@@ -23,24 +23,22 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
       if (response.status === 503) {
         const data = await response.json();
         if (data.error?.includes("is currently loading")) {
-          // Wait for the estimated loading time plus a small buffer
-          const waitTime = Math.min((data.estimated_time || 20) * 1000 + 5000, 60000);
-          console.log(`Model is loading, waiting ${waitTime/1000} seconds before retry...`);
+          const waitTime = Math.min((data.estimated_time || 20) * 1000 + 2000, 30000);
+          toast({
+            title: "Please wait",
+            description: `Model is loading, retrying in ${Math.ceil(waitTime/1000)} seconds...`,
+          });
           await delay(waitTime);
           continue;
         }
       }
       
-      if (response.status === 500) {
-        console.log(`Server error, attempt ${i + 1}/${maxRetries}. Retrying...`);
-        const waitTime = Math.min((i + 1) * 8000, 24000);
-        await delay(waitTime);
-        continue;
-      }
-      
       if (response.status === 429) {
-        console.log(`Rate limit reached, attempt ${i + 1}/${maxRetries}. Retrying...`);
-        const waitTime = Math.pow(2, i) * 3000;
+        const waitTime = Math.min((i + 1) * 10000, 30000); // Increased wait time
+        toast({
+          title: "Rate limit reached",
+          description: `Waiting ${waitTime/1000} seconds before retrying...`,
+        });
         await delay(waitTime);
         continue;
       }
@@ -48,7 +46,8 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
       return response;
     } catch (error) {
       if (i === maxRetries - 1) throw error;
-      await delay(Math.pow(2, i) * 1000);
+      const waitTime = Math.pow(2, i) * 2000;
+      await delay(waitTime);
     }
   }
   throw new Error("Max retries reached");
@@ -70,8 +69,8 @@ export async function generateImage({
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 180000);
 
-  async function tryGenerateWithModel(modelId: string) {
-    const makeRequest = () => fetch(
+  try {
+    const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
       {
         method: "POST",
@@ -85,8 +84,8 @@ export async function generateImage({
             negative_prompt: negativePrompt,
             width: Math.min(width, 768),
             height: Math.min(height, 768),
-            num_inference_steps: 25,
-            guidance_scale: 7.5,
+            num_inference_steps: 20,
+            guidance_scale: 7.0,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1
           }
@@ -95,54 +94,25 @@ export async function generateImage({
       }
     );
 
-    const response = await retryWithBackoff(makeRequest);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorData;
-      try {
-        errorData = JSON.parse(errorText);
-      } catch {
-        errorData = { error: errorText };
-      }
-
-      if (response.status === 401) {
-        throw new Error("Invalid API key");
-      }
-      if (response.status === 429) {
-        throw new Error("Rate limit reached");
-      }
-      
-      throw new Error(errorData.error || "Failed to generate image");
-    }
-
-    return response;
-  }
-
-  try {
-    let response;
-    const models = [MODELS.PRIMARY, MODELS.FALLBACK, MODELS.SMALL];
     let lastError = null;
-
-    for (const model of models) {
+    for (const modelId of [MODELS.PRIMARY, MODELS.FALLBACK]) {
       try {
-        console.log(`Attempting to generate image with model: ${model}`);
-        response = await tryGenerateWithModel(model);
-        console.log(`Successfully generated image with model: ${model}`);
-        break;
+        const response = await retryWithBackoff(() => makeRequest(modelId));
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText);
+        }
+
+        const blob = await response.blob();
+        return URL.createObjectURL(blob);
       } catch (error) {
-        console.log(`Failed with model ${model}, trying next model...`);
+        console.error(`Failed with model ${modelId}:`, error);
         lastError = error;
-        continue;
       }
     }
 
-    if (!response) {
-      throw lastError || new Error("All models failed to generate the image");
-    }
-
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
+    throw lastError || new Error("All models failed to generate the image");
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
