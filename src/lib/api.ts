@@ -7,7 +7,7 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "CompVis/stable-diffusion-v1-4", // Changed to a more stable model
+  PRIMARY: "CompVis/stable-diffusion-v1-4",
   FALLBACK: "runwayml/stable-diffusion-v1-5",
   LAST_RESORT: "stabilityai/stable-diffusion-2-1"
 };
@@ -85,9 +85,13 @@ export async function generateImage({
             negative_prompt: negativePrompt,
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 30, // Reduced for better stability
-            guidance_scale: 7.0,
+            num_inference_steps: 50, // Increased from 30 for better quality
+            guidance_scale: 8.5, // Increased from 7.0 for better quality
             seed: seed || Math.floor(Math.random() * 1000000),
+            num_images_per_prompt: 1,
+            scheduler: "DPMSolverMultistep", // Added for better quality
+            use_karras_sigmas: true, // Added for enhanced detail
+            clip_skip: 2, // Added for better artistic results
           }
         }),
         signal: controller.signal,
