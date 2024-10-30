@@ -1,6 +1,7 @@
 import { ImageGenerator } from "@/components/ImageGenerator";
 import { SocialLinks } from "@/components/SocialLinks";
 import { AuthButtons } from "@/components/AuthButtons";
+import { ChatBot } from "@/components/chat/ChatBot";
 import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
@@ -28,6 +29,7 @@ const Index = () => {
           <ImageGenerator />
           <SocialLinks />
         </div>
+        <ChatBot />
       </div>
     </div>
   );
