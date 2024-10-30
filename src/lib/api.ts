@@ -9,8 +9,8 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "runwayml/stable-diffusion-v1-5",  // Most stable model
-  FALLBACK: "CompVis/stable-diffusion-v1-4",  // Reliable fallback
+  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",  // Using SDXL for higher quality
+  FALLBACK: "runwayml/stable-diffusion-v1-5",  // High quality fallback
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -74,7 +74,7 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000);
+  const timeoutId = setTimeout(() => controller.abort(), 60000); // Increased timeout for higher quality
 
   try {
     const makeRequest = (modelId: string) => fetch(
@@ -86,24 +86,24 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt,
+          inputs: prompt + ", professional photography, 8k uhd, highly detailed, photorealistic, masterpiece quality, sharp focus, realistic lighting, natural colors",
           parameters: {
-            negative_prompt: negativePrompt,
-            width: Math.min(width, 512),
-            height: Math.min(height, 512),
-            num_inference_steps: 20,
-            guidance_scale: 7.0,
+            negative_prompt: negativePrompt + ", cartoon, anime, illustration, painting, drawing, artificial, fake, low quality, blurry, grainy, oversaturated, unrealistic lighting",
+            width: Math.min(width, 1024),  // Increased max dimensions
+            height: Math.min(height, 1024),
+            num_inference_steps: 50,  // Increased steps for better quality
+            guidance_scale: 8.5,  // Increased for more prompt adherence
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler",
-            use_karras_sigmas: false,
+            scheduler: "DPMSolverMultistepScheduler",  // Better quality scheduler
+            use_karras_sigmas: true,  // Enable for better quality
             clip_skip: 1,
             tiling: false,
             use_safetensors: true,
             options: {
-              wait_for_model: false,
+              wait_for_model: true,  // Wait for best model
               use_gpu: true,
-              priority: "performance"
+              priority: "quality"
             }
           }
         }),
