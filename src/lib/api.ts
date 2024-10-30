@@ -7,8 +7,8 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "CompVis/stable-diffusion-v1-4",
-  FALLBACK: "stabilityai/stable-diffusion-xl-base-0.9",
+  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
+  FALLBACK: "runwayml/stable-diffusion-v1-5",
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -77,9 +77,10 @@ export async function generateImage({
           inputs: prompt,
           parameters: {
             negative_prompt: negativePrompt,
-            width: Math.min(width, 768),
-            height: Math.min(height, 768),
-            num_inference_steps: 25,
+            width: Math.min(width, 1024),
+            height: Math.min(height, 1024),
+            num_inference_steps: 50,
+            guidance_scale: 7.5,
             seed: seed || Math.floor(Math.random() * 1000000),
           }
         }),
