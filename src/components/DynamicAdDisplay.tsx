@@ -44,14 +44,14 @@ export function DynamicAdDisplay() {
 
   return (
     <div className="w-full py-4 bg-black/10 backdrop-blur-sm">
-      <div className="container max-w-6xl mx-auto">
+      <div className="container max-w-6xl mx-auto flex justify-center items-center">
         <HoverCard>
           <HoverCardTrigger asChild>
             <div className="cursor-pointer transition-all hover:scale-105">
               <img
                 src={ads.data[currentAdIndex].url}
                 alt="Advertisement"
-                className="w-full max-w-md h-24 object-cover mx-auto rounded-lg shadow-lg"
+                className="w-full max-w-md h-24 object-cover rounded-lg shadow-lg"
               />
             </div>
           </HoverCardTrigger>
