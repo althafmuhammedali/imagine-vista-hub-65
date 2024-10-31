@@ -77,8 +77,8 @@ export async function generateImage({
   const timeoutId = setTimeout(() => controller.abort(), 60000);
 
   try {
-    const enhancedPrompt = `${prompt}, masterpiece, best quality, ultra detailed, photorealistic, 8k uhd, high quality, professional photography, cinematic lighting, dramatic atmosphere, hyperdetailed, octane render, unreal engine 5, ray tracing, subsurface scattering, volumetric lighting, high dynamic range, award winning photo`;
-    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers, watermark, signature, text, jpeg artifacts, compression artifacts`;
+    const enhancedPrompt = `${prompt}, masterpiece, best quality, ultra detailed, photorealistic, 8k uhd, high quality, professional photography, cinematic lighting, dramatic atmosphere, hyperdetailed, octane render, unreal engine 5, ray tracing, subsurface scattering, volumetric lighting, high dynamic range, award winning photo, ultra-realistic, highly detailed, perfect composition, professional color grading, studio quality`;
+    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers, watermark, signature, text, jpeg artifacts, compression artifacts, poorly drawn, bad proportions, draft, sketch, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers`;
 
     const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
@@ -94,11 +94,11 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 150,
-            guidance_scale: 15,
+            num_inference_steps: 200,
+            guidance_scale: 20,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler",
+            scheduler: "DPMSolverMultistepScheduler",
             use_karras_sigmas: true,
             clip_skip: 2,
             tiling: false,
