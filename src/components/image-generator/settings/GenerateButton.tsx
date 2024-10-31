@@ -9,12 +9,11 @@ interface GenerateButtonProps {
 export function GenerateButton({ onGenerate, isLoading }: GenerateButtonProps) {
   return (
     <Button
-      className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg group relative overflow-hidden"
+      className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg transform transition-transform hover:scale-[1.02] will-change-transform"
       size="lg"
       onClick={onGenerate}
       disabled={isLoading}
     >
-      <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-colors" />
       {isLoading ? (
         <>
           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
