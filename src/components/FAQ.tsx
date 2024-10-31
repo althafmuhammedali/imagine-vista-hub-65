@@ -49,6 +49,20 @@ export function FAQ() {
             We operate powerful 505-level servers to handle your image generation requests efficiently. Your donations help us maintain and upgrade this infrastructure for the best possible performance.
           </AccordionContent>
         </AccordionItem>
+
+        <AccordionItem value="other-ways">
+          <AccordionTrigger className="text-white hover:text-amber-400">
+            Is there another way to help besides donating?
+          </AccordionTrigger>
+          <AccordionContent className="text-gray-400">
+            Definitely! You can help by:
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li>Sharing our project on social media.</li>
+              <li>Trying the model and giving us feedback.</li>
+              <li>Creating and sharing your AI-generated art using our hashtag #ComicForgeAI to inspire others.</li>
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
     </div>
   );
