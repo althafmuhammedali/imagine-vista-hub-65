@@ -4,6 +4,7 @@ import { AuthButtons } from "@/components/AuthButtons";
 import { ChatBot } from "@/components/chat/ChatBot";
 import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
+import { PlatformBudget } from "@/components/PlatformBudget";
 import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
@@ -30,6 +31,10 @@ const Index = () => {
           </div>
 
           <div className="space-y-6 sm:space-y-8 md:space-y-12 lg:space-y-16">
+            <div className="transition-all duration-500 hover:scale-[1.01]">
+              <PlatformBudget />
+            </div>
+
             <div className="transition-all duration-500 hover:scale-[1.01]">
               <ImageGenerator />
             </div>
