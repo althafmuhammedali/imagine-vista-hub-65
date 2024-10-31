@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { SocialShareButton } from "./SocialShareButton";
 
 interface ImagePreviewProps {
   generatedImage: string | null;
@@ -66,6 +67,7 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
             <Download className="w-4 h-4 mr-2" />
             Download PNG
           </Button>
+          <SocialShareButton imageUrl={generatedImage} />
         </div>
       ) : !error && (
         <div className="flex items-center justify-center h-full min-h-[300px] md:min-h-[400px] text-gray-400">
