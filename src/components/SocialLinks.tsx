@@ -1,8 +1,16 @@
-import { Heart, Instagram, Linkedin, Phone, Facebook, X, MessageSquare } from "lucide-react";
+import { Heart, Instagram, Linkedin, Phone, Facebook, X, MessageSquare, IndianRupee } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { ReferralShare } from "./ReferralShare";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 declare global {
   interface Window {
@@ -18,6 +26,7 @@ interface RazorpayResponse {
 
 export function SocialLinks() {
   const { toast } = useToast();
+  const UPI_ID = "adnanvv786@ybl";
 
   const socialLinks = [
     {
@@ -116,6 +125,31 @@ export function SocialLinks() {
     }
   };
 
+  const handleUPIClick = async () => {
+    try {
+      // Create UPI payment URL
+      const upiUrl = `upi://pay?pa=${UPI_ID}&pn=ComicForge%20AI&tn=Donation`;
+      
+      // Check if on mobile
+      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        window.location.href = upiUrl;
+      } else {
+        // Copy UPI ID on desktop
+        await navigator.clipboard.writeText(UPI_ID);
+        toast({
+          title: "UPI ID Copied!",
+          description: "Open your UPI app and paste the ID to donate.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process UPI payment. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <footer className="w-full py-8 mt-12 border-t border-gray-800">
       <div className="container flex flex-col items-center gap-6">
@@ -148,21 +182,45 @@ export function SocialLinks() {
                 </TooltipContent>
               </Tooltip>
             ))}
-            <Tooltip>
-              <TooltipTrigger asChild>
+            
+            <Dialog>
+              <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="icon"
                   className="rounded-full border-gray-800 bg-black/20 hover:bg-amber-500/20 hover:border-amber-500"
-                  onClick={handleDonateClick}
                 >
                   <Heart className="h-4 w-4 text-red-500" />
                 </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Donate ₹100</p>
-              </TooltipContent>
-            </Tooltip>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Choose Payment Method</DialogTitle>
+                  <DialogDescription>
+                    Support ComicForge AI by making a donation
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex justify-center gap-4 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={handleDonateClick}
+                    className="flex items-center gap-2"
+                  >
+                    <IndianRupee className="h-4 w-4" />
+                    Razorpay (₹100)
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleUPIClick}
+                    className="flex items-center gap-2"
+                  >
+                    <IndianRupee className="h-4 w-4" />
+                    UPI Direct
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <ReferralShare />
