@@ -10,7 +10,7 @@ interface UPIDialogProps {
 
 export function UPIDialog({ open, onOpenChange }: UPIDialogProps) {
   const { toast } = useToast();
-  const UPI_ID = "adnanvv786@ybl";
+  const UPI_ID = "adnanmuhammad4393@okicici";
 
   const handleUPIClick = async () => {
     try {
