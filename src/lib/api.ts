@@ -77,8 +77,8 @@ export async function generateImage({
   const timeoutId = setTimeout(() => controller.abort(), 60000);
 
   try {
-    const enhancedPrompt = `${prompt}, ultra realistic, 8k uhd, high detail, masterpiece, professional photography, cinematic lighting, dramatic atmosphere, photorealistic, hyperrealistic, octane render, unreal engine 5`;
-    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers`;
+    const enhancedPrompt = `${prompt}, ultra detailed, photorealistic, 8k uhd, high quality, masterpiece, professional photography, cinematic lighting, dramatic atmosphere, hyperdetailed, octane render, unreal engine 5, ray tracing, subsurface scattering, volumetric lighting, high dynamic range`;
+    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers, watermark, signature, text`;
 
     const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
@@ -94,8 +94,8 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 50,
-            guidance_scale: 9,
+            num_inference_steps: 75,
+            guidance_scale: 12,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
             scheduler: "DPMSolverMultistepScheduler",
