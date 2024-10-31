@@ -75,7 +75,7 @@ export function ImageGenerator() {
 
   return (
     <div className="container max-w-6xl py-4 md:py-8 space-y-4 md:space-y-8 px-4 md:px-8">
-      <div className="grid gap-4 md:gap-8 md:grid-cols-[1fr,1fr]">
+      <div className="grid gap-4 md:gap-8 lg:grid-cols-[1fr,1fr]">
         <ImageSettings
           prompt={prompt}
           setPrompt={setPrompt}
