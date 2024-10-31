@@ -50,6 +50,24 @@ export const FAQ = () => {
             We're committed to transparency and will share regular updates on how your contributions are being utilized. You can follow our progress on our blog and community channels, where we'll detail new improvements and community milestones.
           </AccordionContent>
         </AccordionItem>
+
+        <AccordionItem value="item-5" className="bg-black/20 rounded-lg border-none px-4">
+          <AccordionTrigger className="text-amber-200 hover:text-amber-400">
+            Can businesses or organizations support this AI model?
+          </AccordionTrigger>
+          <AccordionContent className="text-gray-300">
+            Absolutely! We welcome support from businesses and organizations. By donating, sponsoring, or partnering with us, businesses can help push the boundaries of AI creativity while gaining visibility within a fast-growing community. Additionally, we offer tailored recognition packages for larger supporters, including branding opportunities and exclusive features.
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="item-6" className="bg-black/20 rounded-lg border-none px-4">
+          <AccordionTrigger className="text-amber-200 hover:text-amber-400">
+            Will the AI model always remain free?
+          </AccordionTrigger>
+          <AccordionContent className="text-gray-300">
+            Yes, that's our commitment! We believe in providing free access to cutting-edge creative tools. However, maintaining and improving this AI model requires resources, which is why we rely on donations. With your support, we can ensure that it remains free and continues to evolve for everyone.
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
     </div>
   );
