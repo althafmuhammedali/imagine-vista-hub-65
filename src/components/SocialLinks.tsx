@@ -1,16 +1,9 @@
-import { Heart, Instagram, Linkedin, Phone, Facebook, X, MessageSquare, IndianRupee } from "lucide-react";
+import { Instagram, Linkedin, Phone, Facebook, X, MessageSquare } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
-import { useToast } from "@/components/ui/use-toast";
 import { ReferralShare } from "./ReferralShare";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { PaymentDialog } from "./payments/PaymentDialog";
+import { useToast } from "@/components/ui/use-toast";
 
 declare global {
   interface Window {
@@ -26,41 +19,6 @@ interface RazorpayResponse {
 
 export function SocialLinks() {
   const { toast } = useToast();
-  const UPI_ID = "adnanvv786@ybl";
-
-  const socialLinks = [
-    {
-      icon: Facebook,
-      href: "https://www.facebook.com/profile.php?id=100084139741037",
-      label: "Facebook",
-    },
-    {
-      icon: X,
-      href: "https://x.com/MuhammadAd93421",
-      label: "X (Twitter)",
-    },
-    {
-      icon: Instagram,
-      href: "https://www.instagram.com/ai.adnanvv/",
-      label: "Instagram",
-    },
-    {
-      icon: Linkedin,
-      href: "https://www.linkedin.com/in/muhammedadnanvv/",
-      label: "LinkedIn",
-    },
-    {
-      icon: Phone,
-      href: "https://wa.me/919656778508",
-      label: "WhatsApp",
-    },
-    {
-      icon: MessageSquare,
-      href: "https://discord.com/invite/vCPH2pFH",
-      label: "Discord",
-    },
-  ];
-
   const handleDonateClick = () => {
     if (!window.Razorpay) {
       toast({
@@ -73,7 +31,7 @@ export function SocialLinks() {
 
     const options = {
       key: "rzp_live_5JYQnqKRnKhB5y",
-      amount: 100 * 100, // Amount in paise (₹100)
+      amount: 100 * 100,
       currency: "INR",
       name: "ComicForge AI",
       description: "Support our AI service",
@@ -125,30 +83,38 @@ export function SocialLinks() {
     }
   };
 
-  const handleUPIClick = async () => {
-    try {
-      // Create UPI payment URL
-      const upiUrl = `upi://pay?pa=${UPI_ID}&pn=ComicForge%20AI&tn=Donation`;
-      
-      // Check if on mobile
-      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        window.location.href = upiUrl;
-      } else {
-        // Copy UPI ID on desktop
-        await navigator.clipboard.writeText(UPI_ID);
-        toast({
-          title: "UPI ID Copied!",
-          description: "Open your UPI app and paste the ID to donate.",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to process UPI payment. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+  const socialLinks = [
+    {
+      icon: Facebook,
+      href: "https://www.facebook.com/profile.php?id=100084139741037",
+      label: "Facebook",
+    },
+    {
+      icon: X,
+      href: "https://x.com/MuhammadAd93421",
+      label: "X (Twitter)",
+    },
+    {
+      icon: Instagram,
+      href: "https://www.instagram.com/ai.adnanvv/",
+      label: "Instagram",
+    },
+    {
+      icon: Linkedin,
+      href: "https://www.linkedin.com/in/muhammedadnanvv/",
+      label: "LinkedIn",
+    },
+    {
+      icon: Phone,
+      href: "https://wa.me/919656778508",
+      label: "WhatsApp",
+    },
+    {
+      icon: MessageSquare,
+      href: "https://discord.com/invite/vCPH2pFH",
+      label: "Discord",
+    },
+  ];
 
   return (
     <footer className="w-full py-8 mt-12 border-t border-gray-800">
@@ -183,43 +149,7 @@ export function SocialLinks() {
               </Tooltip>
             ))}
             
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full border-gray-800 bg-black/20 hover:bg-amber-500/20 hover:border-amber-500"
-                >
-                  <Heart className="h-4 w-4 text-red-500" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Choose Payment Method</DialogTitle>
-                  <DialogDescription>
-                    Support ComicForge AI by making a donation
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="flex justify-center gap-4 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={handleDonateClick}
-                    className="flex items-center gap-2"
-                  >
-                    <IndianRupee className="h-4 w-4" />
-                    Razorpay (₹100)
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={handleUPIClick}
-                    className="flex items-center gap-2"
-                  >
-                    <IndianRupee className="h-4 w-4" />
-                    UPI Direct
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <PaymentDialog handleRazorpayClick={handleDonateClick} />
 
             <Tooltip>
               <TooltipTrigger asChild>
