@@ -31,15 +31,15 @@ const Index = () => {
 
           <div className="space-y-16 md:space-y-24">
             <div className="transition-all duration-500 hover:scale-[1.01]">
-              <Documentation />
-            </div>
-            
-            <div className="transition-all duration-500 hover:scale-[1.01]">
               <ImageGenerator />
             </div>
 
             <div className="transition-all duration-500 hover:scale-[1.01]">
               <FAQ />
+            </div>
+
+            <div className="transition-all duration-500 hover:scale-[1.01]">
+              <Documentation />
             </div>
 
             <div>
