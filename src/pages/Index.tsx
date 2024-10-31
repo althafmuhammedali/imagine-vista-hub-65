@@ -53,11 +53,11 @@ const Index = () => {
             </div>
           </div>
         </div>
-        <DynamicAdDisplay />
         <ChatBot />
       </div>
+      <DynamicAdDisplay />
     </div>
   );
-}
+};
 
 export default Index;
