@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Cpu, Memory, Battery, CircuitBoard, Gpu, HardDrive } from "lucide-react";
+import { Cpu, Boxes, Battery, CircuitBoard, MonitorPlay, HardDrive } from "lucide-react";
 
 export function PlatformBudget() {
   const [hours, setHours] = useState(1);
@@ -8,10 +8,10 @@ export function PlatformBudget() {
 
   const baseComponents = [
     { name: "CPU", icon: Cpu, cost: 8, description: "AMD Ryzen 5 5600X" },
-    { name: "RAM", icon: Memory, cost: 2, description: "16GB DDR4" },
+    { name: "RAM", icon: Boxes, cost: 2, description: "16GB DDR4" },
     { name: "Power Supply", icon: Battery, cost: 1, description: "750W Bronze" },
     { name: "Motherboard", icon: CircuitBoard, cost: 2, description: "B550M" },
-    { name: "GPU", icon: Gpu, cost: 12, description: "RTX 3060 (hourly rental)" },
+    { name: "GPU", icon: MonitorPlay, cost: 12, description: "RTX 3060 (hourly rental)" },
     { name: "Storage", icon: HardDrive, cost: 1, description: "1TB SSD (model weights)" }
   ];
 
