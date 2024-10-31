@@ -1,4 +1,4 @@
-import { Heart, Instagram, Linkedin, Phone, Facebook, X } from "lucide-react";
+import { Heart, Instagram, Linkedin, Phone, Facebook, X, MessageSquare } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
@@ -43,6 +43,11 @@ export function SocialLinks() {
       icon: Phone,
       href: "https://wa.me/919656778508",
       label: "WhatsApp",
+    },
+    {
+      icon: MessageSquare,
+      href: "https://discord.com/invite/vCPH2pFH",
+      label: "Discord",
     },
   ];
 
