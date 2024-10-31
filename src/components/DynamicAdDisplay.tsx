@@ -43,14 +43,14 @@ export function DynamicAdDisplay() {
   if (!ads?.data?.length) return null;
 
   return (
-    <div className="w-full max-w-xs mx-auto my-6">
+    <div className="w-full max-w-xs mx-auto my-2">
       <HoverCard>
         <HoverCardTrigger asChild>
-          <div className="bg-black/10 backdrop-blur-sm p-2 rounded-lg cursor-pointer transition-all hover:scale-105">
+          <div className="bg-black/10 backdrop-blur-sm p-1 rounded-lg cursor-pointer transition-all hover:scale-105">
             <img
               src={ads.data[currentAdIndex].url}
               alt="Advertisement"
-              className="w-full h-auto rounded-lg shadow-lg"
+              className="w-full h-24 object-cover rounded-lg shadow-lg"
             />
           </div>
         </HoverCardTrigger>
