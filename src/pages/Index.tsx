@@ -31,29 +31,36 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="space-y-6 sm:space-y-8 md:space-y-12 lg:space-y-16">
-            <div className="transition-all duration-500 hover:scale-[1.01]">
-              <ImageGenerator />
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3 space-y-6 sm:space-y-8 md:space-y-12 lg:space-y-16">
+              <div className="transition-all duration-500 hover:scale-[1.01]">
+                <ImageGenerator />
+              </div>
 
-            <div className="transition-all duration-500 hover:scale-[1.01]">
-              <FAQ />
-            </div>
+              <div className="transition-all duration-500 hover:scale-[1.01]">
+                <FAQ />
+              </div>
 
-            <div className="transition-all duration-500 hover:scale-[1.01]">
-              <Documentation />
-            </div>
+              <div className="transition-all duration-500 hover:scale-[1.01]">
+                <Documentation />
+              </div>
 
-            <div className="transition-all duration-500 hover:scale-[1.01]">
-              <PlatformBudget />
-            </div>
+              <div className="transition-all duration-500 hover:scale-[1.01]">
+                <PlatformBudget />
+              </div>
 
-            <div>
-              <SocialLinks />
+              <div>
+                <SocialLinks />
+              </div>
+            </div>
+            
+            <div className="lg:col-span-1">
+              <div className="sticky top-4">
+                <DynamicAdDisplay />
+              </div>
             </div>
           </div>
         </div>
-        <DynamicAdDisplay />
         <ChatBot />
       </div>
     </div>
