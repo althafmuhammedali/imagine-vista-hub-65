@@ -21,16 +21,34 @@ interface ImageSettingsProps {
 }
 
 const promptExamples = [
-  "A serene Japanese garden with cherry blossoms, watercolor style",
-  "A magical treehouse in a mystical forest at sunset",
-  "A cute robot playing with butterflies in a meadow, digital art",
-  "A majestic dragon soaring through crystal caves, fantasy art",
-  "A cozy cafe in Paris during autumn, impressionist style",
-  "An underwater city with bioluminescent buildings",
-  "A steampunk airship floating through clouds at golden hour",
-  "A mystical library with floating books and magical lights",
-  "A cyberpunk street market at night with neon lights",
-  "A peaceful mountain landscape with northern lights"
+  {
+    category: "Fantasy",
+    prompts: [
+      "A mystical dragon's lair filled with glowing crystals and ancient treasures, digital art style",
+      "A fairy garden at midnight with bioluminescent flowers and tiny floating lanterns"
+    ]
+  },
+  {
+    category: "Sci-Fi",
+    prompts: [
+      "A futuristic neon-lit cyberpunk marketplace with holographic vendors",
+      "A space station observatory with a view of a binary star system"
+    ]
+  },
+  {
+    category: "Nature",
+    prompts: [
+      "An enchanted forest with rays of sunlight filtering through giant mushrooms",
+      "A hidden waterfall oasis in a desert canyon at sunset"
+    ]
+  },
+  {
+    category: "Urban",
+    prompts: [
+      "A cozy rooftop garden cafe in Tokyo during cherry blossom season",
+      "A steampunk-inspired underground subway station with brass and copper details"
+    ]
+  }
 ];
 
 export function ImageSettings({
@@ -60,49 +78,63 @@ export function ImageSettings({
         </CardHeader>
 
         <div className="space-y-6">
-          <div className="space-y-2 text-left">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="prompt" className="text-white">Your Vision</Label>
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-gray-400 hover:text-amber-400">
-                    Need inspiration?
-                  </Button>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-96 bg-black/90 border-gray-800">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="prompt" className="text-white">Your Vision</Label>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-400 hover:text-amber-400 group"
+                >
+                  Need inspiration?
+                  <Sparkles className="w-4 h-4 ml-2 group-hover:animate-pulse text-amber-400" />
+                </Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-96 bg-black/90 border-gray-800">
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-amber-400 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Spark Your Imagination
+                  </h4>
                   <div className="space-y-4">
-                    <h4 className="text-sm font-semibold text-amber-400">✨ Example Prompts:</h4>
-                    <div className="grid grid-cols-1 gap-3">
-                      {promptExamples.map((example, i) => (
-                        <div
-                          key={i}
-                          className="p-2 rounded-md hover:bg-white/5 cursor-pointer transition-colors"
-                          onClick={() => setPrompt(example)}
-                        >
-                          <p className="text-sm text-white hover:text-amber-400 transition-colors">
-                            {example}
-                          </p>
+                    {promptExamples.map((category, i) => (
+                      <div key={i} className="space-y-2">
+                        <h5 className="text-xs font-medium text-amber-300/80">
+                          {category.category}
+                        </h5>
+                        <div className="grid gap-2">
+                          {category.prompts.map((example, j) => (
+                            <div
+                              key={j}
+                              className="p-2 rounded-md hover:bg-white/5 cursor-pointer transition-all duration-200 group"
+                              onClick={() => setPrompt(example)}
+                            >
+                              <p className="text-sm text-gray-400 group-hover:text-amber-400 transition-colors">
+                                {example}
+                              </p>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                    <div className="pt-2 border-t border-gray-800">
-                      <p className="text-xs text-gray-400">
-                        Click any prompt to use it as your starting point. Feel free to modify and combine ideas!
-                      </p>
-                    </div>
+                      </div>
+                    ))}
                   </div>
-                </HoverCardContent>
-              </HoverCard>
-            </div>
-            <Textarea
-              id="prompt"
-              placeholder="Describe your dream image in detail... (e.g., 'A magical treehouse in a mystical forest at sunset')"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
-            />
+                  <div className="pt-3 border-t border-gray-800">
+                    <p className="text-xs text-gray-500">
+                      Click any prompt to use it as your starting point. Mix and match ideas to create something unique!
+                    </p>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
           </div>
-
+          <Textarea
+            id="prompt"
+            placeholder="Describe your dream image in detail... (e.g., 'A magical treehouse in a mystical forest at sunset')"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            className="h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
+          />
           <div className="space-y-2 text-left">
             <Label htmlFor="negative-prompt" className="text-white flex items-center gap-2">
               Refine Your Image
