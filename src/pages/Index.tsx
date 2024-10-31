@@ -5,6 +5,7 @@ import { ChatBot } from "@/components/chat/ChatBot";
 import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
+import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
 import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
@@ -52,6 +53,7 @@ const Index = () => {
             </div>
           </div>
         </div>
+        <DynamicAdDisplay />
         <ChatBot />
       </div>
     </div>
