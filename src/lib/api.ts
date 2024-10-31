@@ -74,7 +74,7 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 90000); // Increased timeout for higher quality
+  const timeoutId = setTimeout(() => controller.abort(), 120000); // Increased timeout for higher quality
 
   try {
     const makeRequest = (modelId: string) => fetch(
@@ -86,24 +86,24 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", hyperrealistic, photorealistic, 8k uhd, high quality, detailed, masterpiece, professional photography, sharp focus",
+          inputs: prompt + ", masterpiece, best quality, extremely detailed, ultra realistic, photorealistic, 8k uhd, high quality, detailed, professional photography, sharp focus, high resolution",
           parameters: {
-            negative_prompt: negativePrompt + ", blur, lowres, bad quality, out of focus, cartoon, anime, illustration, painting, drawing, artificial, fake looking, unrealistic",
+            negative_prompt: negativePrompt + ", blur, lowres, bad quality, out of focus, cartoon, anime, illustration, painting, drawing, artificial, fake looking, unrealistic, text, watermark, signature, blurry, deformed, low quality, ugly, duplicate, morbid, mutilated, poorly drawn face, bad anatomy",
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 50, // Increased for better quality
-            guidance_scale: 9, // Increased for more realistic adherence to prompt
+            num_inference_steps: 75, // Increased for better quality
+            guidance_scale: 11, // Increased for more realistic adherence to prompt
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "DPMSolverMultistepScheduler",
+            scheduler: "EulerAncestralDiscreteScheduler", // Changed to a better quality scheduler
             use_karras_sigmas: true,
-            clip_skip: 1,
+            clip_skip: 2, // Adjusted for better results
             tiling: false,
             use_safetensors: true,
             options: {
               wait_for_model: true,
               use_gpu: true,
-              priority: "quality" // Changed back to quality for maximum realism
+              priority: "maximum_quality"
             }
           }
         }),
