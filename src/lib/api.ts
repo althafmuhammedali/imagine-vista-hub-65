@@ -74,7 +74,7 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120000); // Increased timeout for higher quality
+  const timeoutId = setTimeout(() => controller.abort(), 180000); // Increased timeout for higher quality
 
   try {
     const makeRequest = (modelId: string) => fetch(
@@ -86,18 +86,18 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", masterpiece, best quality, extremely detailed, ultra realistic, photorealistic, 8k uhd, high quality, detailed, professional photography, sharp focus, high resolution",
+          inputs: prompt + ", masterpiece, best quality, extremely detailed, ultra realistic, photorealistic, 8k uhd, high quality, detailed, professional photography, sharp focus, high resolution, hyperrealistic, cinematic lighting, award-winning photograph",
           parameters: {
-            negative_prompt: negativePrompt + ", blur, lowres, bad quality, out of focus, cartoon, anime, illustration, painting, drawing, artificial, fake looking, unrealistic, text, watermark, signature, blurry, deformed, low quality, ugly, duplicate, morbid, mutilated, poorly drawn face, bad anatomy",
+            negative_prompt: negativePrompt + ", blur, lowres, bad quality, out of focus, cartoon, anime, illustration, painting, drawing, artificial, fake looking, unrealistic, text, watermark, signature, blurry, deformed, low quality, ugly, duplicate, morbid, mutilated, poorly drawn face, bad anatomy, distorted, disfigured",
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 75, // Increased for better quality
-            guidance_scale: 11, // Increased for more realistic adherence to prompt
+            num_inference_steps: 150, // Increased for maximum quality
+            guidance_scale: 12.5, // Increased for stronger prompt adherence
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler", // Changed to a better quality scheduler
+            scheduler: "DPMSolverMultistepScheduler", // Better quality scheduler
             use_karras_sigmas: true,
-            clip_skip: 2, // Adjusted for better results
+            clip_skip: 2,
             tiling: false,
             use_safetensors: true,
             options: {
