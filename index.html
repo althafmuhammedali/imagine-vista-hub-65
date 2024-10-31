@@ -65,6 +65,48 @@
   
   <!-- Scripts -->
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+  
+  <!-- Security measures -->
+  <script>
+    // Disable right click
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    
+    // Disable keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Disable F12
+      if(e.key === 'F12') {
+        e.preventDefault();
+        return false;
+      }
+      
+      // Disable Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+      if(e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
+        e.preventDefault();
+        return false;
+      }
+      
+      // Disable Ctrl+U (view source)
+      if(e.ctrlKey && e.key === 'u') {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // Additional protection for devtools
+    setInterval(() => {
+      const devtools = /./;
+      devtools.toString = function() {
+        this.opened = true;
+      }
+      console.log('%c', devtools);
+      
+      if(devtools.opened) {
+        devtools.opened = false;
+        // Optional: Redirect or show warning
+        // window.location.href = '/';
+      }
+    }, 1000);
+  </script>
 </head>
 
 <body>
