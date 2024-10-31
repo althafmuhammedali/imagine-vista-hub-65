@@ -74,9 +74,12 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000); // Reduced timeout from 180s to 60s
+  const timeoutId = setTimeout(() => controller.abort(), 60000);
 
   try {
+    const enhancedPrompt = `${prompt}, ultra realistic, 8k uhd, high detail, masterpiece, professional photography, cinematic lighting, dramatic atmosphere, photorealistic, hyperrealistic, octane render, unreal engine 5`;
+    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers`;
+
     const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
       {
@@ -86,18 +89,18 @@ export async function generateImage({
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          inputs: prompt + ", masterpiece, best quality, extremely detailed",
+          inputs: enhancedPrompt,
           parameters: {
-            negative_prompt: negativePrompt + ", blur, lowres, bad quality, out of focus",
+            negative_prompt: enhancedNegativePrompt,
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 30, // Reduced from 150 to 30 for faster generation
-            guidance_scale: 7.5, // Reduced from 12.5 to 7.5 for faster generation
+            num_inference_steps: 50,
+            guidance_scale: 9,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler", // Changed to faster scheduler
+            scheduler: "DPMSolverMultistepScheduler",
             use_karras_sigmas: true,
-            clip_skip: 1, // Reduced from 2 to 1
+            clip_skip: 2,
             tiling: false,
             use_safetensors: true,
             options: {
