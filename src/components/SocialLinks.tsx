@@ -2,6 +2,7 @@ import { Heart, Instagram, Linkedin, Phone, Facebook, X, MessageSquare } from "l
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
+import { ReferralShare } from "./ReferralShare";
 
 declare global {
   interface Window {
@@ -160,6 +161,14 @@ export function SocialLinks() {
               </TooltipTrigger>
               <TooltipContent>
                 <p>Donate ₹100</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <ReferralShare />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Share ComicForge AI</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
