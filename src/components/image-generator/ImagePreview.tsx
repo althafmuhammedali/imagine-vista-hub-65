@@ -17,13 +17,11 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
         </Alert>
       )}
       
-      {isLoading && (
+      {isLoading ? (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="text-amber-400 animate-pulse">Generating...</div>
+          <div className="text-amber-400 animate-pulse">Generating your masterpiece...</div>
         </div>
-      )}
-      
-      {generatedImage && !isLoading && (
+      ) : generatedImage ? (
         <div className="h-full p-4 animate-fade-in">
           <img
             src={generatedImage}
@@ -31,9 +29,7 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
             className="w-full h-full object-contain rounded-lg transition-transform duration-500 group-hover:scale-105"
           />
         </div>
-      )}
-      
-      {!generatedImage && !isLoading && !error && (
+      ) : !error && (
         <div className="flex items-center justify-center h-full min-h-[300px] md:min-h-[400px] text-gray-400">
           <div className="text-center space-y-4 p-4 animate-fade-in">
             <ImageIcon className="w-12 h-12 mx-auto opacity-50" />
