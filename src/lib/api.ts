@@ -77,8 +77,8 @@ export async function generateImage({
   const timeoutId = setTimeout(() => controller.abort(), 60000);
 
   try {
-    const enhancedPrompt = `${prompt}, ultra detailed, photorealistic, 8k uhd, high quality, masterpiece, professional photography, cinematic lighting, dramatic atmosphere, hyperdetailed, octane render, unreal engine 5, ray tracing, subsurface scattering, volumetric lighting, high dynamic range`;
-    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers, watermark, signature, text`;
+    const enhancedPrompt = `${prompt}, masterpiece, best quality, ultra detailed, photorealistic, 8k uhd, high quality, professional photography, cinematic lighting, dramatic atmosphere, hyperdetailed, octane render, unreal engine 5, ray tracing, subsurface scattering, volumetric lighting, high dynamic range, award winning photo`;
+    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers, watermark, signature, text, jpeg artifacts, compression artifacts`;
 
     const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
@@ -94,18 +94,19 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 75,
-            guidance_scale: 12,
+            num_inference_steps: 150,
+            guidance_scale: 15,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "DPMSolverMultistepScheduler",
+            scheduler: "EulerAncestralDiscreteScheduler",
             use_karras_sigmas: true,
             clip_skip: 2,
             tiling: false,
             use_safetensors: true,
             options: {
               wait_for_model: true,
-              use_gpu: true
+              use_gpu: true,
+              high_quality_generation: true
             }
           }
         }),
