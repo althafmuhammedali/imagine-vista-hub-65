@@ -15,13 +15,13 @@ const Index = () => {
           <div className="space-y-4 md:space-y-6 text-center mb-6 sm:mb-8 md:mb-16 animate-fade-in">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tighter bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent animate-gradient-x">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold tracking-tighter bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent animate-gradient-x">
                 ComicForge AI
               </h1>
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
             </div>
             <div className="flex items-center justify-center gap-2 transition-all hover:scale-105">
-              <Heart className="w-4 h-4 md:w-5 md:h-5 text-red-500 animate-pulse" />
+              <Heart className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-red-500 animate-pulse" />
               <span className="text-xs sm:text-sm text-gray-400">Standing with Palestine</span>
             </div>
             <p className="text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed text-gray-400 px-4">
@@ -29,7 +29,7 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="space-y-8 sm:space-y-12 md:space-y-16 lg:space-y-24">
+          <div className="space-y-6 sm:space-y-8 md:space-y-12 lg:space-y-16">
             <div className="transition-all duration-500 hover:scale-[1.01]">
               <ImageGenerator />
             </div>
@@ -51,6 +51,6 @@ const Index = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Index;

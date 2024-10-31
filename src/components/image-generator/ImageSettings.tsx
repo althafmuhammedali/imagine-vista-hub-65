@@ -1,24 +1,11 @@
-import { Loader2, Wand2, ImageIcon, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-
-interface ImageSettingsProps {
-  prompt: string;
-  setPrompt: (value: string) => void;
-  negativePrompt: string;
-  setNegativePrompt: (value: string) => void;
-  resolution: string;
-  setResolution: (value: string) => void;
-  seed: string;
-  setSeed: (value: string) => void;
-  onGenerate: () => void;
-  isLoading: boolean;
-  resolutions: Array<{ value: string; width: number; height: number; label: string; }>;
-}
+import { PromptExampleCard } from "./prompt-examples/PromptExampleCard";
+import { ResolutionSelect } from "./settings/ResolutionSelect";
+import { GenerateButton } from "./settings/GenerateButton";
 
 const promptExamples = [
   {
@@ -51,6 +38,20 @@ const promptExamples = [
   }
 ];
 
+interface ImageSettingsProps {
+  prompt: string;
+  setPrompt: (value: string) => void;
+  negativePrompt: string;
+  setNegativePrompt: (value: string) => void;
+  resolution: string;
+  setResolution: (value: string) => void;
+  seed: string;
+  setSeed: (value: string) => void;
+  onGenerate: () => void;
+  isLoading: boolean;
+  resolutions: Array<{ value: string; width: number; height: number; label: string; }>;
+}
+
 export function ImageSettings({
   prompt,
   setPrompt,
@@ -66,75 +67,31 @@ export function ImageSettings({
 }: ImageSettingsProps) {
   return (
     <Card className="backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl">
-      <CardContent className="p-6 space-y-6">
+      <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         <CardHeader className="p-0">
-          <CardTitle className="flex items-center gap-2 text-2xl text-amber-300">
-            <Sparkles className="w-6 h-6" />
+          <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl text-amber-300">
+            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
             Create Your Masterpiece
           </CardTitle>
-          <CardDescription className="text-gray-400">
+          <CardDescription className="text-sm sm:text-base text-gray-400">
             Let your imagination run wild and create stunning artwork
           </CardDescription>
         </CardHeader>
 
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex justify-between items-center flex-wrap gap-2">
             <Label htmlFor="prompt" className="text-white">Your Vision</Label>
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-gray-400 hover:text-amber-400 group"
-                >
-                  Need inspiration?
-                  <Sparkles className="w-4 h-4 ml-2 group-hover:animate-pulse text-amber-400" />
-                </Button>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-96 bg-black/90 border-gray-800">
-                <div className="space-y-4">
-                  <h4 className="text-sm font-semibold text-amber-400 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
-                    Spark Your Imagination
-                  </h4>
-                  <div className="space-y-4">
-                    {promptExamples.map((category, i) => (
-                      <div key={i} className="space-y-2">
-                        <h5 className="text-xs font-medium text-amber-300/80">
-                          {category.category}
-                        </h5>
-                        <div className="grid gap-2">
-                          {category.prompts.map((example, j) => (
-                            <div
-                              key={j}
-                              className="p-2 rounded-md hover:bg-white/5 cursor-pointer transition-all duration-200 group"
-                              onClick={() => setPrompt(example)}
-                            >
-                              <p className="text-sm text-gray-400 group-hover:text-amber-400 transition-colors">
-                                {example}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="pt-3 border-t border-gray-800">
-                    <p className="text-xs text-gray-500">
-                      Click any prompt to use it as your starting point. Mix and match ideas to create something unique!
-                    </p>
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
+            <PromptExampleCard examples={promptExamples} setPrompt={setPrompt} />
           </div>
+          
           <Textarea
             id="prompt"
             placeholder="Describe your dream image in detail... (e.g., 'A magical treehouse in a mystical forest at sunset')"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
+            className="h-20 sm:h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
           />
+
           <div className="space-y-2 text-left">
             <Label htmlFor="negative-prompt" className="text-white flex items-center gap-2">
               Refine Your Image
@@ -145,26 +102,16 @@ export function ImageSettings({
               placeholder="Specify what you don't want in the image... (e.g., 'blurry, low quality, dark')"
               value={negativePrompt}
               onChange={(e) => setNegativePrompt(e.target.value)}
-              className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
+              className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2 text-left">
-              <Label htmlFor="resolution" className="text-white">Image Size</Label>
-              <select
-                id="resolution"
-                value={resolution}
-                onChange={(e) => setResolution(e.target.value)}
-                className="w-full h-10 px-3 rounded-md border border-gray-800 bg-black/20 text-white focus:border-amber-500 focus:ring-amber-500/20"
-              >
-                {resolutions.map((res) => (
-                  <option key={res.value} value={res.value} className="bg-gray-900">
-                    {res.label} ({res.width}x{res.height})
-                  </option>
-                ))}
-              </select>
-            </div>
+            <ResolutionSelect
+              resolution={resolution}
+              setResolution={setResolution}
+              resolutions={resolutions}
+            />
 
             <div className="space-y-2 text-left">
               <Label htmlFor="seed" className="text-white flex items-center gap-2">
@@ -177,30 +124,12 @@ export function ImageSettings({
                 placeholder="For reproducible results..."
                 value={seed}
                 onChange={(e) => setSeed(e.target.value)}
-                className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white"
+                className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
               />
             </div>
           </div>
 
-          <Button
-            className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg group relative overflow-hidden"
-            size="lg"
-            onClick={onGenerate}
-            disabled={isLoading}
-          >
-            <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-colors" />
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Creating Magic...
-              </>
-            ) : (
-              <>
-                <Wand2 className="w-4 h-4 mr-2" />
-                Generate Artwork
-              </>
-            )}
-          </Button>
+          <GenerateButton onGenerate={onGenerate} isLoading={isLoading} />
         </div>
       </CardContent>
     </Card>
