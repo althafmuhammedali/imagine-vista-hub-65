@@ -1,7 +1,6 @@
 import { ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 interface ImagePreviewProps {
   generatedImage: string | null;
@@ -18,7 +17,11 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
         </Alert>
       )}
       
-      {isLoading && <LoadingSpinner />}
+      {isLoading && (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-gray-400">Loading...</div>
+        </div>
+      )}
       
       {generatedImage && !isLoading && (
         <div className="h-full p-4 animate-fade-in">

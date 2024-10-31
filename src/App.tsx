@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 // Lazy load components
 const Index = lazy(() => import("./pages/Index"));
@@ -39,7 +38,7 @@ const App = () => (
             <Route
               path="/"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
+                <Suspense fallback={<div>Loading...</div>}>
                   <Index />
                 </Suspense>
               }
@@ -47,7 +46,7 @@ const App = () => (
             <Route
               path="/sign-in/*"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
+                <Suspense fallback={<div>Loading...</div>}>
                   <SignIn routing="path" path="/sign-in" />
                 </Suspense>
               }
@@ -55,7 +54,7 @@ const App = () => (
             <Route
               path="/sign-up/*"
               element={
-                <Suspense fallback={<LoadingSpinner />}>
+                <Suspense fallback={<div>Loading...</div>}>
                   <SignUp routing="path" path="/sign-up" />
                 </Suspense>
               }
