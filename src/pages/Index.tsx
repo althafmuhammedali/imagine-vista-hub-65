@@ -3,6 +3,7 @@ import { SocialLinks } from "@/components/SocialLinks";
 import { AuthButtons } from "@/components/AuthButtons";
 import { ChatBot } from "@/components/chat/ChatBot";
 import { FAQ } from "@/components/FAQ";
+import { Documentation } from "@/components/Documentation";
 import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
@@ -27,14 +28,23 @@ const Index = () => {
               Transform your imagination into stunning masterpieces with our state-of-the-art AI technology
             </p>
           </div>
-          <div className="transition-all duration-500 hover:scale-[1.01]">
-            <ImageGenerator />
-          </div>
-          <div className="mt-16 md:mt-24 transition-all duration-500 hover:scale-[1.01]">
-            <FAQ />
-          </div>
-          <div className="mt-8 md:mt-16">
-            <SocialLinks />
+
+          <div className="space-y-16 md:space-y-24">
+            <div className="transition-all duration-500 hover:scale-[1.01]">
+              <Documentation />
+            </div>
+            
+            <div className="transition-all duration-500 hover:scale-[1.01]">
+              <ImageGenerator />
+            </div>
+
+            <div className="transition-all duration-500 hover:scale-[1.01]">
+              <FAQ />
+            </div>
+
+            <div>
+              <SocialLinks />
+            </div>
           </div>
         </div>
         <ChatBot />
