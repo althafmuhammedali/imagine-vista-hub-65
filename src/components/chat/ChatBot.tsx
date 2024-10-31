@@ -125,19 +125,19 @@ export function ChatBot() {
       <SheetTrigger asChild>
         <Button
           size="icon"
-          className="fixed bottom-4 right-4 h-12 w-12 rounded-full shadow-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+          className="fixed bottom-4 right-4 h-10 w-10 sm:h-12 sm:w-12 rounded-full shadow-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 z-50"
         >
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[90vw] sm:w-[440px] h-[96vh] sm:h-[600px] flex flex-col p-0">
-        <SheetHeader className="p-4 border-b">
-          <SheetTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-amber-400" />
+      <SheetContent className="w-[90vw] sm:w-[440px] h-[90vh] sm:h-[600px] flex flex-col p-0">
+        <SheetHeader className="p-3 sm:p-4 border-b">
+          <SheetTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
             ForgeAI Creative Assistant
           </SheetTitle>
         </SheetHeader>
-        <ScrollArea className="flex-1 p-4">
+        <ScrollArea className="flex-1 p-3 sm:p-4">
           <div className="space-y-4">
             {messages.map((message, index) => (
               <ChatMessage
@@ -148,21 +148,21 @@ export function ChatBot() {
             ))}
           </div>
         </ScrollArea>
-        <div className="p-4 border-t">
+        <div className="p-3 sm:p-4 border-t">
           <div className="flex gap-2">
             <Input
               placeholder="Ask about prompts, tips, or troubleshooting..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="flex-1"
+              className="flex-1 text-sm sm:text-base"
               disabled={isLoading}
             />
             <Button 
               size="icon" 
               onClick={handleSend} 
               disabled={!input.trim() || isLoading}
-              className="bg-amber-500 hover:bg-amber-600"
+              className="bg-amber-500 hover:bg-amber-600 min-w-[40px]"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

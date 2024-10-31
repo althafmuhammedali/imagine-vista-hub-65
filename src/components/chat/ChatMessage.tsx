@@ -8,13 +8,13 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message, isBot }: ChatMessageProps) {
   return (
-    <div className={`flex gap-3 ${isBot ? "" : "flex-row-reverse"}`}>
-      <Avatar className="w-8 h-8">
+    <div className={`flex gap-2 sm:gap-3 ${isBot ? "" : "flex-row-reverse"}`}>
+      <Avatar className="w-6 h-6 sm:w-8 sm:h-8">
         <AvatarImage src={isBot ? "/bot-avatar.png" : undefined} />
-        <AvatarFallback>{isBot ? "AI" : "You"}</AvatarFallback>
+        <AvatarFallback className="text-xs sm:text-sm">{isBot ? "AI" : "You"}</AvatarFallback>
       </Avatar>
       <div
-        className={`rounded-lg px-4 py-2 max-w-[80%] ${
+        className={`rounded-lg px-3 py-2 sm:px-4 sm:py-2 max-w-[75%] sm:max-w-[80%] text-sm sm:text-base ${
           isBot
             ? "bg-secondary text-secondary-foreground"
             : "bg-primary text-primary-foreground"
