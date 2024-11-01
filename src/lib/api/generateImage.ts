@@ -100,14 +100,14 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: validatedWidth,
             height: validatedHeight,
-            num_inference_steps: 20,
-            guidance_scale: 7.0,
+            num_inference_steps: 30,
+            guidance_scale: 7.5,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler",
+            scheduler: "DPMSolverMultistepScheduler",
             options: {
               wait_for_model: true,
-              use_gpu: false
+              use_gpu: true
             }
           }
         }),

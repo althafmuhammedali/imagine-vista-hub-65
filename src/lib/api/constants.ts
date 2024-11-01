@@ -1,5 +1,5 @@
 export const API_ENDPOINTS = {
-  PRIMARY: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
+  PRIMARY: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
   FALLBACK: "runwayml/stable-diffusion-v1-4"
 };
 
