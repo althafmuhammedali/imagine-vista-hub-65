@@ -32,7 +32,7 @@ export function PlatformBudget() {
     <Card className="w-full max-w-2xl mx-auto backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-amber-400 flex items-center justify-center gap-2">
-          Platform Budget Calculator in Hours
+          Platform Budget in Hours
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
