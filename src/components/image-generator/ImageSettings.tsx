@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { PromptExampleCard } from "./prompt-examples/PromptExampleCard";
 import { ResolutionSelect } from "./settings/ResolutionSelect";
 import { GenerateButton } from "./settings/GenerateButton";
+import { PromptSuggestions } from "./PromptSuggestions";
 
 const promptExamples = [
   {
@@ -84,13 +85,19 @@ export function ImageSettings({
             <PromptExampleCard examples={promptExamples} setPrompt={setPrompt} />
           </div>
           
-          <Textarea
-            id="prompt"
-            placeholder="Describe your dream image in detail... (e.g., 'A magical treehouse in a mystical forest at sunset')"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="h-20 sm:h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
-          />
+          <div className="space-y-2">
+            <Textarea
+              id="prompt"
+              placeholder="Describe your dream image in detail... (e.g., 'A magical treehouse in a mystical forest at sunset')"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="h-20 sm:h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
+            />
+            <PromptSuggestions 
+              inputText={prompt} 
+              onSuggestionClick={setPrompt}
+            />
+          </div>
 
           <div className="space-y-2 text-left">
             <Label htmlFor="negative-prompt" className="text-white flex items-center gap-2">
