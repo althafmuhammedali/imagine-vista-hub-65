@@ -74,7 +74,7 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000); // Reduced timeout to 30s
+  const timeoutId = setTimeout(() => controller.abort(), 120000); // Increased timeout to 120s
 
   try {
     const enhancedPrompt = `${prompt}, high quality, detailed`;
@@ -94,13 +94,13 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: Math.min(width, 1024),
             height: Math.min(height, 1024),
-            num_inference_steps: 30, // Reduced from 200
-            guidance_scale: 7.5, // Reduced from 20
+            num_inference_steps: 30,
+            guidance_scale: 7.5,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
-            use_karras_sigmas: false, // Disabled for speed
-            clip_skip: 1, // Reduced from 2
+            scheduler: "EulerAncestralDiscreteScheduler",
+            use_karras_sigmas: false,
+            clip_skip: 1,
             tiling: false,
             use_safetensors: true,
             options: {
@@ -119,6 +119,10 @@ export async function generateImage({
       return URL.createObjectURL(blob);
     } catch (primaryError) {
       console.error("Primary model error:", primaryError);
+      toast({
+        title: "Switching to backup model",
+        description: "Please wait while we try an alternative model...",
+      });
       
       const response = await retryWithBackoff(() => makeRequest(MODELS.FALLBACK));
       const blob = await response.blob();
@@ -127,7 +131,12 @@ export async function generateImage({
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        throw new Error('Request timed out');
+        toast({
+          title: "Request timeout",
+          description: "The request took too long. Please try again.",
+          variant: "destructive",
+        });
+        throw new Error('Request timed out - please try again');
       }
       throw error;
     }
