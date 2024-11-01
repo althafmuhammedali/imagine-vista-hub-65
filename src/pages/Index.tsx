@@ -22,9 +22,24 @@ const Index = () => {
               </h1>
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
             </div>
-            <div className="flex items-center justify-center gap-2 transition-all hover:scale-105">
-              <Heart className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-red-500 animate-pulse" />
-              <span className="text-xs sm:text-sm text-gray-400">Standing with Palestine</span>
+            <div className="flex flex-col items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-2 transition-all hover:scale-105">
+                <Heart className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-red-500 animate-pulse" />
+                <span className="text-xs sm:text-sm text-gray-400">Standing with Palestine</span>
+              </div>
+              <a 
+                href="https://www.producthunt.com/posts/comicforgeai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-comicforgeai" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:opacity-90 transition-opacity"
+              >
+                <img 
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=564210&theme=light" 
+                  alt="ComicForgeAi - Let your imagination run wild and create stunning artwork | Product Hunt" 
+                  width="250" 
+                  height="54" 
+                />
+              </a>
             </div>
             <p className="text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed text-gray-400 px-4">
               Transform your imagination into stunning masterpieces with our state-of-the-art AI technology
