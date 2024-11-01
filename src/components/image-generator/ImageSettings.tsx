@@ -67,7 +67,7 @@ export function ImageSettings({
   resolutions,
 }: ImageSettingsProps) {
   return (
-    <Card className="backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl">
+    <Card className="glass animate-fade-up">
       <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         <CardHeader className="p-0">
           <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl text-amber-300">
