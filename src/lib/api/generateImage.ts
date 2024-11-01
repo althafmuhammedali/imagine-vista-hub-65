@@ -1,18 +1,18 @@
 import { toast } from "@/components/ui/use-toast";
-import { GenerateImageParams } from './types';
-import { MODELS, MAX_RETRIES, TIMEOUT_DURATION, INITIAL_RETRY_DELAY } from './config';
+import { GenerateImageParams, ApiResponse } from './types';
+import { API_ENDPOINTS, API_CONFIG } from './constants';
 import { checkRateLimit } from './rateLimit';
-import { delay, sanitizeInput } from './utils';
+import { delay, sanitizeInput, validateDimensions } from './utils';
 
-async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = MAX_RETRIES): Promise<Response> {
+async function retryWithBackoff(fn: () => Promise<Response>): Promise<Response> {
   let lastError: Error | null = null;
 
-  for (let i = 0; i < maxRetries; i++) {
+  for (let i = 0; i < API_CONFIG.MAX_RETRIES; i++) {
     try {
       const response = await fn();
       
       if (response.status === 503) {
-        const data = await response.json();
+        const data = await response.json() as ApiResponse;
         if (data.error?.includes("is currently loading")) {
           const waitTime = Math.min((data.estimated_time || 20) * 1000, 30000);
           toast({
@@ -43,10 +43,9 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = MAX_RE
       lastError = error instanceof Error ? error : new Error(String(error));
       
       if (lastError.message === "rate_limit") throw lastError;
-      if (i === maxRetries - 1) throw lastError;
+      if (i === API_CONFIG.MAX_RETRIES - 1) throw lastError;
       
-      const waitTime = INITIAL_RETRY_DELAY * Math.pow(2, i);
-      await delay(waitTime);
+      await delay(API_CONFIG.INITIAL_RETRY_DELAY * Math.pow(2, i));
     }
   }
   throw lastError || new Error("Failed after maximum retries");
@@ -77,11 +76,10 @@ export async function generateImage({
 
   const sanitizedPrompt = sanitizeInput(prompt);
   const sanitizedNegativePrompt = sanitizeInput(negativePrompt);
-  const validatedWidth = Math.min(Math.max(width, 256), 512); // Reduced max size for free tier
-  const validatedHeight = Math.min(Math.max(height, 256), 512); // Reduced max size for free tier
+  const { width: validatedWidth, height: validatedHeight } = validateDimensions(width, height);
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_DURATION);
+  const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT_DURATION);
 
   try {
     const enhancedPrompt = `${sanitizedPrompt}, high quality, detailed`;
@@ -102,14 +100,14 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: validatedWidth,
             height: validatedHeight,
-            num_inference_steps: 20, // Reduced steps for faster free tier processing
+            num_inference_steps: 20,
             guidance_scale: 7.0,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
             scheduler: "EulerAncestralDiscreteScheduler",
             options: {
               wait_for_model: true,
-              use_gpu: false // Disabled for free tier
+              use_gpu: false
             }
           }
         }),
@@ -118,7 +116,7 @@ export async function generateImage({
     );
 
     try {
-      const response = await retryWithBackoff(() => makeRequest(MODELS.PRIMARY));
+      const response = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.PRIMARY));
       const blob = await response.blob();
       return URL.createObjectURL(blob);
     } catch (primaryError) {
@@ -128,7 +126,7 @@ export async function generateImage({
         description: "Please wait while we try an alternative model...",
       });
       
-      const response = await retryWithBackoff(() => makeRequest(MODELS.FALLBACK));
+      const response = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.FALLBACK));
       const blob = await response.blob();
       return URL.createObjectURL(blob);
     }
