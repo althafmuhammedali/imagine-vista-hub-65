@@ -6,7 +6,7 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { Sparkles, Briefcase, Shield, Star } from "lucide-react";
+import { Sparkles, Briefcase, Shield, Star, Heart } from "lucide-react";
 
 const Index = () => {
   return (
@@ -37,6 +37,11 @@ const Index = () => {
                   <Briefcase className="w-6 h-6 text-amber-400" />
                   <span className="text-sm text-gray-400">Professional Tools</span>
                 </div>
+              </div>
+
+              <div className="flex items-center justify-center gap-2 transition-all hover:scale-105 mb-4">
+                <Heart className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-red-500 animate-pulse" />
+                <span className="text-xs sm:text-sm text-gray-400">Standing with Palestine</span>
               </div>
               
               <a 
