@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { generateImage, GenerateImageParams } from "@/lib/api";
 import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImagePreview } from "./image-generator/ImagePreview";
+import { useQueryClient } from "@tanstack/react-query";
 
 const resolutions = [
   { value: "1:1", width: 1024, height: 1024, label: "Square" },
@@ -18,6 +19,7 @@ export function ImageGenerator() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const queryClient = useQueryClient();
 
   // Cleanup URLs when component unmounts or new image is generated
   useEffect(() => {
@@ -28,7 +30,7 @@ export function ImageGenerator() {
     };
   }, [generatedImage]);
 
-  const handleGenerate = async () => {
+  const handleGenerate = useCallback(async () => {
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt) {
       toast({
@@ -67,6 +69,13 @@ export function ImageGenerator() {
 
       const imageUrl = await generateImage(params);
       setGeneratedImage(imageUrl);
+      
+      // Prefetch the next likely prompt
+      queryClient.prefetchQuery({
+        queryKey: ['image', { ...params, prompt: trimmedPrompt + " detailed" }],
+        queryFn: () => generateImage({ ...params, prompt: trimmedPrompt + " detailed" }),
+      });
+
       toast({
         title: "Success",
         description: "Image generated successfully!",
@@ -82,7 +91,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [prompt, resolution, negativePrompt, seed, generatedImage, queryClient]);
 
   return (
     <div className="container max-w-6xl py-4 space-y-4 px-4 sm:px-6 md:px-8">
