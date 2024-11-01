@@ -19,16 +19,18 @@ export function ImageGenerator() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
+  // Cleanup URLs when component unmounts or new image is generated
   useEffect(() => {
     return () => {
       if (generatedImage) {
         URL.revokeObjectURL(generatedImage);
       }
     };
-  }, []);
+  }, [generatedImage]);
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) {
+    const trimmedPrompt = prompt.trim();
+    if (!trimmedPrompt) {
       toast({
         title: "Error",
         description: "Please enter a prompt",
@@ -37,17 +39,26 @@ export function ImageGenerator() {
       return;
     }
 
+    if (trimmedPrompt.length < 3) {
+      toast({
+        title: "Error",
+        description: "Prompt must be at least 3 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     setError(undefined);
-    const selectedResolution = resolutions.find((r) => r.value === resolution)!;
 
     try {
       if (generatedImage) {
         URL.revokeObjectURL(generatedImage);
       }
 
+      const selectedResolution = resolutions.find((r) => r.value === resolution)!;
       const params: GenerateImageParams = {
-        prompt: prompt.trim(),
+        prompt: trimmedPrompt,
         width: selectedResolution.width,
         height: selectedResolution.height,
         negativePrompt: negativePrompt.trim(),

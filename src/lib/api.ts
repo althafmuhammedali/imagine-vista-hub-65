@@ -13,9 +13,15 @@ const MODELS = {
   FALLBACK: "runwayml/stable-diffusion-v1-5",
 };
 
+const MAX_RETRIES = 3;
+const TIMEOUT_DURATION = 180000; // 3 minutes
+const INITIAL_RETRY_DELAY = 1000;
+
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Promise<Response> {
+async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = MAX_RETRIES): Promise<Response> {
+  let lastError: Error | null = null;
+
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fn();
@@ -23,10 +29,10 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
       if (response.status === 503) {
         const data = await response.json();
         if (data.error?.includes("is currently loading")) {
-          const waitTime = Math.min((data.estimated_time || 20) * 1000, 20000);
+          const waitTime = Math.min((data.estimated_time || 20) * 1000, 30000);
           toast({
-            title: "Please wait",
-            description: "Model is warming up...",
+            title: "Model is warming up",
+            description: `Please wait ${Math.ceil(waitTime/1000)} seconds...`,
           });
           await delay(waitTime);
           continue;
@@ -48,16 +54,16 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
 
       return response;
     } catch (error) {
-      if (error instanceof Error) {
-        if (error.message === "rate_limit") throw error;
-        if (i === maxRetries - 1) throw error;
-      }
+      lastError = error instanceof Error ? error : new Error(String(error));
       
-      const waitTime = Math.pow(2, i) * 1000;
+      if (lastError.message === "rate_limit") throw lastError;
+      if (i === maxRetries - 1) throw lastError;
+      
+      const waitTime = INITIAL_RETRY_DELAY * Math.pow(2, i);
       await delay(waitTime);
     }
   }
-  throw new Error("Failed after maximum retries");
+  throw lastError || new Error("Failed after maximum retries");
 }
 
 export async function generateImage({
@@ -74,11 +80,11 @@ export async function generateImage({
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120000); // Increased timeout to 120s
+  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_DURATION);
 
   try {
-    const enhancedPrompt = `${prompt}, high quality, detailed`;
-    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, low quality`;
+    const enhancedPrompt = `${prompt}, high quality, detailed, professional`;
+    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, low quality, watermark, signature, text`;
 
     const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
@@ -98,9 +104,9 @@ export async function generateImage({
             guidance_scale: 7.5,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler",
-            use_karras_sigmas: false,
-            clip_skip: 1,
+            scheduler: "DPMSolverMultistepScheduler",
+            use_karras_sigmas: true,
+            clip_skip: 2,
             tiling: false,
             use_safetensors: true,
             options: {
@@ -133,10 +139,10 @@ export async function generateImage({
       if (error.name === 'AbortError') {
         toast({
           title: "Request timeout",
-          description: "The request took too long. Please try again.",
+          description: "The request took too long. Please try again with a simpler prompt.",
           variant: "destructive",
         });
-        throw new Error('Request timed out - please try again');
+        throw new Error('Request timed out - please try again with a simpler prompt');
       }
       throw error;
     }
