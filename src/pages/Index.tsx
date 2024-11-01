@@ -6,11 +6,19 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award } from "lucide-react";
+import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a] animate-gradient-x">
+      <Alert className="rounded-none border-none bg-amber-500/10 backdrop-blur-sm">
+        <Info className="h-4 w-4 text-amber-400" />
+        <AlertDescription className="text-amber-200">
+          This platform's prompt generation is heavily influenced by our unique prompting style
+        </AlertDescription>
+      </Alert>
+      
       <div className="min-h-screen bg-black/5 backdrop-blur-sm">
         <AuthButtons />
         <div className="container max-w-6xl py-4 sm:py-6 md:py-12 px-4 sm:px-6 lg:px-8">
