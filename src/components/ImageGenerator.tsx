@@ -94,26 +94,30 @@ export function ImageGenerator() {
   }, [prompt, resolution, negativePrompt, seed, generatedImage, queryClient]);
 
   return (
-    <div className="container max-w-6xl py-4 space-y-4 px-4 sm:px-6 md:px-8">
-      <div className="grid gap-4 md:gap-8 lg:grid-cols-[1fr,1fr]">
-        <ImageSettings
-          prompt={prompt}
-          setPrompt={setPrompt}
-          negativePrompt={negativePrompt}
-          setNegativePrompt={setNegativePrompt}
-          resolution={resolution}
-          setResolution={setResolution}
-          seed={seed}
-          setSeed={setSeed}
-          onGenerate={handleGenerate}
-          isLoading={isLoading}
-          resolutions={resolutions}
-        />
-        <ImagePreview
-          generatedImage={generatedImage}
-          isLoading={isLoading}
-          error={error}
-        />
+    <div className="container max-w-6xl py-6 space-y-6 px-4 sm:px-6 md:px-8">
+      <div className="grid gap-6 md:gap-8 lg:grid-cols-[1fr,1fr]">
+        <div className="glass-morphism rounded-2xl p-6 transition-all duration-300">
+          <ImageSettings
+            prompt={prompt}
+            setPrompt={setPrompt}
+            negativePrompt={negativePrompt}
+            setNegativePrompt={setNegativePrompt}
+            resolution={resolution}
+            setResolution={setResolution}
+            seed={seed}
+            setSeed={setSeed}
+            onGenerate={handleGenerate}
+            isLoading={isLoading}
+            resolutions={resolutions}
+          />
+        </div>
+        <div className="glass-morphism rounded-2xl transition-all duration-300">
+          <ImagePreview
+            generatedImage={generatedImage}
+            isLoading={isLoading}
+            error={error}
+          />
+        </div>
       </div>
     </div>
   );
