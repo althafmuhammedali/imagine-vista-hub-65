@@ -1,15 +1,16 @@
 #root {
   max-width: 100%;
   margin: 0 auto;
-  padding: 1rem;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   text-align: center;
 }
 
 .logo {
-  height: 4em;
-  padding: 1em;
+  height: clamp(3em, 5vw, 4em);
+  padding: clamp(0.75em, 2vw, 1em);
   will-change: filter;
   transition: filter 300ms;
+  touch-action: manipulation;
 }
 
 .logo:hover {
@@ -36,24 +37,54 @@
 }
 
 .card {
-  padding: 1em;
+  padding: clamp(0.75em, 2vw, 1em);
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 
 .read-the-docs {
   color: #888;
 }
 
+/* Mobile-first responsive design */
 @media (max-width: 640px) {
   #root {
-    padding: 0.5rem;
+    padding: max(0.5rem, env(safe-area-inset-top)) max(0.5rem, env(safe-area-inset-right)) max(0.5rem, env(safe-area-inset-bottom)) max(0.5rem, env(safe-area-inset-left));
   }
   
   .logo {
-    height: 3em;
-    padding: 0.75em;
+    height: clamp(2.5em, 4vw, 3em);
+    padding: clamp(0.5em, 1.5vw, 0.75em);
   }
   
   .card {
-    padding: 0.75em;
+    padding: clamp(0.5em, 1.5vw, 0.75em);
+  }
+
+  /* Improve touch targets on mobile */
+  button, 
+  input[type="button"], 
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent text selection during touch interactions */
+  * {
+    user-select: none;
+  }
+
+  /* Enable text selection in input fields */
+  input, 
+  textarea {
+    user-select: text;
+  }
+}
+
+/* Tablet and larger screens */
+@media (min-width: 641px) and (max-width: 1024px) {
+  #root {
+    padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
   }
 }
