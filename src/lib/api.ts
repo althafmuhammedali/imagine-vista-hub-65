@@ -17,7 +17,42 @@ const MAX_RETRIES = 3;
 const TIMEOUT_DURATION = 180000; // 3 minutes
 const INITIAL_RETRY_DELAY = 1000;
 
+// Rate limiting configuration
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT = 10; // requests per window
+const RATE_WINDOW = 60000; // 1 minute in milliseconds
+
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Rate limiting function
+const checkRateLimit = (userId: string): boolean => {
+  const now = Date.now();
+  const userLimit = rateLimitStore.get(userId);
+
+  if (!userLimit || now > userLimit.resetTime) {
+    rateLimitStore.set(userId, {
+      count: 1,
+      resetTime: now + RATE_WINDOW
+    });
+    return true;
+  }
+
+  if (userLimit.count >= RATE_LIMIT) {
+    return false;
+  }
+
+  userLimit.count += 1;
+  rateLimitStore.set(userId, userLimit);
+  return true;
+}
+
+// Sanitize and validate input
+const sanitizeInput = (input: string): string => {
+  return input
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/[^\w\s,.!?-]/g, '') // Remove special characters except basic punctuation
+    .trim();
+};
 
 async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = MAX_RETRIES): Promise<Response> {
   let lastError: Error | null = null;
@@ -42,7 +77,8 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = MAX_RE
       if (response.status === 429) {
         toast({
           title: "Rate limit reached",
-          description: "Switching to backup model...",
+          description: "Please wait before making more requests.",
+          variant: "destructive",
         });
         throw new Error("rate_limit");
       }
@@ -79,12 +115,31 @@ export async function generateImage({
     throw new Error("Missing API key");
   }
 
+  // Apply rate limiting
+  const userId = localStorage.getItem('userId') || 'anonymous';
+  if (!checkRateLimit(userId)) {
+    toast({
+      title: "Rate limit exceeded",
+      description: "Please wait a minute before trying again.",
+      variant: "destructive",
+    });
+    throw new Error("Rate limit exceeded");
+  }
+
+  // Sanitize inputs
+  const sanitizedPrompt = sanitizeInput(prompt);
+  const sanitizedNegativePrompt = sanitizeInput(negativePrompt);
+
+  // Validate dimensions
+  const validatedWidth = Math.min(Math.max(width, 256), 1024);
+  const validatedHeight = Math.min(Math.max(height, 256), 1024);
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_DURATION);
 
   try {
-    const enhancedPrompt = `${prompt}, high quality, detailed, professional`;
-    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, low quality, watermark, signature, text`;
+    const enhancedPrompt = `${sanitizedPrompt}, high quality, detailed, professional`;
+    const enhancedNegativePrompt = `${sanitizedNegativePrompt}, blur, noise, low quality, watermark, signature, text`;
 
     const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
@@ -92,14 +147,15 @@ export async function generateImage({
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "X-Request-ID": crypto.randomUUID(), // Add request ID for tracking
         },
         body: JSON.stringify({
           inputs: enhancedPrompt,
           parameters: {
             negative_prompt: enhancedNegativePrompt,
-            width: Math.min(width, 1024),
-            height: Math.min(height, 1024),
+            width: validatedWidth,
+            height: validatedHeight,
             num_inference_steps: 30,
             guidance_scale: 7.5,
             seed: seed || Math.floor(Math.random() * 1000000),
