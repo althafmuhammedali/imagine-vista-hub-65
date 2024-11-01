@@ -24,20 +24,13 @@ export function FeedbackBox() {
     setIsSending(true);
 
     try {
-      const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      const response = await fetch("/api/send-feedback", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          service_id: "default_service",
-          template_id: "template_feedback",
-          user_id: "rRR9mzz46Vq3IyUy7",
-          template_params: {
-            to_email: "comicfixteam@f5.si",
-            feedback: feedback,
-            from_name: "ComicForge User",
-          },
+          feedback: feedback,
         }),
       });
 
