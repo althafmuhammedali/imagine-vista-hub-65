@@ -32,7 +32,7 @@ export function FeedbackBox() {
         body: JSON.stringify({
           service_id: "default_service",
           template_id: "template_feedback",
-          user_id: "YOUR_EMAILJS_PUBLIC_KEY", // You'll need to sign up for EmailJS
+          user_id: "rRR9mzz46Vq3IyUy7",
           template_params: {
             to_email: "comicfixteam@f5.si",
             feedback: feedback,
