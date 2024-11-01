@@ -6,7 +6,7 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { Sparkles, Briefcase, Shield, Star, Heart } from "lucide-react";
+import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award } from "lucide-react";
 
 const Index = () => {
   return (
@@ -24,37 +24,47 @@ const Index = () => {
             </div>
             
             <div className="flex flex-col items-center justify-center gap-4">
-              <div className="flex items-center justify-center gap-8 my-6">
-                <div className="flex flex-col items-center gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 my-6">
+                <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
                   <Shield className="w-6 h-6 text-amber-400" />
                   <span className="text-sm text-gray-400">Secure Platform</span>
                 </div>
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
                   <Star className="w-6 h-6 text-amber-400" />
                   <span className="text-sm text-gray-400">Premium Quality</span>
                 </div>
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
                   <Briefcase className="w-6 h-6 text-amber-400" />
                   <span className="text-sm text-gray-400">Professional Tools</span>
                 </div>
+                <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
+                  <Zap className="w-6 h-6 text-amber-400" />
+                  <span className="text-sm text-gray-400">Fast Generation</span>
+                </div>
               </div>
 
-              <div className="flex items-center justify-center gap-2 transition-all hover:scale-105 mb-4">
+              <div className="flex items-center justify-center gap-2 transition-all hover:scale-105 mb-4 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full">
                 <Heart className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-red-500 animate-pulse" />
                 <span className="text-xs sm:text-sm text-gray-400">Standing with Palestine</span>
+              </div>
+
+              <div className="flex items-center gap-2 mb-6">
+                <Award className="w-5 h-5 text-amber-400" />
+                <span className="text-sm text-amber-200">Featured on Product Hunt</span>
               </div>
               
               <a 
                 href="https://www.producthunt.com/posts/comicforgeai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-comicforgeai" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="hover:opacity-90 transition-opacity"
+                className="hover:opacity-90 transition-opacity transform hover:scale-105"
               >
                 <img 
                   src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=564210&theme=light" 
                   alt="ComicForgeAi - Let your imagination run wild and create stunning artwork | Product Hunt" 
                   width="250" 
                   height="54" 
+                  className="shadow-lg rounded"
                 />
               </a>
             </div>
