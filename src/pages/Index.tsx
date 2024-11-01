@@ -6,7 +6,7 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
   return (
@@ -23,6 +23,10 @@ const Index = () => {
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
             </div>
             <div className="flex flex-col items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-2 transition-all hover:scale-105">
+                <Heart className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-red-500 animate-pulse" />
+                <span className="text-xs sm:text-sm text-gray-400">Standing with Palestine</span>
+              </div>
               <a 
                 href="https://www.producthunt.com/posts/comicforgeai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-comicforgeai" 
                 target="_blank" 
