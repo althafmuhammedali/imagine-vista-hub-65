@@ -2,6 +2,7 @@ import { toast } from "@/components/ui/use-toast";
 import { checkRateLimit, getRemainingRequests, getResetTime } from './rateLimit';
 import { API_ENDPOINTS, API_CONFIG } from './constants';
 import { delay, sanitizeInput, validateDimensions } from './utils';
+import { enhancePrompt, enhanceNegativePrompt } from './promptEnhancer';
 import type { GenerateImageParams, ApiResponse } from './types';
 
 async function retryWithBackoff(fn: () => Promise<Response>): Promise<Response> {
@@ -53,8 +54,8 @@ async function retryWithBackoff(fn: () => Promise<Response>): Promise<Response> 
 
 export async function generateImage({
   prompt,
-  width = 512,
-  height = 512,
+  width = 1024,
+  height = 1024,
   negativePrompt = "",
   seed,
 }: GenerateImageParams): Promise<string> {
@@ -91,8 +92,8 @@ export async function generateImage({
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT_DURATION);
 
   try {
-    const enhancedPrompt = `${sanitizedPrompt}, high quality, detailed`;
-    const enhancedNegativePrompt = `${sanitizedNegativePrompt}, blur, noise, low quality, watermark`;
+    const enhancedPrompt = enhancePrompt(sanitizedPrompt);
+    const enhancedNegativePrompt = enhanceNegativePrompt(sanitizedNegativePrompt);
 
     const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
@@ -109,15 +110,9 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: validatedWidth,
             height: validatedHeight,
-            num_inference_steps: 30,
-            guidance_scale: 7.5,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "DPMSolverMultistepScheduler",
-            options: {
-              wait_for_model: true,
-              use_gpu: true
-            }
+            ...API_CONFIG.DEFAULT_PARAMS
           }
         }),
         signal: controller.signal
@@ -125,9 +120,21 @@ export async function generateImage({
     );
 
     try {
+      // Try with SDXL base model first
       const response = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.PRIMARY));
       const blob = await response.blob();
-      return URL.createObjectURL(blob);
+      const baseImage = URL.createObjectURL(blob);
+
+      // Try to enhance with SDXL refiner
+      try {
+        const refinedResponse = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.ENHANCED));
+        const refinedBlob = await refinedResponse.blob();
+        URL.revokeObjectURL(baseImage); // Clean up base image URL
+        return URL.createObjectURL(refinedBlob);
+      } catch (refinerError) {
+        console.warn("Refiner failed, using base image:", refinerError);
+        return baseImage;
+      }
     } catch (primaryError) {
       console.error("Primary model error:", primaryError);
       toast({
