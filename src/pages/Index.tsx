@@ -6,7 +6,7 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { Sparkles, Heart } from "lucide-react";
+import { Sparkles, Briefcase, Shield, Star } from "lucide-react";
 
 const Index = () => {
   return (
@@ -22,11 +22,23 @@ const Index = () => {
               </h1>
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
             </div>
+            
             <div className="flex flex-col items-center justify-center gap-4">
-              <div className="flex items-center justify-center gap-2 transition-all hover:scale-105">
-                <Heart className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-red-500 animate-pulse" />
-                <span className="text-xs sm:text-sm text-gray-400">Standing with Palestine</span>
+              <div className="flex items-center justify-center gap-8 my-6">
+                <div className="flex flex-col items-center gap-2">
+                  <Shield className="w-6 h-6 text-amber-400" />
+                  <span className="text-sm text-gray-400">Secure Platform</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <Star className="w-6 h-6 text-amber-400" />
+                  <span className="text-sm text-gray-400">Premium Quality</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <Briefcase className="w-6 h-6 text-amber-400" />
+                  <span className="text-sm text-gray-400">Professional Tools</span>
+                </div>
               </div>
+              
               <a 
                 href="https://www.producthunt.com/posts/comicforgeai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-comicforgeai" 
                 target="_blank" 
@@ -42,24 +54,24 @@ const Index = () => {
               </a>
             </div>
             <p className="text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed text-gray-400 px-4">
-              Transform your imagination into stunning masterpieces with our state-of-the-art AI technology
+              Transform your creative vision into stunning masterpieces with our enterprise-grade AI technology
             </p>
           </div>
 
-          <div className="space-y-6 sm:space-y-8 md:space-y-12 lg:space-y-16">
-            <div className="transition-all duration-500 hover:scale-[1.01]">
+          <div className="space-y-8 sm:space-y-12 md:space-y-16 lg:space-y-20">
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
               <ImageGenerator />
             </div>
 
-            <div className="transition-all duration-500 hover:scale-[1.01]">
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
               <FAQ />
             </div>
 
-            <div className="transition-all duration-500 hover:scale-[1.01]">
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
               <Documentation />
             </div>
 
-            <div className="transition-all duration-500 hover:scale-[1.01]">
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
               <PlatformBudget />
             </div>
 
