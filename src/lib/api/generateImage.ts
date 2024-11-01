@@ -1,8 +1,8 @@
 import { toast } from "@/components/ui/use-toast";
-import { GenerateImageParams, ApiResponse } from './types';
+import { checkRateLimit, getRemainingRequests, getResetTime } from './rateLimit';
 import { API_ENDPOINTS, API_CONFIG } from './constants';
-import { checkRateLimit } from './rateLimit';
 import { delay, sanitizeInput, validateDimensions } from './utils';
+import type { GenerateImageParams, ApiResponse } from './types';
 
 async function retryWithBackoff(fn: () => Promise<Response>): Promise<Response> {
   let lastError: Error | null = null;
@@ -66,13 +66,22 @@ export async function generateImage({
 
   const userId = localStorage.getItem('userId') || 'anonymous';
   if (!checkRateLimit(userId)) {
+    const resetTime = getResetTime(userId);
+    const waitMinutes = resetTime ? Math.ceil((resetTime - Date.now()) / 60000) : 1;
+    
     toast({
       title: "Rate limit exceeded",
-      description: "Please wait a minute before trying again.",
+      description: `You've reached the limit of 5 images per minute. Please wait ${waitMinutes} minute(s).`,
       variant: "destructive",
     });
     throw new Error("Rate limit exceeded");
   }
+
+  const remainingRequests = getRemainingRequests(userId);
+  toast({
+    title: "Remaining requests",
+    description: `You have ${remainingRequests} image generation(s) left for this minute.`,
+  });
 
   const sanitizedPrompt = sanitizeInput(prompt);
   const sanitizedNegativePrompt = sanitizeInput(negativePrompt);
