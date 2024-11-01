@@ -1,15 +1,30 @@
 import { createRoot } from 'react-dom/client';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import './index.css';
 
 // Lazy load the main App component
 const App = lazy(() => import('./App'));
 
-// Register service worker
+// Fix mobile viewport height
+const setVH = () => {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+};
+
+// Register service worker and handle viewport
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(error => {
       console.error('Service worker registration failed:', error);
+    });
+    
+    // Initial VH calculation
+    setVH();
+    
+    // Recalculate on resize and orientation change
+    window.addEventListener('resize', setVH);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(setVH, 100);
     });
   });
 }
