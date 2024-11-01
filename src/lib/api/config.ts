@@ -1,6 +1,6 @@
 export const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
-  FALLBACK: "runwayml/stable-diffusion-v1-5",
+  PRIMARY: "runwayml/stable-diffusion-v1-5", // Free model
+  FALLBACK: "CompVis/stable-diffusion-v1-4", // Free backup model
 };
 
 export const MAX_RETRIES = 3;

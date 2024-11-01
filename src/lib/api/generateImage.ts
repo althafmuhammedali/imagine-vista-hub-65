@@ -77,15 +77,15 @@ export async function generateImage({
 
   const sanitizedPrompt = sanitizeInput(prompt);
   const sanitizedNegativePrompt = sanitizeInput(negativePrompt);
-  const validatedWidth = Math.min(Math.max(width, 256), 1024);
-  const validatedHeight = Math.min(Math.max(height, 256), 1024);
+  const validatedWidth = Math.min(Math.max(width, 256), 512); // Reduced max size for free tier
+  const validatedHeight = Math.min(Math.max(height, 256), 512); // Reduced max size for free tier
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_DURATION);
 
   try {
-    const enhancedPrompt = `${sanitizedPrompt}, high quality, detailed, professional`;
-    const enhancedNegativePrompt = `${sanitizedNegativePrompt}, blur, noise, low quality, watermark, signature, text`;
+    const enhancedPrompt = `${sanitizedPrompt}, high quality, detailed`;
+    const enhancedNegativePrompt = `${sanitizedNegativePrompt}, blur, noise, low quality, watermark`;
 
     const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
@@ -102,18 +102,14 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: validatedWidth,
             height: validatedHeight,
-            num_inference_steps: 25, // Reduced from 30 for faster generation
-            guidance_scale: 7.0, // Slightly reduced from 7.5 for speed
+            num_inference_steps: 20, // Reduced steps for faster free tier processing
+            guidance_scale: 7.0,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
-            use_karras_sigmas: true,
-            clip_skip: 2,
-            tiling: false,
-            use_safetensors: true,
+            scheduler: "EulerAncestralDiscreteScheduler",
             options: {
               wait_for_model: true,
-              use_gpu: true
+              use_gpu: false // Disabled for free tier
             }
           }
         }),
