@@ -5,6 +5,15 @@ import './index.css';
 // Lazy load the main App component
 const App = lazy(() => import('./App'));
 
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(error => {
+      console.error('Service worker registration failed:', error);
+    });
+  });
+}
+
 // Create root and render with Suspense
 createRoot(document.getElementById('root')!).render(
   <Suspense fallback={
