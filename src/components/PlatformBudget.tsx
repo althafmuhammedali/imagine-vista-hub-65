@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Cpu, Boxes, Battery, CircuitBoard, MonitorPlay, HardDrive } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 export function PlatformBudget() {
   const [hours, setHours] = useState(1);
   const [totalCost, setTotalCost] = useState(26);
+  const { toast } = useToast();
+  const [lastInputTime, setLastInputTime] = useState(Date.now());
+  const RATE_LIMIT_MS = 500; // Minimum time between inputs
 
   const baseComponents = [
     { name: "CPU", icon: Cpu, cost: 8, description: "AMD Ryzen 5 5600X" },
@@ -15,18 +19,74 @@ export function PlatformBudget() {
     { name: "Storage", icon: HardDrive, cost: 1, description: "1TB SSD (model weights)" }
   ];
 
+  const sanitizeAndValidateInput = (value: string): number => {
+    // Remove any non-numeric characters
+    const sanitizedValue = value.replace(/[^0-9]/g, '');
+    const numValue = parseInt(sanitizedValue) || 1;
+    
+    // Enforce reasonable limits
+    if (numValue > 168) { // Max 1 week worth of hours
+      toast({
+        title: "Invalid Input",
+        description: "Maximum allowed hours is 168 (1 week)",
+        variant: "destructive"
+      });
+      return 168;
+    }
+    if (numValue < 1) {
+      toast({
+        title: "Invalid Input",
+        description: "Minimum allowed hours is 1",
+        variant: "destructive"
+      });
+      return 1;
+    }
+    return numValue;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const now = Date.now();
+    if (now - lastInputTime < RATE_LIMIT_MS) {
+      return; // Rate limit exceeded
+    }
+    setLastInputTime(now);
+
+    const validatedHours = sanitizeAndValidateInput(e.target.value);
+    setHours(validatedHours);
+  };
+
   useEffect(() => {
     const calculateTotal = () => {
-      const hourlyGpuCost = 12 * hours;
-      const fixedCosts = baseComponents.reduce((acc, component) => {
-        if (component.name !== "GPU") return acc + component.cost;
-        return acc;
-      }, 0);
-      setTotalCost(fixedCosts + hourlyGpuCost);
+      try {
+        const hourlyGpuCost = 12 * hours;
+        const fixedCosts = baseComponents.reduce((acc, component) => {
+          if (component.name !== "GPU") return acc + component.cost;
+          return acc;
+        }, 0);
+        const total = fixedCosts + hourlyGpuCost;
+        
+        // Validate final total
+        if (total > 5000) {
+          toast({
+            title: "Security Alert",
+            description: "Invalid total cost calculation detected",
+            variant: "destructive"
+          });
+          return;
+        }
+        
+        setTotalCost(total);
+      } catch (error) {
+        toast({
+          title: "Calculation Error",
+          description: "An error occurred while calculating the total",
+          variant: "destructive"
+        });
+      }
     };
 
     calculateTotal();
-  }, [hours]);
+  }, [hours, toast]);
 
   return (
     <Card className="w-full max-w-2xl mx-auto backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl">
@@ -63,8 +123,9 @@ export function PlatformBudget() {
               id="hours"
               type="number"
               min="1"
+              max="168"
               value={hours}
-              onChange={(e) => setHours(Math.max(1, parseInt(e.target.value) || 1))}
+              onChange={handleInputChange}
               className="w-20 px-2 py-1 rounded bg-black/30 border border-gray-700 text-white focus:outline-none focus:border-amber-400"
             />
           </div>
