@@ -6,7 +6,6 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { FeedbackBox } from "@/components/FeedbackBox";
 import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
@@ -52,13 +51,8 @@ const Index = () => {
               <ImageGenerator />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="transition-all duration-500 hover:scale-[1.01]">
-                <FAQ />
-              </div>
-              <div className="transition-all duration-500 hover:scale-[1.01]">
-                <FeedbackBox />
-              </div>
+            <div className="transition-all duration-500 hover:scale-[1.01]">
+              <FAQ />
             </div>
 
             <div className="transition-all duration-500 hover:scale-[1.01]">
