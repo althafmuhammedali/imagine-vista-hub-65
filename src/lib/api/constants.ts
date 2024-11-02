@@ -4,15 +4,15 @@ export const API_ENDPOINTS = {
 
 export const API_CONFIG = {
   MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 45000, // 45 seconds - balanced timeout
+  TIMEOUT_DURATION: 45000, // 45 seconds
   INITIAL_RETRY_DELAY: 300,
   RATE_LIMIT: {
     MAX_REQUESTS: 50,
     TIME_WINDOW: 3600000, // 1 hour
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 25, // Increased steps for better quality
-    guidance_scale: 8.5, // Higher guidance scale for better adherence to prompt
+    num_inference_steps: 25,
+    guidance_scale: 8.5,
     scheduler: "DDIMScheduler",
     tiling: false,
     use_safetensors: true,
@@ -20,8 +20,8 @@ export const API_CONFIG = {
       wait_for_model: true,
       use_gpu: true,
       max_memory: {
-        'cuda': 0.9, // Increased GPU memory allocation
-        'cpu': 0.7  // Increased CPU memory allocation
+        'cuda': 0.9,
+        'cpu': 0.7
       },
       torch_compile: true,
       enable_vae_slicing: true,
