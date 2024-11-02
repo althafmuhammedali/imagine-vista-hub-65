@@ -1,17 +1,13 @@
 import { PROMPT_ENHANCERS } from './constants';
 
-export const enhancePrompt = (prompt: string, options = { 
-  quality: true,
-  lighting: true,
-  camera: true,
-  style: true
-}) => {
-  const enhancers = [];
-  
-  if (options.quality) enhancers.push(PROMPT_ENHANCERS.QUALITY);
-  if (options.lighting) enhancers.push(PROMPT_ENHANCERS.LIGHTING);
-  if (options.camera) enhancers.push(PROMPT_ENHANCERS.CAMERA);
-  if (options.style) enhancers.push(PROMPT_ENHANCERS.STYLE);
+export const enhancePrompt = (prompt: string) => {
+  const enhancers = [
+    "masterpiece",
+    "best quality",
+    "highly detailed",
+    "professional",
+    "sharp focus"
+  ];
   
   return `${prompt}, ${enhancers.join(', ')}`;
 };
