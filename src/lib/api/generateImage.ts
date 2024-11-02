@@ -8,7 +8,9 @@ export async function generateImage({
   height = 1024,
   negativePrompt,
 }: GenerateImageParams): Promise<string> {
-  if (!import.meta.env.VITE_HUGGINGFACE_API_KEY) {
+  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
+  
+  if (!apiKey) {
     throw new Error(ERROR_MESSAGES.MISSING_API_KEY);
   }
 
@@ -32,7 +34,7 @@ export async function generateImage({
         const res = await fetch(API_CONFIG.API_URL, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
+            'Authorization': `Bearer ${apiKey.trim()}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -48,8 +50,11 @@ export async function generateImage({
         });
 
         if (!res.ok) {
-          const error = await res.json();
-          throw new Error(error.error || ERROR_MESSAGES.GENERATION_FAILED);
+          const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
+          if (res.status === 401) {
+            throw new Error('Invalid API key. Please check your Hugging Face API key.');
+          }
+          throw new Error(errorData.error || ERROR_MESSAGES.GENERATION_FAILED);
         }
 
         response = await res.blob();
