@@ -5,10 +5,13 @@ export const API_ENDPOINTS = {
 
 export const API_CONFIG = {
   MAX_RETRIES: 3,
-  TIMEOUT_DURATION: 90000, // Reduced from 180s to 90s for faster feedback
-  INITIAL_RETRY_DELAY: 500, // Reduced from 1000ms to 500ms
-  RATE_LIMIT: 10, // Increased from 5 to 10 requests per minute
-  RATE_WINDOW: 60000,
+  TIMEOUT_DURATION: 90000,
+  INITIAL_RETRY_DELAY: 500,
+  RATE_LIMIT: {
+    MAX_REQUESTS: 5, // Maximum requests per time window
+    TIME_WINDOW: 3600000, // 1 hour in milliseconds
+    FREE_TIER_MAX: 5, // Maximum images for free tier users
+  },
   DEFAULT_PARAMS: {
     num_inference_steps: 30, // Optimized for speed while maintaining quality
     guidance_scale: 7.5,
@@ -24,9 +27,14 @@ export const API_CONFIG = {
   }
 };
 
-export const PROMPT_ENHANCERS = {
-  QUALITY: "masterpiece, best quality, highly detailed",
-  LIGHTING: "studio lighting, dramatic lighting",
-  CAMERA: "8k uhd, dslr",
-  STYLE: "trending on artstation"
+export const ERROR_MESSAGES = {
+  RATE_LIMIT_EXCEEDED: "You have reached your image generation limit. Please try again later or upgrade your plan.",
+  MISSING_API_KEY: "API key is missing. Please check your environment variables.",
+  TIMEOUT: "Request timed out. Please try again with a simpler prompt.",
+  EMPTY_PROMPT: "Please enter a prompt before generating.",
+  SHORT_PROMPT: "Prompt must be at least 3 characters long.",
+  GENERATION_FAILED: "Failed to generate image. Please try again.",
+  MODEL_LOADING: "Model is still loading. Please wait...",
+  INVALID_RESPONSE: "Received invalid response from the server.",
+  RATE_LIMIT: "Too many requests. Please wait before trying again.",
 };
