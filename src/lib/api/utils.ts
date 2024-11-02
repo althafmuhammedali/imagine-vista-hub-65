@@ -22,38 +22,3 @@ export const validateDimensions = (width: number, height: number): { width: numb
     height: validateDimension(height)
   };
 };
-
-export const enhancePrompt = (prompt: string): string => {
-  const qualityBoosters = [
-    "masterpiece",
-    "best quality",
-    "highly detailed",
-    "sharp focus",
-    "professional",
-    "8k uhd",
-    "high resolution"
-  ];
-
-  const enhancedPrompt = prompt.toLowerCase().trim();
-  const boosters = qualityBoosters.filter(booster => !enhancedPrompt.includes(booster.toLowerCase()));
-  
-  return boosters.length > 0 ? `${prompt}, ${boosters.join(', ')}` : prompt;
-};
-
-export const enhanceNegativePrompt = (prompt: string): string => {
-  const baseNegative = [
-    "blur",
-    "noise",
-    "jpeg artifacts",
-    "compression artifacts",
-    "watermark",
-    "text",
-    "low quality",
-    "pixelated",
-    "grainy",
-    "distorted",
-    "low resolution"
-  ].join(', ');
-
-  return prompt ? `${prompt}, ${baseNegative}` : baseNegative;
-};

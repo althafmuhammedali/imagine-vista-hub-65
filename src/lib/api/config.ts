@@ -1,20 +1,21 @@
 export const API_CONFIG = {
+  API_URL: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
   MAX_RETRIES: 3,
   TIMEOUT_DURATION: 180000, // 3 minutes
   INITIAL_RETRY_DELAY: 1000,
   RATE_LIMIT: 10,
   RATE_WINDOW: 60000,
   GENERATION_PARAMS: {
-    num_inference_steps: 30, // Optimized for faster generation
-    guidance_scale: 9.5, // Increased for better quality
-    scheduler: "DPMSolverMultistepScheduler", // Best balance of speed and quality
+    num_inference_steps: 30,
+    guidance_scale: 9.5,
+    scheduler: "DPMSolverMultistepScheduler",
     tiling: true,
     use_safetensors: true,
     options: {
       wait_for_model: true,
       use_gpu: true,
       max_memory: {
-        'cuda': 0.99, // Maximum GPU utilization
+        'cuda': 0.99,
         'cpu': 0.8
       },
       torch_compile: true,
@@ -24,11 +25,6 @@ export const API_CONFIG = {
       enable_cuda_graph: true
     }
   }
-};
-
-export const API_ENDPOINTS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
-  FALLBACK: "stabilityai/stable-diffusion-xl-refiner-1.0" // Added SDXL refiner for higher quality
 };
 
 export const ERROR_MESSAGES = {

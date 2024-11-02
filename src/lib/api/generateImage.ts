@@ -1,9 +1,12 @@
-import { HfInference } from '@huggingface/inference';
-import { API_CONFIG, API_ENDPOINTS, ERROR_MESSAGES } from './constants';
+import { API_CONFIG, ERROR_MESSAGES } from './config';
 import { delay, sanitizeInput, validateDimensions } from './utils';
-import type { GenerateImageParams } from './types';
 
-const hf = new HfInference(import.meta.env.VITE_HUGGINGFACE_API_KEY);
+export interface GenerateImageParams {
+  prompt: string;
+  width?: number;
+  height?: number;
+  negativePrompt?: string;
+}
 
 export async function generateImage({
   prompt,
@@ -32,17 +35,30 @@ export async function generateImage({
 
     while (retries < API_CONFIG.MAX_RETRIES) {
       try {
-        response = await hf.textToImage({
-          model: API_ENDPOINTS.PRIMARY,
-          inputs: sanitizedPrompt,
-          parameters: {
-            ...API_CONFIG.GENERATION_PARAMS,
-            width: validatedWidth,
-            height: validatedHeight,
-            negative_prompt: sanitizedNegativePrompt,
+        const res = await fetch(API_CONFIG.API_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
+            'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            inputs: sanitizedPrompt,
+            parameters: {
+              ...API_CONFIG.GENERATION_PARAMS,
+              width: validatedWidth,
+              height: validatedHeight,
+              negative_prompt: sanitizedNegativePrompt,
+            }
+          }),
           signal: controller.signal,
         });
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.error || ERROR_MESSAGES.GENERATION_FAILED);
+        }
+
+        response = await res.blob();
         break;
       } catch (error) {
         retries++;
@@ -55,9 +71,7 @@ export async function generateImage({
       throw new Error(ERROR_MESSAGES.INVALID_RESPONSE);
     }
 
-    const blob = new Blob([response], { type: 'image/png' });
-    return URL.createObjectURL(blob);
-
+    return URL.createObjectURL(response);
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
