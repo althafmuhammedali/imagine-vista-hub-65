@@ -1,4 +1,4 @@
-import { API_CONFIG, ERROR_MESSAGES } from './config';
+import { API_CONFIG, ERROR_MESSAGES, API_ENDPOINTS } from './constants';
 import { delay, sanitizeInput, validateDimensions } from './utils';
 import { GenerateImageParams } from './types';
 
@@ -26,12 +26,20 @@ export async function generateImage({
     const sanitizedPrompt = sanitizeInput(prompt);
     const sanitizedNegativePrompt = negativePrompt ? sanitizeInput(negativePrompt) : undefined;
 
+    // Choose model based on prompt complexity and image size
+    const isComplexPrompt = sanitizedPrompt.length > 100 || sanitizedPrompt.includes("detailed") || sanitizedPrompt.includes("high quality");
+    const isLargeImage = validatedWidth * validatedHeight > 786432; // 1024x768
+    
+    const modelEndpoint = isComplexPrompt || isLargeImage 
+      ? API_ENDPOINTS.PRIMARY  // Use FLUX.1-dev for complex prompts or large images
+      : API_ENDPOINTS.FALLBACK; // Use FLUX.1-schnell for simpler prompts and smaller images
+
     let response;
     let retries = 0;
 
     while (retries < API_CONFIG.MAX_RETRIES) {
       try {
-        const res = await fetch(API_CONFIG.API_URL, {
+        const res = await fetch(`https://api-inference.huggingface.co/models/${modelEndpoint}`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${apiKey.trim()}`,

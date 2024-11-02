@@ -1,6 +1,7 @@
 export const API_ENDPOINTS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
-  FALLBACK: "stabilityai/stable-diffusion-xl-refiner-1.0"
+  PRIMARY: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
+  FALLBACK: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+  BACKUP: "stabilityai/stable-diffusion-xl-base-1.0"
 };
 
 export const API_CONFIG = {
