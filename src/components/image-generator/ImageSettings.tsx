@@ -45,8 +45,6 @@ interface ImageSettingsProps {
   setNegativePrompt: (value: string) => void;
   resolution: string;
   setResolution: (value: string) => void;
-  seed: string;
-  setSeed: (value: string) => void;
   onGenerate: () => void;
   isLoading: boolean;
   resolutions: Array<{ value: string; width: number; height: number; label: string; }>;
@@ -59,8 +57,6 @@ export function ImageSettings({
   setNegativePrompt,
   resolution,
   setResolution,
-  seed,
-  setSeed,
   onGenerate,
   isLoading,
   resolutions,
@@ -108,27 +104,12 @@ export function ImageSettings({
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div>
             <ResolutionSelect
               resolution={resolution}
               setResolution={setResolution}
               resolutions={resolutions}
             />
-
-            <div className="space-y-2 text-left">
-              <Label htmlFor="seed" className="text-white flex items-center gap-2">
-                Seed
-                <span className="text-xs text-gray-400">(Optional)</span>
-              </Label>
-              <Input
-                id="seed"
-                type="number"
-                placeholder="For reproducible results..."
-                value={seed}
-                onChange={(e) => setSeed(e.target.value)}
-                className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
-              />
-            </div>
           </div>
 
           <GenerateButton onGenerate={onGenerate} isLoading={isLoading} />

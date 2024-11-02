@@ -15,7 +15,6 @@ export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
   const [resolution, setResolution] = useState("1:1");
   const [negativePrompt, setNegativePrompt] = useState("");
-  const [seed, setSeed] = useState("");
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
@@ -64,7 +63,6 @@ export function ImageGenerator() {
         width: selectedResolution.width,
         height: selectedResolution.height,
         negativePrompt: negativePrompt.trim(),
-        seed: seed ? parseInt(seed) : undefined,
       };
 
       const imageUrl = await generateImage(params);
@@ -91,7 +89,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, resolution, negativePrompt, seed, generatedImage, queryClient]);
+  }, [prompt, resolution, negativePrompt, generatedImage, queryClient]);
 
   return (
     <div className="container max-w-6xl py-4 space-y-4 px-4 sm:px-6 md:px-8">
@@ -103,8 +101,6 @@ export function ImageGenerator() {
           setNegativePrompt={setNegativePrompt}
           resolution={resolution}
           setResolution={setResolution}
-          seed={seed}
-          setSeed={setSeed}
           onGenerate={handleGenerate}
           isLoading={isLoading}
           resolutions={resolutions}
