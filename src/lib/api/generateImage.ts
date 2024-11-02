@@ -39,9 +39,8 @@ export async function generateImage({
       throw new Error("Failed to generate image - Empty response");
     }
 
-    // Convert the blob to a URL
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
+    // The response is already a Blob, so we can create a URL directly
+    return URL.createObjectURL(response);
 
   } catch (error) {
     if (error instanceof Error) {
