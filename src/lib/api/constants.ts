@@ -4,15 +4,15 @@ export const API_ENDPOINTS = {
 
 export const API_CONFIG = {
   MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 30000, // 30 seconds
+  TIMEOUT_DURATION: 45000, // 45 seconds - balanced timeout
   INITIAL_RETRY_DELAY: 300,
   RATE_LIMIT: {
     MAX_REQUESTS: 50,
     TIME_WINDOW: 3600000, // 1 hour
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 20,
-    guidance_scale: 7.5,
+    num_inference_steps: 25, // Increased steps for better quality
+    guidance_scale: 8.5, // Higher guidance scale for better adherence to prompt
     scheduler: "DDIMScheduler",
     tiling: false,
     use_safetensors: true,
@@ -20,14 +20,14 @@ export const API_CONFIG = {
       wait_for_model: true,
       use_gpu: true,
       max_memory: {
-        'cuda': 0.8,
-        'cpu': 0.6
+        'cuda': 0.9, // Increased GPU memory allocation
+        'cpu': 0.7  // Increased CPU memory allocation
       },
-      torch_compile: false,
+      torch_compile: true,
       enable_vae_slicing: true,
       enable_vae_tiling: false,
-      cross_attention_optimization: false,
-      enable_cuda_graph: false
+      cross_attention_optimization: true,
+      enable_cuda_graph: true
     }
   }
 };
