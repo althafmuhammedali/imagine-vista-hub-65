@@ -1,33 +1,33 @@
 export const API_ENDPOINTS = {
-  PRIMARY: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev"
+  PRIMARY: "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
 };
 
 export const API_CONFIG = {
   MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 60000, // Reduced to 1 minute
-  INITIAL_RETRY_DELAY: 300, // Further reduced retry delay
+  TIMEOUT_DURATION: 30000, // 30 seconds
+  INITIAL_RETRY_DELAY: 300,
   RATE_LIMIT: {
     MAX_REQUESTS: 50,
     TIME_WINDOW: 3600000, // 1 hour
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 15, // Further reduced steps while maintaining quality
-    guidance_scale: 7.0, // Slightly reduced for faster generation
-    scheduler: "DPMSolverMultistepScheduler",
-    tiling: true,
+    num_inference_steps: 20,
+    guidance_scale: 7.5,
+    scheduler: "DDIMScheduler",
+    tiling: false,
     use_safetensors: true,
     options: {
       wait_for_model: true,
       use_gpu: true,
       max_memory: {
-        'cuda': 0.99,
-        'cpu': 0.8
+        'cuda': 0.8,
+        'cpu': 0.6
       },
-      torch_compile: true,
+      torch_compile: false,
       enable_vae_slicing: true,
-      enable_vae_tiling: true,
-      cross_attention_optimization: true,
-      enable_cuda_graph: true
+      enable_vae_tiling: false,
+      cross_attention_optimization: false,
+      enable_cuda_graph: false
     }
   }
 };
