@@ -5,7 +5,7 @@ export const API_ENDPOINTS = {
 
 export const API_CONFIG = {
   MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 180000, // 3 minutes - balanced for speed and quality
+  TIMEOUT_DURATION: 180000, // 3 minutes
   INITIAL_RETRY_DELAY: 1000,
   RATE_LIMIT: {
     MAX_REQUESTS: Infinity,
@@ -13,23 +13,23 @@ export const API_CONFIG = {
     FREE_TIER_MAX: Infinity,
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 100, // Maintaining high quality with 100 steps
-    guidance_scale: 12.0, // Increased for maximum quality
-    scheduler: "EulerAncestralDiscreteScheduler", // Fast high-quality scheduler
-    use_karras_sigmas: true, // Enhanced sampling
-    clip_skip: 2, // Optimal for better prompt understanding
+    num_inference_steps: 100,
+    guidance_scale: 12.0,
+    scheduler: "EulerAncestralDiscreteScheduler",
+    use_karras_sigmas: true,
+    clip_skip: 2,
     tiling: false,
     use_safetensors: true,
     options: {
-      wait_for_model: false, // Don't wait for model loading
+      wait_for_model: false,
       use_gpu: true,
       max_memory: {
-        'free': 0.99, // Using maximum available memory
+        'free': 0.99,
       },
-      enable_cuda_graph: true, // Enable CUDA optimization
-      torch_compile: true, // Enable PyTorch 2.0 compilation
-      enable_vae_slicing: true, // Enable VAE slicing for faster processing
-      enable_vae_tiling: true, // Enable VAE tiling for parallel processing
+      enable_cuda_graph: true,
+      torch_compile: true,
+      enable_vae_slicing: true,
+      enable_vae_tiling: true,
     }
   }
 };
