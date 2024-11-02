@@ -6,30 +6,35 @@ import { Label } from "@/components/ui/label";
 import { PromptExampleCard } from "./prompt-examples/PromptExampleCard";
 import { ResolutionSelect } from "./settings/ResolutionSelect";
 import { GenerateButton } from "./settings/GenerateButton";
+import { PromptSuggestions } from "./PromptSuggestions";
 
 const promptExamples = [
   {
-    category: "Landscapes",
+    category: "Fantasy",
     prompts: [
-      "A serene mountain lake at sunset with snow-capped peaks",
-      "A mystical forest with glowing mushrooms and fireflies",
-      "A dramatic coastal cliff with crashing waves at storm"
+      "A mystical dragon's lair filled with glowing crystals and ancient treasures, digital art style",
+      "A fairy garden at midnight with bioluminescent flowers and tiny floating lanterns"
     ]
   },
   {
-    category: "Characters",
+    category: "Sci-Fi",
     prompts: [
-      "A wise old wizard in flowing robes studying ancient tomes",
-      "A cyberpunk street samurai with neon highlights",
-      "A peaceful druid surrounded by forest animals"
+      "A futuristic neon-lit cyberpunk marketplace with holographic vendors",
+      "A space station observatory with a view of a binary star system"
     ]
   },
   {
-    category: "Fantasy Scenes",
+    category: "Nature",
     prompts: [
-      "A floating castle in the clouds with rainbow bridges",
-      "A dragon's lair filled with golden treasures",
-      "A magical library with books flying between shelves"
+      "An enchanted forest with rays of sunlight filtering through giant mushrooms",
+      "A hidden waterfall oasis in a desert canyon at sunset"
+    ]
+  },
+  {
+    category: "Urban",
+    prompts: [
+      "A cozy rooftop garden cafe in Tokyo during cherry blossom season",
+      "A steampunk-inspired underground subway station with brass and copper details"
     ]
   }
 ];
@@ -87,6 +92,10 @@ export function ImageSettings({
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               className="h-20 sm:h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
+            />
+            <PromptSuggestions 
+              inputText={prompt} 
+              onSuggestionClick={setPrompt}
             />
           </div>
 

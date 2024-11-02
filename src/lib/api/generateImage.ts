@@ -1,6 +1,6 @@
 import { toast } from "@/components/ui/use-toast";
-import { checkRateLimit, getRemainingRequests, getResetTime } from './rateLimit';
-import { API_ENDPOINTS, API_CONFIG } from './config';
+import { checkRateLimit, getRemainingRequests } from './rateLimit';
+import { API_ENDPOINTS, API_CONFIG } from './constants';
 import { delay, sanitizeInput, validateDimensions } from './utils';
 import { enhancePrompt, enhanceNegativePrompt } from './promptEnhancer';
 import type { GenerateImageParams } from './types';
