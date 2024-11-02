@@ -7,6 +7,33 @@ import { PromptExampleCard } from "./prompt-examples/PromptExampleCard";
 import { ResolutionSelect } from "./settings/ResolutionSelect";
 import { GenerateButton } from "./settings/GenerateButton";
 
+const promptExamples = [
+  {
+    category: "Landscapes",
+    prompts: [
+      "A serene mountain lake at sunset with snow-capped peaks",
+      "A mystical forest with glowing mushrooms and fireflies",
+      "A dramatic coastal cliff with crashing waves at storm"
+    ]
+  },
+  {
+    category: "Characters",
+    prompts: [
+      "A wise old wizard in flowing robes studying ancient tomes",
+      "A cyberpunk street samurai with neon highlights",
+      "A peaceful druid surrounded by forest animals"
+    ]
+  },
+  {
+    category: "Fantasy Scenes",
+    prompts: [
+      "A floating castle in the clouds with rainbow bridges",
+      "A dragon's lair filled with golden treasures",
+      "A magical library with books flying between shelves"
+    ]
+  }
+];
+
 interface ImageSettingsProps {
   prompt: string;
   setPrompt: (value: string) => void;
