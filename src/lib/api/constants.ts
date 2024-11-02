@@ -13,7 +13,7 @@ export const API_CONFIG = {
   GENERATION_PARAMS: {
     num_inference_steps: 30,
     guidance_scale: 9.5,
-    scheduler: "EulerAncestralDiscreteScheduler",
+    scheduler: "DPMSolverMultistepScheduler",
     tiling: true,
     use_safetensors: true,
     options: {
@@ -33,12 +33,12 @@ export const API_CONFIG = {
 };
 
 export const ERROR_MESSAGES = {
-  MISSING_API_KEY: "API key is missing. Please check your environment variables.",
-  TIMEOUT: "Request timed out. Please try again with a simpler prompt.",
+  MISSING_API_KEY: "Our servers are experiencing configuration issues. We're working on it!",
+  TIMEOUT: "The request took too long to process. Please try again with a simpler prompt.",
   EMPTY_PROMPT: "Please enter a prompt before generating.",
   SHORT_PROMPT: "Prompt must be at least 3 characters long.",
-  GENERATION_FAILED: "Failed to generate image. Please try again.",
-  MODEL_LOADING: "Model is still loading. Please wait...",
-  INVALID_RESPONSE: "Received invalid response from the server.",
-  RATE_LIMIT: "Too many requests. Please wait before trying again.",
+  GENERATION_FAILED: "Our servers are currently experiencing high load. Please try again in a few minutes.",
+  MODEL_LOADING: "Our servers are warming up. Please try again in a moment...",
+  INVALID_RESPONSE: "Something went wrong on our end. Please try again.",
+  RATE_LIMIT: "You've reached the maximum number of requests. Please wait a moment before trying again.",
 };

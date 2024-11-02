@@ -50,11 +50,11 @@ export async function generateImage({
         });
 
         if (!res.ok) {
-          const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
+          const errorData = await res.json().catch(() => ({ error: ERROR_MESSAGES.INVALID_RESPONSE }));
           if (res.status === 401) {
-            throw new Error('Invalid API key. Please check your Hugging Face API key.');
+            throw new Error(ERROR_MESSAGES.MISSING_API_KEY);
           }
-          throw new Error(errorData.error || ERROR_MESSAGES.GENERATION_FAILED);
+          throw new Error(ERROR_MESSAGES.GENERATION_FAILED);
         }
 
         response = await res.blob();
