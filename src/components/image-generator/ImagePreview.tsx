@@ -1,4 +1,4 @@
-import { ImageIcon, Download } from "lucide-react";
+import { ImageIcon, Download, Upload } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,51 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
     }
   };
 
+  const handleUpload = async () => {
+    if (!generatedImage) return;
+
+    try {
+      toast({
+        title: "Uploading",
+        description: "Please wait while we upload your image...",
+      });
+
+      // Convert base64 URL to blob
+      const response = await fetch(generatedImage);
+      const blob = await response.blob();
+
+      // Create FormData
+      const formData = new FormData();
+      formData.append('image', blob);
+      formData.append('key', '73ffc7abc53c74281c83c278d6a9a82b');
+
+      // Upload to ImgBB
+      const uploadResponse = await fetch('https://api.imgbb.com/1/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await uploadResponse.json();
+
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "Image uploaded successfully! URL copied to clipboard.",
+        });
+        // Copy URL to clipboard
+        await navigator.clipboard.writeText(data.data.url);
+      } else {
+        throw new Error(data.error?.message || 'Upload failed');
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to upload image",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="relative overflow-hidden backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl min-h-[300px] md:min-h-[400px] group transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
       {error && (
@@ -59,14 +104,24 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
             alt="Generated artwork"
             className="w-full h-full object-contain rounded-lg transition-transform duration-500 group-hover:scale-105"
           />
-          <Button
-            onClick={handleDownload}
-            className="absolute bottom-6 right-6 bg-black/50 hover:bg-black/70 backdrop-blur-sm"
-            size="sm"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Download PNG
-          </Button>
+          <div className="absolute bottom-6 right-6 flex gap-2">
+            <Button
+              onClick={handleUpload}
+              className="bg-black/50 hover:bg-black/70 backdrop-blur-sm"
+              size="sm"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Upload
+            </Button>
+            <Button
+              onClick={handleDownload}
+              className="bg-black/50 hover:bg-black/70 backdrop-blur-sm"
+              size="sm"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download
+            </Button>
+          </div>
           <SocialShareButton imageUrl={generatedImage} />
         </div>
       ) : !error && (
