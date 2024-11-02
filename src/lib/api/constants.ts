@@ -3,6 +3,7 @@ export const API_ENDPOINTS = {
 };
 
 export const API_CONFIG = {
+  API_URL: API_ENDPOINTS.PRIMARY,
   MAX_RETRIES: 2,
   TIMEOUT_DURATION: 45000, // 45 seconds
   INITIAL_RETRY_DELAY: 300,
