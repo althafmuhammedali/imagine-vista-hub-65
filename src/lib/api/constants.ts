@@ -1,20 +1,20 @@
 export const API_ENDPOINTS = {
-  PRIMARY: "https://api-inference.huggingface.co/models/muhammedAdnan3/black-forest-labs-FLUX.1-dev"
+  PRIMARY: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell"
 };
 
 export const API_CONFIG = {
   API_URL: API_ENDPOINTS.PRIMARY,
   MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 45000, // 45 seconds
+  TIMEOUT_DURATION: 30000, // Reduced to 30 seconds
   INITIAL_RETRY_DELAY: 300,
   RATE_LIMIT: {
     MAX_REQUESTS: 50,
     TIME_WINDOW: 3600000, // 1 hour
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 25,
-    guidance_scale: 8.5,
-    scheduler: "DDIMScheduler",
+    num_inference_steps: 20, // Reduced from 25 for faster generation
+    guidance_scale: 7.5, // Optimized for speed vs. quality balance
+    scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
     tiling: false,
     use_safetensors: true,
     options: {
