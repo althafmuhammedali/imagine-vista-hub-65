@@ -31,11 +31,10 @@ export async function generateImage({
       model: API_ENDPOINTS.PRIMARY,
       inputs: sanitizedPrompt,
       parameters: {
+        ...API_CONFIG.GENERATION_PARAMS,
         width: validatedWidth,
         height: validatedHeight,
         negative_prompt: sanitizedNegativePrompt,
-        num_inference_steps: API_CONFIG.GENERATION_PARAMS.num_inference_steps,
-        guidance_scale: API_CONFIG.GENERATION_PARAMS.guidance_scale,
       }
     });
 

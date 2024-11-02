@@ -31,6 +31,15 @@ export function ImageGenerator() {
       return;
     }
 
+    if (trimmedPrompt.length < 3) {
+      toast({
+        title: "Error",
+        description: "Prompt must be at least 3 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     setError(undefined);
 
@@ -48,17 +57,19 @@ export function ImageGenerator() {
         prompt: trimmedPrompt,
         width: selectedResolution.width,
         height: selectedResolution.height,
-        negativePrompt: negativePrompt || undefined // Only send if it has a value
+        negativePrompt: negativePrompt.trim() || undefined
       };
 
       const imageUrl = await generateImage(params);
       setGeneratedImage(imageUrl);
 
-      // Prefetch next possible generation
+      // Prefetch next possible generation with optimized settings
       queryClient.prefetchQuery({
         queryKey: ['image', params],
         queryFn: () => generateImage(params),
         staleTime: 5 * 60 * 1000, // 5 minutes
+        gcTime: 10 * 60 * 1000, // 10 minutes
+        retry: 1,
       });
 
       toast({
