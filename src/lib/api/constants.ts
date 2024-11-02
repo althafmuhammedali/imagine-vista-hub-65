@@ -7,8 +7,8 @@ export const API_CONFIG = {
   MAX_RETRIES: 3,
   TIMEOUT_DURATION: 180000, // 3 minutes
   INITIAL_RETRY_DELAY: 1000,
-  RATE_LIMIT: 10, // Increased to 10 requests
-  RATE_WINDOW: 120000, // Changed to 2 minutes
+  RATE_LIMIT: 10, // 10 requests per minute
+  RATE_WINDOW: 60000, // Changed to 1 minute (60000ms)
   DEFAULT_PARAMS: {
     num_inference_steps: 50,
     guidance_scale: 8.5,
