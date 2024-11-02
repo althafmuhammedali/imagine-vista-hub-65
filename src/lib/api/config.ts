@@ -5,24 +5,30 @@ export const API_CONFIG = {
   RATE_LIMIT: 10,
   RATE_WINDOW: 60000,
   GENERATION_PARAMS: {
-    num_inference_steps: 35, // Reduced for faster generation while maintaining quality
-    guidance_scale: 7.5, // Optimized for better balance
-    scheduler: "DPMSolverMultistepScheduler",
-    tiling: false,
+    num_inference_steps: 30, // Optimized for faster generation
+    guidance_scale: 9.5, // Increased for better quality
+    scheduler: "DPMSolverMultistepScheduler", // Best balance of speed and quality
+    tiling: true,
     use_safetensors: true,
     options: {
       wait_for_model: true,
       use_gpu: true,
       max_memory: {
-        'free': 0.95 // Increased memory utilization
-      }
+        'cuda': 0.99, // Maximum GPU utilization
+        'cpu': 0.8
+      },
+      torch_compile: true,
+      enable_vae_slicing: true,
+      enable_vae_tiling: true,
+      cross_attention_optimization: true,
+      enable_cuda_graph: true
     }
   }
 };
 
 export const API_ENDPOINTS = {
   PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
-  FALLBACK: "runwayml/stable-diffusion-v1-5"
+  FALLBACK: "stabilityai/stable-diffusion-xl-refiner-1.0" // Added SDXL refiner for higher quality
 };
 
 export const ERROR_MESSAGES = {
