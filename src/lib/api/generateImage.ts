@@ -1,91 +1,102 @@
-import { API_CONFIG, ERROR_MESSAGES } from './constants';
+import { toast } from "@/components/ui/use-toast";
+import { checkRateLimit, getRemainingRequests, getResetTime } from './rateLimit';
+import { API_ENDPOINTS, API_CONFIG } from './config';
 import { delay, sanitizeInput, validateDimensions } from './utils';
-import { GenerateImageParams } from './types';
+import { enhancePrompt, enhanceNegativePrompt } from './promptEnhancer';
+import type { GenerateImageParams } from './types';
+
+async function retryWithBackoff(fn: () => Promise<Response>): Promise<Response> {
+  for (let i = 0; i < API_CONFIG.MAX_RETRIES; i++) {
+    try {
+      const response = await fn();
+      
+      if (response.status === 503) {
+        const data = await response.json();
+        if (data.error?.includes("is currently loading")) {
+          await delay(Math.min((data.estimated_time || 10) * 1000, 15000));
+          continue;
+        }
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to generate image");
+      }
+
+      return response;
+    } catch (error) {
+      if (i === API_CONFIG.MAX_RETRIES - 1) throw error;
+      await delay(API_CONFIG.INITIAL_RETRY_DELAY * Math.pow(2, i));
+    }
+  }
+  throw new Error("Failed after maximum retries");
+}
 
 export async function generateImage({
   prompt,
   width = 1024,
   height = 1024,
-  negativePrompt,
+  negativePrompt = "",
+  seed,
 }: GenerateImageParams): Promise<string> {
   const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error(ERROR_MESSAGES.MISSING_API_KEY);
+  if (!apiKey) throw new Error("Missing API key");
+
+  const userId = localStorage.getItem('userId') || 'anonymous';
+  if (!checkRateLimit(userId)) {
+    const resetTime = Math.ceil((getResetTime(userId)! - Date.now()) / 60000);
+    throw new Error(`Rate limit exceeded. Please wait ${resetTime} minute(s).`);
   }
 
-  if (!prompt || prompt.trim().length < 3) {
-    throw new Error(ERROR_MESSAGES.SHORT_PROMPT);
-  }
+  const remaining = getRemainingRequests(userId);
+  toast({
+    title: "Generating Image",
+    description: `${remaining} generations remaining this minute.`,
+  });
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT_DURATION);
 
   try {
     const { width: validatedWidth, height: validatedHeight } = validateDimensions(width, height);
-    const sanitizedPrompt = sanitizeInput(prompt);
-    const sanitizedNegativePrompt = negativePrompt ? sanitizeInput(negativePrompt) : undefined;
+    const enhancedPrompt = enhancePrompt(sanitizeInput(prompt));
+    const enhancedNegativePrompt = enhanceNegativePrompt(sanitizeInput(negativePrompt));
 
-    let response;
-    let retries = 0;
-
-    while (retries < API_CONFIG.MAX_RETRIES) {
-      try {
-        const res = await fetch(API_CONFIG.API_URL, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${apiKey.trim()}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            inputs: sanitizedPrompt,
-            parameters: {
-              ...API_CONFIG.GENERATION_PARAMS,
-              width: validatedWidth,
-              height: validatedHeight,
-              negative_prompt: sanitizedNegativePrompt,
-            }
-          }),
-          signal: controller.signal,
-        });
-
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({ error: ERROR_MESSAGES.INVALID_RESPONSE }));
-          
-          if (res.status === 503) {
-            throw new Error(ERROR_MESSAGES.MODEL_LOADING);
+    const makeRequest = (modelId: string) => fetch(
+      `https://api-inference.huggingface.co/models/${modelId}`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+          "X-Request-ID": crypto.randomUUID(),
+        },
+        body: JSON.stringify({
+          inputs: enhancedPrompt,
+          parameters: {
+            negative_prompt: enhancedNegativePrompt,
+            width: validatedWidth,
+            height: validatedHeight,
+            seed: seed || Math.floor(Math.random() * 1000000),
+            num_images_per_prompt: 1,
+            ...API_CONFIG.DEFAULT_PARAMS
           }
-          
-          if (res.status === 429) {
-            throw new Error(ERROR_MESSAGES.RATE_LIMIT);
-          }
-          
-          throw new Error(errorData.error || ERROR_MESSAGES.GENERATION_FAILED);
-        }
-
-        response = await res.blob();
-        break;
-      } catch (error) {
-        if (error instanceof Error && error.name === 'AbortError') {
-          throw new Error(ERROR_MESSAGES.TIMEOUT);
-        }
-        
-        retries++;
-        if (retries === API_CONFIG.MAX_RETRIES) throw error;
-        await delay(API_CONFIG.INITIAL_RETRY_DELAY * Math.pow(2, retries - 1));
+        }),
+        signal: controller.signal
       }
-    }
+    );
 
-    if (!response) {
-      throw new Error(ERROR_MESSAGES.INVALID_RESPONSE);
-    }
-
-    return URL.createObjectURL(response);
+    const response = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.PRIMARY));
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
   } catch (error) {
     if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out - please try again');
+      }
       throw error;
     }
-    throw new Error(ERROR_MESSAGES.GENERATION_FAILED);
+    throw new Error('Failed to generate image');
   } finally {
     clearTimeout(timeoutId);
   }

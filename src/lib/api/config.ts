@@ -1,8 +1,3 @@
-export const API_ENDPOINTS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
-  FALLBACK: "runwayml/stable-diffusion-v1-5",
-};
-
 export const API_CONFIG = {
   MAX_RETRIES: 3,
   TIMEOUT_DURATION: 90000, // Reduced from 180s to 90s for faster feedback
@@ -24,9 +19,7 @@ export const API_CONFIG = {
   }
 };
 
-export const PROMPT_ENHANCERS = {
-  QUALITY: "masterpiece, best quality, highly detailed",
-  LIGHTING: "studio lighting, dramatic lighting",
-  CAMERA: "8k uhd, dslr",
-  STYLE: "trending on artstation"
+export const API_ENDPOINTS = {
+  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
+  FALLBACK: "runwayml/stable-diffusion-v1-5",
 };

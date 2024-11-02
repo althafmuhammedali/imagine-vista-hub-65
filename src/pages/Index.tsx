@@ -6,16 +6,16 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { Sparkles, Rocket, Star, Gem, Infinity, Heart, Award } from "lucide-react";
+import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a] animate-gradient-x">
       <Alert className="rounded-none border-none bg-amber-500/10 backdrop-blur-sm">
-        <Rocket className="h-4 w-4 text-amber-400" />
+        <Info className="h-4 w-4 text-amber-400" />
         <AlertDescription className="text-amber-200">
-          Experience next-gen AI art creation with our unique prompting style and advanced features
+          This platform's prompt generation is heavily influenced by our unique prompting style
         </AlertDescription>
       </Alert>
       
@@ -24,29 +24,29 @@ const Index = () => {
         <div className="container max-w-6xl py-4 sm:py-6 md:py-12 px-4 sm:px-6 lg:px-8">
           <div className="space-y-4 md:space-y-6 text-center mb-6 sm:mb-8 md:mb-16 animate-fade-in">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Gem className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold tracking-tighter bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent animate-gradient-x">
                 ComicForge AI
               </h1>
-              <Gem className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
             </div>
             
             <div className="flex flex-col items-center justify-center gap-4">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 my-6">
                 <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
-                  <Infinity className="w-6 h-6 text-amber-400" />
-                  <span className="text-sm text-gray-400">Unlimited Creativity</span>
+                  <Shield className="w-6 h-6 text-amber-400" />
+                  <span className="text-sm text-gray-400">Secure Platform</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
                   <Star className="w-6 h-6 text-amber-400" />
                   <span className="text-sm text-gray-400">Premium Quality</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
-                  <Rocket className="w-6 h-6 text-amber-400" />
-                  <span className="text-sm text-gray-400">Next-Gen AI</span>
+                  <Briefcase className="w-6 h-6 text-amber-400" />
+                  <span className="text-sm text-gray-400">Professional Tools</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
-                  <Sparkles className="w-6 h-6 text-amber-400" />
+                  <Zap className="w-6 h-6 text-amber-400" />
                   <span className="text-sm text-gray-400">Fast Generation</span>
                 </div>
               </div>
@@ -62,24 +62,22 @@ const Index = () => {
               </div>
               
               <a 
-                href={`https://www.producthunt.com/posts/comicforgeai?api_key=${import.meta.env.VITE_PRODUCTHUNT_API_KEY}`}
-                target="_blank"
+                href="https://www.producthunt.com/posts/comicforgeai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-comicforgeai" 
+                target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-block hover:opacity-90 transition-opacity"
+                className="hover:opacity-90 transition-opacity transform hover:scale-105"
               >
                 <img 
-                  src={`https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=564210&theme=light&period=daily&api_key=${import.meta.env.VITE_PRODUCTHUNT_API_KEY}`}
-                  alt="ComicForge AI - Create professional 40K AI art & images instantly | Product Hunt"
-                  width={250}
-                  height={54}
-                  className="w-[250px] h-[54px]"
-                  loading="lazy"
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=564210&theme=light" 
+                  alt="ComicForgeAi - Let your imagination run wild and create stunning artwork | Product Hunt" 
+                  width="250" 
+                  height="54" 
+                  className="shadow-lg rounded"
                 />
               </a>
             </div>
-
             <p className="text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed text-gray-400 px-4">
-              Experience the future of AI art creation with our enterprise-grade technology. Unlike other platforms, we offer advanced features like custom negative prompts, seed control, and AI-assisted creativity.
+              Transform your creative vision into stunning masterpieces with our enterprise-grade AI technology
             </p>
           </div>
 
