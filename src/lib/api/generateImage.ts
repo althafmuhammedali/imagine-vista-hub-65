@@ -23,11 +23,15 @@ export async function generateImage({
     const enhancedPrompt = enhancePrompt(sanitizeInput(prompt));
     const enhancedNegativePrompt = enhanceNegativePrompt(sanitizeInput(negativePrompt));
 
+    // Combine positive and negative prompts for FLUX.1-dev model
+    const combinedPrompt = negativePrompt 
+      ? `${enhancedPrompt} ### ${enhancedNegativePrompt}`
+      : enhancedPrompt;
+
     const response = await hf.textToImage({
       model: API_ENDPOINTS.PRIMARY,
-      inputs: enhancedPrompt,
+      inputs: combinedPrompt,
       parameters: {
-        negative_prompt: enhancedNegativePrompt,
         width: validatedWidth,
         height: validatedHeight,
         num_inference_steps: API_CONFIG.GENERATION_PARAMS.num_inference_steps,
