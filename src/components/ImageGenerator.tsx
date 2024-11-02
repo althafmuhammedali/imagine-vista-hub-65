@@ -20,51 +20,9 @@ export function ImageGenerator() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
-  const [requestCount, setRequestCount] = useState(0);
-  const [lastRequestTime, setLastRequestTime] = useState(Date.now());
   const queryClient = useQueryClient();
-  const { user } = useUser();
-
-  useEffect(() => {
-    const storedCount = localStorage.getItem('imageRequestCount');
-    const storedTime = localStorage.getItem('lastRequestTime');
-    
-    if (storedCount && storedTime) {
-      const timeDiff = Date.now() - parseInt(storedTime);
-      if (timeDiff < API_CONFIG.RATE_LIMIT.TIME_WINDOW) {
-        setRequestCount(parseInt(storedCount));
-        setLastRequestTime(parseInt(storedTime));
-      } else {
-        // Reset if time window has passed
-        localStorage.setItem('imageRequestCount', '0');
-        localStorage.setItem('lastRequestTime', Date.now().toString());
-        setRequestCount(0);
-        setLastRequestTime(Date.now());
-      }
-    }
-  }, []);
-
-  const checkRateLimit = useCallback(() => {
-    const timeDiff = Date.now() - lastRequestTime;
-    const isWithinWindow = timeDiff < API_CONFIG.RATE_LIMIT.TIME_WINDOW;
-    const maxRequests = user?.publicMetadata?.isPremium 
-      ? Infinity 
-      : API_CONFIG.RATE_LIMIT.FREE_TIER_MAX;
-
-    if (isWithinWindow && requestCount >= maxRequests) {
-      toast({
-        title: "Rate Limit Exceeded",
-        description: "You have reached your image generation limit. Please upgrade your plan for unlimited generations.",
-        variant: "destructive",
-      });
-      return false;
-    }
-    return true;
-  }, [requestCount, lastRequestTime, user?.publicMetadata?.isPremium]);
 
   const handleGenerate = useCallback(async () => {
-    if (!checkRateLimit()) return;
-
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt) {
       toast({
@@ -106,13 +64,6 @@ export function ImageGenerator() {
 
       const imageUrl = await generateImage(params);
       setGeneratedImage(imageUrl);
-      
-      // Update rate limit counters
-      const newCount = requestCount + 1;
-      setRequestCount(newCount);
-      setLastRequestTime(Date.now());
-      localStorage.setItem('imageRequestCount', newCount.toString());
-      localStorage.setItem('lastRequestTime', Date.now().toString());
 
       queryClient.prefetchQuery({
         queryKey: ['image', { ...params, prompt: trimmedPrompt + " detailed" }],
@@ -134,7 +85,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, resolution, negativePrompt, generatedImage, queryClient, checkRateLimit, requestCount]);
+  }, [prompt, resolution, negativePrompt, generatedImage, queryClient]);
 
   return (
     <div className="container max-w-6xl py-2 sm:py-4 md:py-6 space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">

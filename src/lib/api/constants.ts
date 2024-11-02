@@ -8,9 +8,9 @@ export const API_CONFIG = {
   TIMEOUT_DURATION: 90000,
   INITIAL_RETRY_DELAY: 500,
   RATE_LIMIT: {
-    MAX_REQUESTS: 5,
+    MAX_REQUESTS: Infinity, // Changed to Infinity to remove limits
     TIME_WINDOW: 3600000, // 1 hour in milliseconds
-    FREE_TIER_MAX: 5,
+    FREE_TIER_MAX: Infinity, // Changed to Infinity to remove limits
   },
   GENERATION_PARAMS: {
     num_inference_steps: 30,
@@ -28,7 +28,6 @@ export const API_CONFIG = {
 };
 
 export const ERROR_MESSAGES = {
-  RATE_LIMIT_EXCEEDED: "You have reached your image generation limit. Please try again later or upgrade your plan.",
   MISSING_API_KEY: "API key is missing. Please check your environment variables.",
   TIMEOUT: "Request timed out. Please try again with a simpler prompt.",
   EMPTY_PROMPT: "Please enter a prompt before generating.",
