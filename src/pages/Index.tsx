@@ -6,7 +6,7 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { Sparkles, Rocket, Star, Gem, Infinity } from "lucide-react";
+import { Sparkles, Rocket, Star, Gem, Infinity, Heart, Award } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Index = () => {
