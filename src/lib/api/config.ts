@@ -1,6 +1,5 @@
 export const MODELS = {
-  PRIMARY: "runwayml/stable-diffusion-v1-5", // Free model
-  FALLBACK: "CompVis/stable-diffusion-v1-4", // Free backup model
+  PRIMARY: "black-forest-labs/FLUX.1-schnell", // Only using the primary model now
 };
 
 export const MAX_RETRIES = 3;

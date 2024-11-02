@@ -62,8 +62,8 @@ export async function generateImage({
     const enhancedPrompt = enhancePrompt(sanitizeInput(prompt));
     const enhancedNegativePrompt = enhanceNegativePrompt(sanitizeInput(negativePrompt));
 
-    const makeRequest = (modelId: string) => fetch(
-      `https://api-inference.huggingface.co/models/${modelId}`,
+    const makeRequest = () => fetch(
+      `https://api-inference.huggingface.co/models/${API_ENDPOINTS.PRIMARY}`,
       {
         method: "POST",
         headers: {
@@ -86,7 +86,7 @@ export async function generateImage({
       }
     );
 
-    const response = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.PRIMARY));
+    const response = await retryWithBackoff(makeRequest);
     const blob = await response.blob();
     return URL.createObjectURL(blob);
   } catch (error) {
