@@ -13,3 +13,21 @@ export const validateDimensions = (width: number, height: number): { width: numb
     height: Math.min(Math.max(height, 256), 1024)
   };
 };
+
+export const enhancePrompt = (prompt: string): string => {
+  const qualityBoosters = [
+    "masterpiece",
+    "best quality",
+    "highly detailed",
+    "sharp focus",
+    "professional",
+    "8k uhd",
+    "high resolution"
+  ];
+  return `${prompt}, ${qualityBoosters.join(', ')}`;
+};
+
+export const enhanceNegativePrompt = (prompt: string): string => {
+  const baseNegative = "blur, noise, jpeg artifacts, compression artifacts, watermark, text, low quality, pixelated, grainy, distorted, low resolution";
+  return prompt ? `${prompt}, ${baseNegative}` : baseNegative;
+};

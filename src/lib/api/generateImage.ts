@@ -1,8 +1,6 @@
 import { toast } from "@/components/ui/use-toast";
-import { checkRateLimit, getRemainingRequests, getResetTime } from './rateLimit';
-import { API_ENDPOINTS, API_CONFIG } from './config';
-import { delay, sanitizeInput, validateDimensions } from './utils';
-import { enhancePrompt, enhanceNegativePrompt } from './promptEnhancer';
+import { API_CONFIG, API_ENDPOINTS } from './config';
+import { delay, sanitizeInput, validateDimensions, enhancePrompt, enhanceNegativePrompt } from './utils';
 import type { GenerateImageParams } from './types';
 
 async function retryWithBackoff(fn: () => Promise<Response>): Promise<Response> {
@@ -41,18 +39,6 @@ export async function generateImage({
   const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
   if (!apiKey) throw new Error("Missing API key");
 
-  const userId = localStorage.getItem('userId') || 'anonymous';
-  if (!checkRateLimit(userId)) {
-    const resetTime = Math.ceil((getResetTime(userId)! - Date.now()) / 60000);
-    throw new Error(`Rate limit exceeded. Please wait ${resetTime} minute(s).`);
-  }
-
-  const remaining = getRemainingRequests(userId);
-  toast({
-    title: "Generating Image",
-    description: `${remaining} generations remaining this minute.`,
-  });
-
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT_DURATION);
 
@@ -76,31 +62,32 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: validatedWidth,
             height: validatedHeight,
-            num_inference_steps: 50, // Increased from 30 for better quality
-            guidance_scale: 8.5, // Increased from 7.5 for better adherence to prompt
-            scheduler: "DPMSolverMultistepScheduler",
-            num_images_per_prompt: 1,
-            use_karras_sigmas: true,
-            clip_skip: 1, // Changed from 2 for better quality
-            tiling: false,
-            use_safetensors: true,
-            options: {
-              wait_for_model: true,
-              use_gpu: true
-            }
+            ...API_CONFIG.GENERATION_PARAMS
           }
         }),
         signal: controller.signal
       }
     );
 
-    const response = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.PRIMARY));
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
+    try {
+      const response = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.PRIMARY));
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
+    } catch (primaryError) {
+      console.error("Primary model error:", primaryError);
+      toast({
+        title: "Switching to backup model",
+        description: "Please wait while we try an alternative model...",
+      });
+      
+      const response = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.FALLBACK));
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
+    }
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        throw new Error('Request timed out - please try again');
+        throw new Error('Request timed out - please try again with a simpler prompt');
       }
       throw error;
     }
