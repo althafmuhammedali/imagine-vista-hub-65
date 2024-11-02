@@ -62,13 +62,13 @@ const Index = () => {
               </div>
               
               <a 
-                href="https://www.producthunt.com/posts/comicforgeai"
+                href={`https://www.producthunt.com/posts/comicforgeai?api_key=${import.meta.env.VITE_PRODUCTHUNT_API_KEY}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block hover:opacity-90 transition-opacity"
               >
                 <img 
-                  src={`https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=564210&theme=light&period=daily`}
+                  src={`https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=564210&theme=light&period=daily&api_key=${import.meta.env.VITE_PRODUCTHUNT_API_KEY}`}
                   alt="ComicForge AI - Create professional 40K AI art & images instantly | Product Hunt"
                   width={250}
                   height={54}
@@ -86,27 +86,27 @@ const Index = () => {
           <div className="space-y-8 sm:space-y-12 md:space-y-16 lg:space-y-20">
             <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
               <ImageGenerator />
-              </div>
+            </div>
 
-              <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-                <FAQ />
-              </div>
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+              <FAQ />
+            </div>
 
-              <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-                <Documentation />
-              </div>
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+              <Documentation />
+            </div>
 
-              <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-                <PlatformBudget />
-              </div>
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+              <PlatformBudget />
+            </div>
 
-              <div>
-                <SocialLinks />
-              </div>
+            <div>
+              <SocialLinks />
             </div>
           </div>
-          <ChatBot />
         </div>
+        <ChatBot />
+      </div>
       <DynamicAdDisplay />
     </div>
   );
