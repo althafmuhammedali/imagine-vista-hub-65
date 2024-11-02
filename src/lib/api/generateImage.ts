@@ -1,5 +1,5 @@
 import { toast } from "@/components/ui/use-toast";
-import { API_CONFIG, API_ENDPOINTS } from './config';
+import { API_CONFIG, API_ENDPOINTS } from './constants';
 import { delay, sanitizeInput, validateDimensions, enhancePrompt, enhanceNegativePrompt } from './utils';
 import type { GenerateImageParams } from './types';
 
@@ -13,6 +13,10 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries: number 
       if (response.status === 503) {
         const data = await response.json();
         if (data.error?.includes("is currently loading")) {
+          toast({
+            title: "Model Loading",
+            description: "Please wait while the model loads...",
+          });
           const waitTime = Math.min((data.estimated_time || 10) * 1000, 15000);
           await delay(waitTime);
           continue;
@@ -28,6 +32,12 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries: number 
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
       if (i === maxRetries - 1) break;
+      
+      toast({
+        title: "Retrying",
+        description: `Attempt ${i + 1} of ${maxRetries}...`,
+      });
+      
       await delay(API_CONFIG.INITIAL_RETRY_DELAY * Math.pow(2, i));
     }
   }

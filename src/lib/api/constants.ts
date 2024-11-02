@@ -8,14 +8,14 @@ export const API_CONFIG = {
   TIMEOUT_DURATION: 90000,
   INITIAL_RETRY_DELAY: 500,
   RATE_LIMIT: {
-    MAX_REQUESTS: 5, // Maximum requests per time window
+    MAX_REQUESTS: 5,
     TIME_WINDOW: 3600000, // 1 hour in milliseconds
-    FREE_TIER_MAX: 5, // Maximum images for free tier users
+    FREE_TIER_MAX: 5,
   },
-  DEFAULT_PARAMS: {
-    num_inference_steps: 30, // Optimized for speed while maintaining quality
+  GENERATION_PARAMS: {
+    num_inference_steps: 30,
     guidance_scale: 7.5,
-    scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
+    scheduler: "EulerAncestralDiscreteScheduler",
     use_karras_sigmas: true,
     clip_skip: 2,
     tiling: false,

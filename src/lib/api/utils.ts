@@ -59,21 +59,3 @@ export const enhanceNegativePrompt = (prompt: string): string => {
 
   return prompt ? `${prompt}, ${baseNegative}` : baseNegative;
 };
-
-export const isValidApiKey = (key: string | undefined): boolean => {
-  return typeof key === 'string' && key.length > 0;
-};
-
-export const validatePrompt = (prompt: string): { isValid: boolean; error?: string } => {
-  const trimmedPrompt = prompt.trim();
-  
-  if (!trimmedPrompt) {
-    return { isValid: false, error: 'Please enter a prompt' };
-  }
-  
-  if (trimmedPrompt.length < 3) {
-    return { isValid: false, error: 'Prompt must be at least 3 characters long' };
-  }
-  
-  return { isValid: true };
-};
