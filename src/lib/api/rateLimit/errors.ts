@@ -5,3 +5,10 @@ export class RateLimitError extends Error {
     this.name = 'RateLimitError';
   }
 }
+
+export class ModelBusyError extends Error {
+  constructor() {
+    super("Model too busy, unable to get response in less than 60 second(s)");
+    this.name = 'ModelBusyError';
+  }
+}

@@ -39,6 +39,18 @@ export async function generateImage({
 
   if (!response.ok) {
     if (response.status === 429) {
+      const errorData = await response.json();
+      const isBusy = errorData.error?.includes("loading") || errorData.estimated_time > 60;
+      
+      if (isBusy) {
+        toast({
+          title: "Model Busy",
+          description: "Model too busy, unable to get response in less than 60 second(s)",
+          variant: "destructive",
+        });
+        throw new Error("Model too busy, unable to get response in less than 60 second(s)");
+      }
+      
       toast({
         title: "Rate Limit Exceeded",
         description: "Please wait before making more requests.",
