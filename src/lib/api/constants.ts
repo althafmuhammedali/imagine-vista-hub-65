@@ -7,12 +7,12 @@ export const API_CONFIG = {
   MAX_RETRIES: 3,
   TIMEOUT_DURATION: 180000, // 3 minutes
   INITIAL_RETRY_DELAY: 1000,
-  RATE_LIMIT: 5, // Reduced to 5 requests per minute for stability
-  RATE_WINDOW: 60000,
+  RATE_LIMIT: 10, // Increased to 10 requests
+  RATE_WINDOW: 120000, // Changed to 2 minutes
   DEFAULT_PARAMS: {
-    num_inference_steps: 50, // Increased for better quality
-    guidance_scale: 8.5, // Increased for better adherence to prompt
-    scheduler: "DPMSolverMultistepScheduler", // Better scheduler
+    num_inference_steps: 50,
+    guidance_scale: 8.5,
+    scheduler: "DPMSolverMultistepScheduler",
     use_karras_sigmas: true,
     clip_skip: 2,
     tiling: false,
