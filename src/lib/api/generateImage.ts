@@ -1,12 +1,6 @@
 import { API_CONFIG, ERROR_MESSAGES } from './config';
 import { delay, sanitizeInput, validateDimensions } from './utils';
-
-export interface GenerateImageParams {
-  prompt: string;
-  width?: number;
-  height?: number;
-  negativePrompt?: string;
-}
+import { GenerateImageParams } from './types';
 
 export async function generateImage({
   prompt,
