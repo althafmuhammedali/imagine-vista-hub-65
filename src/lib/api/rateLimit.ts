@@ -19,7 +19,7 @@ export const checkRateLimit = (userId: string): boolean => {
   }
 
   // Check if limit exceeded
-  if (userLimit.count >= 10) { // Increased to 10 requests per minute
+  if (userLimit.count >= 5) { // Reduced to 5 requests per minute
     return false;
   }
 
@@ -34,10 +34,10 @@ export const getRemainingRequests = (userId: string): number => {
   const userLimit = rateLimitStore.get(userId);
   
   if (!userLimit || now > userLimit.resetTime) {
-    return 10; // Increased limit
+    return 5; // Maximum requests per minute
   }
   
-  return Math.max(0, 10 - userLimit.count);
+  return Math.max(0, 5 - userLimit.count);
 };
 
 export const getResetTime = (userId: string): number | null => {

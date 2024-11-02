@@ -1,5 +1,7 @@
 import { API_CONFIG, getAuthHeaders } from './config';
 import { ApiError, AuthenticationError } from './errors';
+import { enhancePrompt, enhanceNegativePrompt } from './promptEnhancer';
+import { checkRateLimit } from './rateLimit';
 import type { GenerateImageParams } from './types';
 
 export async function generateImage({
@@ -8,7 +10,16 @@ export async function generateImage({
   height = 1024,
   negativePrompt = "",
 }: GenerateImageParams): Promise<string> {
+  const userId = localStorage.getItem('userId') || 'anonymous';
+  
+  if (!checkRateLimit(userId)) {
+    throw new ApiError('Rate limit exceeded. Please wait a minute before trying again.');
+  }
+
   try {
+    const enhancedPrompt = enhancePrompt(prompt);
+    const enhancedNegativePrompt = enhanceNegativePrompt(negativePrompt);
+
     const response = await fetch(API_CONFIG.BASE_URL, {
       method: "POST",
       headers: {
@@ -16,20 +27,13 @@ export async function generateImage({
         ...getAuthHeaders(),
       },
       body: JSON.stringify({
-        inputs: prompt,
+        inputs: enhancedPrompt,
         parameters: {
-          negative_prompt: negativePrompt,
+          ...API_CONFIG.DEFAULT_PARAMS,
+          negative_prompt: enhancedNegativePrompt,
           width,
           height,
-          num_inference_steps: 30,
-          guidance_scale: 7.5,
-          scheduler: "EulerAncestralDiscreteScheduler",
-          num_images_per_prompt: 1,
         },
-        options: {
-          wait_for_model: true,
-          use_gpu: true,
-        }
       }),
     });
 
@@ -39,7 +43,7 @@ export async function generateImage({
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-      throw new ApiError(error.error || 'Failed to generate image', response.status);
+      throw new ApiError(error.error || 'Failed to generate image');
     }
 
     const blob = await response.blob();
