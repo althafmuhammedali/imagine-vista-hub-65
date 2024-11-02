@@ -1,9 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { generateImage, GenerateImageParams } from "@/lib/api";
 import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImagePreview } from "./image-generator/ImagePreview";
 import { useQueryClient } from "@tanstack/react-query";
+import { Progress } from "@/components/ui/progress";
 
 const resolutions = [
   { value: "1:1", width: 1024, height: 1024, label: "Square" },
@@ -18,7 +19,16 @@ export function ImageGenerator() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const [processingTime, setProcessingTime] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const progressInterval = useRef<NodeJS.Timeout>();
+  const startTime = useRef<number>(0);
   const queryClient = useQueryClient();
+
+  const updateProgress = useCallback(() => {
+    setProcessingTime((Date.now() - startTime.current) / 1000);
+    setProgress((prev) => Math.min(prev + 2, 95)); // Increment progress but cap at 95%
+  }, []);
 
   const handleGenerate = useCallback(async () => {
     const trimmedPrompt = prompt.trim();
@@ -42,6 +52,12 @@ export function ImageGenerator() {
 
     setIsLoading(true);
     setError(undefined);
+    setProgress(0);
+    setProcessingTime(0);
+    startTime.current = Date.now();
+
+    // Start progress updates
+    progressInterval.current = setInterval(updateProgress, 100);
 
     try {
       if (generatedImage) {
@@ -62,19 +78,20 @@ export function ImageGenerator() {
 
       const imageUrl = await generateImage(params);
       setGeneratedImage(imageUrl);
+      setProgress(100);
 
-      // Prefetch next possible generation with optimized settings
+      // Prefetch next possible generation
       queryClient.prefetchQuery({
         queryKey: ['image', params],
         queryFn: () => generateImage(params),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        gcTime: 10 * 60 * 1000, // 10 minutes
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
         retry: 1,
       });
 
       toast({
         title: "Success",
-        description: "Image generated successfully!",
+        description: `Image generated in ${(Date.now() - startTime.current) / 1000}s!`,
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to generate image";
@@ -85,9 +102,10 @@ export function ImageGenerator() {
         variant: "destructive",
       });
     } finally {
+      clearInterval(progressInterval.current);
       setIsLoading(false);
     }
-  }, [prompt, resolution, negativePrompt, generatedImage, queryClient]);
+  }, [prompt, resolution, negativePrompt, generatedImage, queryClient, updateProgress]);
 
   return (
     <div className="container max-w-6xl py-2 sm:py-4 md:py-6 space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">
@@ -104,6 +122,14 @@ export function ImageGenerator() {
             isLoading={isLoading}
             resolutions={resolutions}
           />
+          {isLoading && (
+            <div className="mt-4 space-y-2">
+              <Progress value={progress} className="h-2" />
+              <p className="text-sm text-gray-500 text-center">
+                Processing... {processingTime.toFixed(1)}s
+              </p>
+            </div>
+          )}
         </div>
         <div className="order-1 lg:order-2">
           <ImagePreview
