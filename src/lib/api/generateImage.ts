@@ -9,14 +9,12 @@ export async function generateImage({
   negativePrompt = "",
 }: GenerateImageParams): Promise<string> {
   try {
-    const headers = {
-      ...API_CONFIG.HEADERS,
-      ...getAuthHeaders(),
-    };
-
     const response = await fetch(API_CONFIG.BASE_URL, {
       method: "POST",
-      headers,
+      headers: {
+        ...API_CONFIG.HEADERS,
+        ...getAuthHeaders(),
+      },
       body: JSON.stringify({
         inputs: prompt,
         parameters: {
