@@ -1,5 +1,5 @@
 export const API_ENDPOINTS = {
-  PRIMARY: "gokaygokay/Flux-Game-Assets-LoRA-v2",
+  PRIMARY: "black-forest-labs/FLUX.1-schnell",
   FALLBACK: "runwayml/stable-diffusion-v1-5",
 };
 
