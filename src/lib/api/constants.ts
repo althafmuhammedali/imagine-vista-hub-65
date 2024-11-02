@@ -1,30 +1,30 @@
 export const API_ENDPOINTS = {
-  PRIMARY: "black-forest-labs/FLUX.1-dev",
+  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
   FALLBACK: "runwayml/stable-diffusion-v1-5"
 };
 
 export const API_CONFIG = {
-  MAX_RETRIES: 1, // Reduced retries to speed up error responses
-  TIMEOUT_DURATION: 20000, // Further reduced timeout to 20 seconds
-  INITIAL_RETRY_DELAY: 100, // Faster retry attempts
+  MAX_RETRIES: 2,
+  TIMEOUT_DURATION: 30000, // Increased to 30 seconds for better quality
+  INITIAL_RETRY_DELAY: 1000,
   RATE_LIMIT: {
     MAX_REQUESTS: Infinity,
     TIME_WINDOW: 3600000,
     FREE_TIER_MAX: Infinity,
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 8, // Reduced steps for faster generation
-    guidance_scale: 7.0, // Slightly reduced for speed
-    scheduler: "LMSDiscreteScheduler", // Even faster scheduler
-    use_karras_sigmas: false, // Disabled for speed
-    clip_skip: 1, // Reduced for speed
+    num_inference_steps: 30, // Increased steps for better quality
+    guidance_scale: 8.5, // Increased for more prompt adherence
+    scheduler: "DPMSolverMultistepScheduler", // Better quality scheduler
+    use_karras_sigmas: true, // Enabled for improved quality
+    clip_skip: 2, // Adjusted for better prompt understanding
     tiling: false,
     use_safetensors: true,
     options: {
-      wait_for_model: false,
+      wait_for_model: true,
       use_gpu: true,
       max_memory: {
-        'free': 0.8, // Use 80% of available memory for faster processing
+        'free': 0.9, // Using more memory for better quality
       }
     }
   }
