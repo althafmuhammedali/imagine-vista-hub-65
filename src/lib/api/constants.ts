@@ -5,7 +5,7 @@ export const API_ENDPOINTS = {
 
 export const API_CONFIG = {
   MAX_RETRIES: 3,
-  TIMEOUT_DURATION: 90000,
+  TIMEOUT_DURATION: 60000, // Reduced from 90000 to 60000 for faster timeout
   INITIAL_RETRY_DELAY: 500,
   RATE_LIMIT: {
     MAX_REQUESTS: Infinity,
@@ -13,9 +13,9 @@ export const API_CONFIG = {
     FREE_TIER_MAX: Infinity,
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 30,
-    guidance_scale: 7.5,
-    scheduler: "EulerAncestralDiscreteScheduler",
+    num_inference_steps: 20, // Reduced from 30 for faster generation
+    guidance_scale: 8.5, // Increased from 7.5 for better quality
+    scheduler: "DPMSolverMultistepScheduler", // Changed to faster scheduler
     use_karras_sigmas: true,
     clip_skip: 2,
     tiling: false,
