@@ -5,17 +5,18 @@ export const API_ENDPOINTS = {
 export const API_CONFIG = {
   API_URL: API_ENDPOINTS.PRIMARY,
   MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 30000, // Reduced to 30 seconds
+  TIMEOUT_DURATION: 30000, // 30 seconds
   INITIAL_RETRY_DELAY: 300,
   RATE_LIMIT: {
     MAX_REQUESTS: 50,
     TIME_WINDOW: 3600000, // 1 hour
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 20, // Reduced from 25 for faster generation
-    guidance_scale: 7.5, // Optimized for speed vs. quality balance
-    scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
+    num_inference_steps: 50, // Updated to match Python example
+    guidance_scale: 3.5, // Updated to match Python example
+    scheduler: "EulerAncestralDiscreteScheduler",
     use_safetensors: true,
+    max_sequence_length: 512, // Added from Python example
     options: {
       wait_for_model: true,
       use_gpu: true,
