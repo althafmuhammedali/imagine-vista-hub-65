@@ -1,5 +1,5 @@
 export const API_ENDPOINTS = {
-  PRIMARY: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev"
+  PRIMARY: "https://api-inference.huggingface.co/models/muhammedAdnan3/black-forest-labs-FLUX.1-dev"
 };
 
 export const API_CONFIG = {
