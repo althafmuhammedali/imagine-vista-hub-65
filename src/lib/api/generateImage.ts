@@ -1,4 +1,4 @@
-import { API_CONFIG, ERROR_MESSAGES, API_ENDPOINTS } from './constants';
+import { API_CONFIG, ERROR_MESSAGES } from './constants';
 import { delay, sanitizeInput, validateDimensions } from './utils';
 import { GenerateImageParams } from './types';
 
@@ -31,7 +31,7 @@ export async function generateImage({
 
     while (retries < API_CONFIG.MAX_RETRIES) {
       try {
-        const res = await fetch(API_ENDPOINTS.PRIMARY, {
+        const res = await fetch(API_CONFIG.API_URL, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${apiKey.trim()}`,
@@ -51,10 +51,20 @@ export async function generateImage({
 
         if (!res.ok) {
           const errorData = await res.json().catch(() => ({ error: ERROR_MESSAGES.INVALID_RESPONSE }));
+          
+          if (res.status === 503) {
+            throw new Error(ERROR_MESSAGES.MODEL_LOADING);
+          }
+          
+          if (res.status === 429) {
+            throw new Error(ERROR_MESSAGES.RATE_LIMIT);
+          }
+          
           if (res.status === 401) {
             throw new Error(ERROR_MESSAGES.MISSING_API_KEY);
           }
-          throw new Error(ERROR_MESSAGES.GENERATION_FAILED);
+          
+          throw new Error(errorData.error || ERROR_MESSAGES.GENERATION_FAILED);
         }
 
         response = await res.blob();

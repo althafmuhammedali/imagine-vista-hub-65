@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  API_URL: "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+  API_URL: "https://api-inference.huggingface.co/models/muhammedAdnan3/black-forest-labs-FLUX.1-dev",
   MAX_RETRIES: 3,
   TIMEOUT_DURATION: 180000, // 3 minutes
   INITIAL_RETRY_DELAY: 1000,
