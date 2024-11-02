@@ -68,14 +68,16 @@ const Index = () => {
                 className="inline-block hover:opacity-90 transition-opacity"
               >
                 <img 
-                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=564210&theme=light"
-                  alt="ComicForge AI on Product Hunt"
+                  src={`https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=564210&theme=light&period=daily`}
+                  alt="ComicForge AI - Create professional 40K AI art & images instantly | Product Hunt"
                   width={250}
                   height={54}
                   className="w-[250px] h-[54px]"
+                  loading="lazy"
                 />
               </a>
             </div>
+
             <p className="text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed text-gray-400 px-4">
               Transform your creative vision into stunning masterpieces with our enterprise-grade AI technology
             </p>
@@ -84,27 +86,27 @@ const Index = () => {
           <div className="space-y-8 sm:space-y-12 md:space-y-16 lg:space-y-20">
             <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
               <ImageGenerator />
-            </div>
+              </div>
 
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <FAQ />
-            </div>
+              <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+                <FAQ />
+              </div>
 
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <Documentation />
-            </div>
+              <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+                <Documentation />
+              </div>
 
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <PlatformBudget />
-            </div>
+              <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+                <PlatformBudget />
+              </div>
 
-            <div>
-              <SocialLinks />
+              <div>
+                <SocialLinks />
+              </div>
             </div>
           </div>
+          <ChatBot />
         </div>
-        <ChatBot />
-      </div>
       <DynamicAdDisplay />
     </div>
   );
