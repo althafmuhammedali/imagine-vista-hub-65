@@ -16,7 +16,6 @@ export const API_CONFIG = {
     num_inference_steps: 100,
     guidance_scale: 12.0,
     scheduler: "EulerAncestralDiscreteScheduler",
-    clip_skip: 2,
     tiling: false,
     use_safetensors: true,
     options: {
