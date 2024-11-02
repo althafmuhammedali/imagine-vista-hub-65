@@ -92,24 +92,28 @@ export function ImageGenerator() {
   }, [prompt, resolution, negativePrompt, generatedImage, queryClient]);
 
   return (
-    <div className="container max-w-6xl py-4 space-y-4 px-4 sm:px-6 md:px-8">
+    <div className="container max-w-6xl py-2 sm:py-4 space-y-4 px-2 sm:px-6 md:px-8">
       <div className="grid gap-4 md:gap-8 lg:grid-cols-[1fr,1fr]">
-        <ImageSettings
-          prompt={prompt}
-          setPrompt={setPrompt}
-          negativePrompt={negativePrompt}
-          setNegativePrompt={setNegativePrompt}
-          resolution={resolution}
-          setResolution={setResolution}
-          onGenerate={handleGenerate}
-          isLoading={isLoading}
-          resolutions={resolutions}
-        />
-        <ImagePreview
-          generatedImage={generatedImage}
-          isLoading={isLoading}
-          error={error}
-        />
+        <div className="order-2 lg:order-1">
+          <ImageSettings
+            prompt={prompt}
+            setPrompt={setPrompt}
+            negativePrompt={negativePrompt}
+            setNegativePrompt={setNegativePrompt}
+            resolution={resolution}
+            setResolution={setResolution}
+            onGenerate={handleGenerate}
+            isLoading={isLoading}
+            resolutions={resolutions}
+          />
+        </div>
+        <div className="order-1 lg:order-2">
+          <ImagePreview
+            generatedImage={generatedImage}
+            isLoading={isLoading}
+            error={error}
+          />
+        </div>
       </div>
     </div>
   );
