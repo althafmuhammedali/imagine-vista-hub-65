@@ -90,7 +90,7 @@ export function ImageGenerator() {
   return (
     <div className="container max-w-6xl py-2 sm:py-4 md:py-6 space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">
       <div className="grid gap-4 md:gap-6 lg:gap-8 lg:grid-cols-[1fr,1fr]">
-        <div className="order-2 lg:order-1 transition-all duration-300">
+        <div className="order-2 lg:order-1 transition-all duration-300 hover:scale-[1.01]">
           <ImageSettings
             prompt={prompt}
             setPrompt={setPrompt}
@@ -103,7 +103,7 @@ export function ImageGenerator() {
             resolutions={resolutions}
           />
         </div>
-        <div className="order-1 lg:order-2 transition-all duration-300">
+        <div className="order-1 lg:order-2 transition-all duration-300 hover:scale-[1.01]">
           <ImagePreview
             generatedImage={generatedImage}
             isLoading={isLoading}

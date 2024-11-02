@@ -6,16 +6,16 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info } from "lucide-react";
+import { Sparkles, Rocket, Star, Gem, Infinity } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a] animate-gradient-x">
       <Alert className="rounded-none border-none bg-amber-500/10 backdrop-blur-sm">
-        <Info className="h-4 w-4 text-amber-400" />
+        <Rocket className="h-4 w-4 text-amber-400" />
         <AlertDescription className="text-amber-200">
-          This platform's prompt generation is heavily influenced by our unique prompting style
+          Experience next-gen AI art creation with our unique prompting style and advanced features
         </AlertDescription>
       </Alert>
       
@@ -24,29 +24,29 @@ const Index = () => {
         <div className="container max-w-6xl py-4 sm:py-6 md:py-12 px-4 sm:px-6 lg:px-8">
           <div className="space-y-4 md:space-y-6 text-center mb-6 sm:mb-8 md:mb-16 animate-fade-in">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
+              <Gem className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold tracking-tighter bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent animate-gradient-x">
                 ComicForge AI
               </h1>
-              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
+              <Gem className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
             </div>
             
             <div className="flex flex-col items-center justify-center gap-4">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 my-6">
                 <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
-                  <Shield className="w-6 h-6 text-amber-400" />
-                  <span className="text-sm text-gray-400">Secure Platform</span>
+                  <Infinity className="w-6 h-6 text-amber-400" />
+                  <span className="text-sm text-gray-400">Unlimited Creativity</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
                   <Star className="w-6 h-6 text-amber-400" />
                   <span className="text-sm text-gray-400">Premium Quality</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
-                  <Briefcase className="w-6 h-6 text-amber-400" />
-                  <span className="text-sm text-gray-400">Professional Tools</span>
+                  <Rocket className="w-6 h-6 text-amber-400" />
+                  <span className="text-sm text-gray-400">Next-Gen AI</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-black/20 backdrop-blur-sm hover:bg-black/30 transition-all">
-                  <Zap className="w-6 h-6 text-amber-400" />
+                  <Sparkles className="w-6 h-6 text-amber-400" />
                   <span className="text-sm text-gray-400">Fast Generation</span>
                 </div>
               </div>
@@ -79,7 +79,7 @@ const Index = () => {
             </div>
 
             <p className="text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed text-gray-400 px-4">
-              Transform your creative vision into stunning masterpieces with our enterprise-grade AI technology
+              Experience the future of AI art creation with our enterprise-grade technology. Unlike other platforms, we offer advanced features like custom negative prompts, seed control, and AI-assisted creativity.
             </p>
           </div>
 
