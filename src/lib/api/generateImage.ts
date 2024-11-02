@@ -3,31 +3,36 @@ import { API_CONFIG, API_ENDPOINTS } from './config';
 import { delay, sanitizeInput, validateDimensions, enhancePrompt, enhanceNegativePrompt } from './utils';
 import type { GenerateImageParams } from './types';
 
-async function retryWithBackoff(fn: () => Promise<Response>): Promise<Response> {
-  for (let i = 0; i < API_CONFIG.MAX_RETRIES; i++) {
+async function retryWithBackoff(fn: () => Promise<Response>, maxRetries: number = API_CONFIG.MAX_RETRIES): Promise<Response> {
+  let lastError: Error | null = null;
+
+  for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fn();
       
       if (response.status === 503) {
         const data = await response.json();
         if (data.error?.includes("is currently loading")) {
-          await delay(Math.min((data.estimated_time || 10) * 1000, 15000));
+          const waitTime = Math.min((data.estimated_time || 10) * 1000, 15000);
+          await delay(waitTime);
           continue;
         }
       }
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to generate image");
+        const errorData = await response.json().catch(() => ({ error: `HTTP error ${response.status}` }));
+        throw new Error(errorData.error || `Failed to generate image: ${response.status}`);
       }
 
       return response;
     } catch (error) {
-      if (i === API_CONFIG.MAX_RETRIES - 1) throw error;
+      lastError = error instanceof Error ? error : new Error(String(error));
+      if (i === maxRetries - 1) break;
       await delay(API_CONFIG.INITIAL_RETRY_DELAY * Math.pow(2, i));
     }
   }
-  throw new Error("Failed after maximum retries");
+
+  throw lastError || new Error("Failed after maximum retries");
 }
 
 export async function generateImage({
@@ -37,7 +42,7 @@ export async function generateImage({
   negativePrompt = "",
 }: GenerateImageParams): Promise<string> {
   const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
-  if (!apiKey) throw new Error("Missing API key");
+  if (!apiKey) throw new Error("Missing API key - Please check your environment variables");
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT_DURATION);
@@ -72,6 +77,7 @@ export async function generateImage({
     try {
       const response = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.PRIMARY));
       const blob = await response.blob();
+      if (blob.size === 0) throw new Error("Generated image is empty");
       return URL.createObjectURL(blob);
     } catch (primaryError) {
       console.error("Primary model error:", primaryError);
@@ -82,6 +88,7 @@ export async function generateImage({
       
       const response = await retryWithBackoff(() => makeRequest(API_ENDPOINTS.FALLBACK));
       const blob = await response.blob();
+      if (blob.size === 0) throw new Error("Generated image is empty");
       return URL.createObjectURL(blob);
     }
   } catch (error) {

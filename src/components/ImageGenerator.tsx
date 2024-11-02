@@ -20,11 +20,12 @@ export function ImageGenerator() {
   const [error, setError] = useState<string | undefined>();
   const queryClient = useQueryClient();
 
-  // Cleanup URLs when component unmounts or new image is generated
+  // Enhanced cleanup with better URL handling
   useEffect(() => {
+    let currentImageUrl = generatedImage;
     return () => {
-      if (generatedImage) {
-        URL.revokeObjectURL(generatedImage);
+      if (currentImageUrl) {
+        URL.revokeObjectURL(currentImageUrl);
       }
     };
   }, [generatedImage]);
@@ -53,11 +54,16 @@ export function ImageGenerator() {
     setError(undefined);
 
     try {
+      // Clean up previous URL before generating new one
       if (generatedImage) {
         URL.revokeObjectURL(generatedImage);
       }
 
-      const selectedResolution = resolutions.find((r) => r.value === resolution)!;
+      const selectedResolution = resolutions.find((r) => r.value === resolution);
+      if (!selectedResolution) {
+        throw new Error("Invalid resolution selected");
+      }
+
       const params: GenerateImageParams = {
         prompt: trimmedPrompt,
         width: selectedResolution.width,
@@ -68,11 +74,11 @@ export function ImageGenerator() {
       const imageUrl = await generateImage(params);
       setGeneratedImage(imageUrl);
       
-      // Prefetch the next likely prompt
+      // Prefetch with error handling
       queryClient.prefetchQuery({
         queryKey: ['image', { ...params, prompt: trimmedPrompt + " detailed" }],
         queryFn: () => generateImage({ ...params, prompt: trimmedPrompt + " detailed" }),
-      });
+      }).catch(console.error);
 
       toast({
         title: "Success",
