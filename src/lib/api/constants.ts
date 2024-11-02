@@ -4,33 +4,31 @@ export const API_ENDPOINTS = {
 };
 
 export const API_CONFIG = {
-  MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 240000, // Increased to 4 minutes for higher quality processing
+  MAX_RETRIES: 3,
+  TIMEOUT_DURATION: 180000, // 3 minutes
   INITIAL_RETRY_DELAY: 1000,
   RATE_LIMIT: {
-    MAX_REQUESTS: Infinity,
-    TIME_WINDOW: 3600000,
-    FREE_TIER_MAX: Infinity,
+    MAX_REQUESTS: 50,
+    TIME_WINDOW: 3600000, // 1 hour
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 30, // Optimized steps
-    guidance_scale: 9.5, // Enhanced quality
+    num_inference_steps: 30,
+    guidance_scale: 9.5,
     scheduler: "EulerAncestralDiscreteScheduler",
     tiling: true,
     use_safetensors: true,
     options: {
-      wait_for_model: false,
+      wait_for_model: true,
       use_gpu: true,
       max_memory: {
-        'cuda': 0.99, // Maximum GPU utilization
+        'cuda': 0.99,
         'cpu': 0.8
       },
-      enable_cuda_graph: true,
       torch_compile: true,
       enable_vae_slicing: true,
       enable_vae_tiling: true,
       cross_attention_optimization: true,
-      refiner_steps: 10 // Added refiner steps for extra quality
+      enable_cuda_graph: true
     }
   }
 };

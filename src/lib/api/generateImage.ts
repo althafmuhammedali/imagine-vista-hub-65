@@ -27,16 +27,29 @@ export async function generateImage({
     const sanitizedPrompt = sanitizeInput(prompt);
     const sanitizedNegativePrompt = negativePrompt ? sanitizeInput(negativePrompt) : undefined;
 
-    const response = await hf.textToImage({
-      model: API_ENDPOINTS.PRIMARY,
-      inputs: sanitizedPrompt,
-      parameters: {
-        ...API_CONFIG.GENERATION_PARAMS,
-        width: validatedWidth,
-        height: validatedHeight,
-        negative_prompt: sanitizedNegativePrompt,
+    let response;
+    let retries = 0;
+
+    while (retries < API_CONFIG.MAX_RETRIES) {
+      try {
+        response = await hf.textToImage({
+          model: API_ENDPOINTS.PRIMARY,
+          inputs: sanitizedPrompt,
+          parameters: {
+            ...API_CONFIG.GENERATION_PARAMS,
+            width: validatedWidth,
+            height: validatedHeight,
+            negative_prompt: sanitizedNegativePrompt,
+          },
+          signal: controller.signal,
+        });
+        break;
+      } catch (error) {
+        retries++;
+        if (retries === API_CONFIG.MAX_RETRIES) throw error;
+        await delay(API_CONFIG.INITIAL_RETRY_DELAY * Math.pow(2, retries - 1));
       }
-    });
+    }
 
     if (!response) {
       throw new Error(ERROR_MESSAGES.INVALID_RESPONSE);

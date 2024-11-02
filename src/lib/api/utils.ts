@@ -24,8 +24,6 @@ export const validateDimensions = (width: number, height: number): { width: numb
 };
 
 export const enhancePrompt = (prompt: string): string => {
-  if (!prompt) return '';
-  
   const qualityBoosters = [
     "masterpiece",
     "best quality",
