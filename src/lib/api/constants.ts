@@ -4,26 +4,28 @@ export const API_ENDPOINTS = {
 };
 
 export const API_CONFIG = {
-  MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 30000, // Reduced timeout to 30 seconds
-  INITIAL_RETRY_DELAY: 250,
+  MAX_RETRIES: 1, // Reduced retries to speed up error responses
+  TIMEOUT_DURATION: 20000, // Further reduced timeout to 20 seconds
+  INITIAL_RETRY_DELAY: 100, // Faster retry attempts
   RATE_LIMIT: {
     MAX_REQUESTS: Infinity,
     TIME_WINDOW: 3600000,
     FREE_TIER_MAX: Infinity,
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 10, // Reduced from 15 to 10 steps
-    guidance_scale: 7.5, // Slightly reduced for faster generation
-    scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
-    use_karras_sigmas: true,
-    clip_skip: 2,
+    num_inference_steps: 8, // Reduced steps for faster generation
+    guidance_scale: 7.0, // Slightly reduced for speed
+    scheduler: "LMSDiscreteScheduler", // Even faster scheduler
+    use_karras_sigmas: false, // Disabled for speed
+    clip_skip: 1, // Reduced for speed
     tiling: false,
     use_safetensors: true,
     options: {
       wait_for_model: false,
       use_gpu: true,
-      max_memory: null,
+      max_memory: {
+        'free': 0.8, // Use 80% of available memory for faster processing
+      }
     }
   }
 };
