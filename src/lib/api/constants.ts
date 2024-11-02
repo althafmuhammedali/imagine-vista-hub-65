@@ -4,26 +4,26 @@ export const API_ENDPOINTS = {
 };
 
 export const API_CONFIG = {
-  MAX_RETRIES: 3,
-  TIMEOUT_DURATION: 45000, // Further reduced timeout for faster response
-  INITIAL_RETRY_DELAY: 500,
+  MAX_RETRIES: 2,
+  TIMEOUT_DURATION: 30000, // Reduced timeout to 30 seconds
+  INITIAL_RETRY_DELAY: 250,
   RATE_LIMIT: {
     MAX_REQUESTS: Infinity,
     TIME_WINDOW: 3600000,
     FREE_TIER_MAX: Infinity,
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 15, // Optimized for speed while maintaining quality
-    guidance_scale: 9.0, // Increased for even better quality
-    scheduler: "DPMSolverMultistepScheduler", // Fastest scheduler
+    num_inference_steps: 10, // Reduced from 15 to 10 steps
+    guidance_scale: 7.5, // Slightly reduced for faster generation
+    scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
     use_karras_sigmas: true,
     clip_skip: 2,
     tiling: false,
     use_safetensors: true,
     options: {
-      wait_for_model: false, // Don't wait for model to load
+      wait_for_model: false,
       use_gpu: true,
-      max_memory: null, // Let the model manage memory automatically
+      max_memory: null,
     }
   }
 };
