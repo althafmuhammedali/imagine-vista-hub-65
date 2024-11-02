@@ -3,22 +3,18 @@ export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, 
 export const sanitizeInput = (input: string): string => {
   if (!input) return '';
   return input
-    .replace(/<[^>]*>/g, '') // Remove HTML tags
-    .replace(/[^\w\s,.!?-]/g, '') // Remove special characters except basic punctuation
-    .trim()
-    .slice(0, 500); // Limit prompt length
+    .replace(/<[^>]*>/g, '')
+    .replace(/[^\w\s,.!?-]/g, '')
+    .trim();
 };
 
 export const validateDimensions = (width: number, height: number): { width: number; height: number } => {
   const MIN_DIMENSION = 256;
   const MAX_DIMENSION = 1024;
-  const STEP_SIZE = 8;
   
   const validateDimension = (dim: number, defaultDim: number = 1024): number => {
     if (!dim || isNaN(dim)) return defaultDim;
-    // Round to nearest multiple of STEP_SIZE
-    const roundedDim = Math.round(dim / STEP_SIZE) * STEP_SIZE;
-    return Math.min(Math.max(roundedDim, MIN_DIMENSION), MAX_DIMENSION);
+    return Math.min(Math.max(dim, MIN_DIMENSION), MAX_DIMENSION);
   };
 
   return {
