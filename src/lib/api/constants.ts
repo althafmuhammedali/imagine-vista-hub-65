@@ -1,5 +1,5 @@
 export const API_ENDPOINTS = {
-  PRIMARY: "black-forest-labs/FLUX.1-schnell",
+  PRIMARY: "black-forest-labs/FLUX.1-dev",
   FALLBACK: "runwayml/stable-diffusion-v1-5",
 };
 
@@ -8,9 +8,9 @@ export const API_CONFIG = {
   TIMEOUT_DURATION: 90000,
   INITIAL_RETRY_DELAY: 500,
   RATE_LIMIT: {
-    MAX_REQUESTS: Infinity, // Changed to Infinity to remove limits
-    TIME_WINDOW: 3600000, // 1 hour in milliseconds
-    FREE_TIER_MAX: Infinity, // Changed to Infinity to remove limits
+    MAX_REQUESTS: Infinity,
+    TIME_WINDOW: 3600000,
+    FREE_TIER_MAX: Infinity,
   },
   GENERATION_PARAMS: {
     num_inference_steps: 30,

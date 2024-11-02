@@ -24,7 +24,7 @@ export async function generateImage({
     const enhancedNegativePrompt = enhanceNegativePrompt(sanitizeInput(negativePrompt));
 
     const response = await hf.textToImage({
-      model: "black-forest-labs/FLUX.1-dev",
+      model: API_ENDPOINTS.PRIMARY,
       inputs: enhancedPrompt,
       parameters: {
         negative_prompt: enhancedNegativePrompt,
@@ -39,8 +39,9 @@ export async function generateImage({
       throw new Error("Failed to generate image - Empty response");
     }
 
-    // The response is already a Blob, so we can create a URL directly
-    return URL.createObjectURL(response);
+    // Convert the response to a blob and create a URL
+    const blob = new Blob([response], { type: 'image/png' });
+    return URL.createObjectURL(blob);
 
   } catch (error) {
     if (error instanceof Error) {
