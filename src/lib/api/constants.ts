@@ -5,7 +5,7 @@ export const API_ENDPOINTS = {
 
 export const API_CONFIG = {
   MAX_RETRIES: 3,
-  TIMEOUT_DURATION: 60000, // Reduced from 90000 to 60000 for faster timeout
+  TIMEOUT_DURATION: 45000, // Further reduced timeout for faster response
   INITIAL_RETRY_DELAY: 500,
   RATE_LIMIT: {
     MAX_REQUESTS: Infinity,
@@ -13,16 +13,17 @@ export const API_CONFIG = {
     FREE_TIER_MAX: Infinity,
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 20, // Reduced from 30 for faster generation
-    guidance_scale: 8.5, // Increased from 7.5 for better quality
-    scheduler: "DPMSolverMultistepScheduler", // Changed to faster scheduler
+    num_inference_steps: 15, // Optimized for speed while maintaining quality
+    guidance_scale: 9.0, // Increased for even better quality
+    scheduler: "DPMSolverMultistepScheduler", // Fastest scheduler
     use_karras_sigmas: true,
     clip_skip: 2,
     tiling: false,
     use_safetensors: true,
     options: {
-      wait_for_model: true,
-      use_gpu: true
+      wait_for_model: false, // Don't wait for model to load
+      use_gpu: true,
+      max_memory: null, // Let the model manage memory automatically
     }
   }
 };
