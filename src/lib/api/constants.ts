@@ -1,5 +1,5 @@
 export const API_ENDPOINTS = {
-  PRIMARY: "black-forest-labs/FLUX.1-dev",
+  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
   FALLBACK: "runwayml/stable-diffusion-v1-5"
 };
 
@@ -13,8 +13,8 @@ export const API_CONFIG = {
     FREE_TIER_MAX: Infinity,
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 100,
-    guidance_scale: 12.0,
+    num_inference_steps: 40, // Balanced for quality and speed
+    guidance_scale: 9.0, // Enhanced for better quality
     scheduler: "EulerAncestralDiscreteScheduler",
     tiling: false,
     use_safetensors: true,
@@ -28,6 +28,7 @@ export const API_CONFIG = {
       torch_compile: true,
       enable_vae_slicing: true,
       enable_vae_tiling: true,
+      cross_attention_optimization: true // Added for faster processing
     }
   }
 };

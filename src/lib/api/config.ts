@@ -5,14 +5,17 @@ export const API_CONFIG = {
   RATE_LIMIT: 10,
   RATE_WINDOW: 60000,
   GENERATION_PARAMS: {
-    num_inference_steps: 50,
-    guidance_scale: 8.5,
+    num_inference_steps: 35, // Reduced for faster generation while maintaining quality
+    guidance_scale: 7.5, // Optimized for better balance
     scheduler: "DPMSolverMultistepScheduler",
     tiling: false,
     use_safetensors: true,
     options: {
       wait_for_model: true,
-      use_gpu: true
+      use_gpu: true,
+      max_memory: {
+        'free': 0.95 // Increased memory utilization
+      }
     }
   }
 };
