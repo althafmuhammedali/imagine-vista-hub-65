@@ -1,6 +1,6 @@
 export const API_ENDPOINTS = {
   PRIMARY: "black-forest-labs/FLUX.1-dev",
-  FALLBACK: "runwayml/stable-diffusion-v1-5",
+  FALLBACK: "runwayml/stable-diffusion-v1-5"
 };
 
 export const API_CONFIG = {
