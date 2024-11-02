@@ -64,11 +64,12 @@ const Index = () => {
               <a 
                 href="https://www.producthunt.com/posts/comicforgeai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-comicforgeai" 
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 <img 
                   src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=564210&theme=light" 
-                  alt="ComicForgeAi - Let&#0032;your&#0032;imagination&#0032;run&#0032;wild&#0032;and&#0032;create&#0032;stunning&#0032;artwork | Product Hunt" 
-                  style="width: 250px; height: 54px;" 
+                  alt="ComicForgeAi - Let your imagination run wild and create stunning artwork | Product Hunt" 
+                  style={{ width: '250px', height: '54px' }}
                   width="250" 
                   height="54"
                 />
