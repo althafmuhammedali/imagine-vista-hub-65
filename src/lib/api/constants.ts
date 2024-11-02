@@ -13,9 +13,9 @@ export const API_CONFIG = {
     FREE_TIER_MAX: Infinity,
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 100, // Balanced for speed and quality
-    guidance_scale: 10.0, // Strong prompt adherence while maintaining speed
-    scheduler: "EulerAncestralDiscreteScheduler", // Fastest high-quality scheduler
+    num_inference_steps: 100, // Maintaining high quality with 100 steps
+    guidance_scale: 12.0, // Increased for maximum quality
+    scheduler: "EulerAncestralDiscreteScheduler", // Fast high-quality scheduler
     use_karras_sigmas: true, // Enhanced sampling
     clip_skip: 2, // Optimal for better prompt understanding
     tiling: false,
