@@ -11,3 +11,10 @@ export class AuthenticationError extends ApiError {
     this.name = 'AuthenticationError';
   }
 }
+
+export class RateLimitError extends ApiError {
+  constructor(message = 'Server is currently at capacity. Please try again later.') {
+    super(message, 429);
+    this.name = 'RateLimitError';
+  }
+}
