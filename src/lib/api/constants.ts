@@ -15,7 +15,6 @@ export const API_CONFIG = {
     num_inference_steps: 20, // Reduced from 25 for faster generation
     guidance_scale: 7.5, // Optimized for speed vs. quality balance
     scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
-    tiling: false,
     use_safetensors: true,
     options: {
       wait_for_model: true,
