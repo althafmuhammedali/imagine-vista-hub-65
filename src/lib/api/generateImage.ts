@@ -37,7 +37,6 @@ export async function generateImage({
   width = 1024,
   height = 1024,
   negativePrompt = "",
-  seed,
 }: GenerateImageParams): Promise<string> {
   const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
   if (!apiKey) throw new Error("Missing API key");
@@ -77,9 +76,18 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: validatedWidth,
             height: validatedHeight,
-            seed: seed || Math.floor(Math.random() * 1000000),
+            num_inference_steps: 50, // Increased from 30 for better quality
+            guidance_scale: 8.5, // Increased from 7.5 for better adherence to prompt
+            scheduler: "DPMSolverMultistepScheduler",
             num_images_per_prompt: 1,
-            ...API_CONFIG.DEFAULT_PARAMS
+            use_karras_sigmas: true,
+            clip_skip: 1, // Changed from 2 for better quality
+            tiling: false,
+            use_safetensors: true,
+            options: {
+              wait_for_model: true,
+              use_gpu: true
+            }
           }
         }),
         signal: controller.signal
