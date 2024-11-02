@@ -4,9 +4,9 @@ export const API_ENDPOINTS = {
 
 export const API_CONFIG = {
   API_URL: API_ENDPOINTS.PRIMARY,
-  MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 60000, // Increased to 60 seconds for larger images
-  INITIAL_RETRY_DELAY: 300,
+  MAX_RETRIES: 3,
+  TIMEOUT_DURATION: 120000, // Increased to 120 seconds for larger images
+  INITIAL_RETRY_DELAY: 1000,
   RATE_LIMIT: {
     MAX_REQUESTS: 50,
     TIME_WINDOW: 3600000, // 1 hour
@@ -33,12 +33,12 @@ export const API_CONFIG = {
 };
 
 export const ERROR_MESSAGES = {
-  MISSING_API_KEY: "Our servers are experiencing configuration issues. We're working on it!",
-  TIMEOUT: "The request took too long to process. Please try again with a simpler prompt.",
+  MISSING_API_KEY: "Missing Hugging Face API key. Please check your environment variables.",
+  TIMEOUT: "The request took too long. Please try with a simpler prompt or smaller image size.",
   EMPTY_PROMPT: "Please enter a prompt before generating.",
   SHORT_PROMPT: "Prompt must be at least 3 characters long.",
-  GENERATION_FAILED: "Our servers are currently experiencing high load. Please try again in a few minutes.",
-  MODEL_LOADING: "Our servers are warming up. Please try again in a moment...",
-  INVALID_RESPONSE: "Something went wrong on our end. Please try again.",
-  RATE_LIMIT: "You've reached the maximum number of requests. Please wait a moment before trying again.",
+  GENERATION_FAILED: "Failed to generate image. Please try again.",
+  MODEL_LOADING: "Model is loading. Please try again in a moment...",
+  INVALID_RESPONSE: "Received invalid response from the server.",
+  RATE_LIMIT: "Too many requests. Please wait a moment before trying again.",
 };

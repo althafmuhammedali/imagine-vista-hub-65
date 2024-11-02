@@ -60,16 +60,16 @@ export async function generateImage({
             throw new Error(ERROR_MESSAGES.RATE_LIMIT);
           }
           
-          if (res.status === 401) {
-            throw new Error(ERROR_MESSAGES.MISSING_API_KEY);
-          }
-          
           throw new Error(errorData.error || ERROR_MESSAGES.GENERATION_FAILED);
         }
 
         response = await res.blob();
         break;
       } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          throw new Error(ERROR_MESSAGES.TIMEOUT);
+        }
+        
         retries++;
         if (retries === API_CONFIG.MAX_RETRIES) throw error;
         await delay(API_CONFIG.INITIAL_RETRY_DELAY * Math.pow(2, retries - 1));
@@ -83,9 +83,6 @@ export async function generateImage({
     return URL.createObjectURL(response);
   } catch (error) {
     if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        throw new Error(ERROR_MESSAGES.TIMEOUT);
-      }
       throw error;
     }
     throw new Error(ERROR_MESSAGES.GENERATION_FAILED);
