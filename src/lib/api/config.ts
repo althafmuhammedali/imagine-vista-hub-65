@@ -8,7 +8,6 @@ export const API_CONFIG = {
     num_inference_steps: 50,
     guidance_scale: 8.5,
     scheduler: "DPMSolverMultistepScheduler",
-    use_karras_sigmas: true,
     clip_skip: 1,
     tiling: false,
     use_safetensors: true,
