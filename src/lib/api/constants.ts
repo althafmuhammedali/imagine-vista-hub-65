@@ -1,18 +1,18 @@
 export const API_ENDPOINTS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
+  PRIMARY: "black-forest-labs/FLUX.1-schnell",
   FALLBACK: "runwayml/stable-diffusion-v1-5",
 };
 
 export const API_CONFIG = {
   MAX_RETRIES: 3,
-  TIMEOUT_DURATION: 90000, // Reduced from 180s to 90s for faster feedback
-  INITIAL_RETRY_DELAY: 500, // Reduced from 1000ms to 500ms
-  RATE_LIMIT: 10, // Increased from 5 to 10 requests per minute
+  TIMEOUT_DURATION: 90000,
+  INITIAL_RETRY_DELAY: 500,
+  RATE_LIMIT: 10,
   RATE_WINDOW: 60000,
   DEFAULT_PARAMS: {
-    num_inference_steps: 30, // Optimized for speed while maintaining quality
+    num_inference_steps: 30,
     guidance_scale: 7.5,
-    scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
+    scheduler: "EulerAncestralDiscreteScheduler",
     use_karras_sigmas: true,
     clip_skip: 2,
     tiling: false,

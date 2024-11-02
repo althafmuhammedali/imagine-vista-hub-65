@@ -80,7 +80,7 @@ export function ImageSettings({
         </CardHeader>
 
         <div className="space-y-4 sm:space-y-6">
-          <div className="flex justify-between items-center flex-wrap gap-2">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
             <Label htmlFor="prompt" className="text-white">Your Vision</Label>
             <PromptExampleCard examples={promptExamples} setPrompt={setPrompt} />
           </div>

@@ -49,16 +49,12 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
         description: "Please wait while we upload your image...",
       });
 
-      // Convert base64 URL to blob
       const response = await fetch(generatedImage);
       const blob = await response.blob();
-
-      // Create FormData
       const formData = new FormData();
       formData.append('image', blob);
       formData.append('key', '73ffc7abc53c74281c83c278d6a9a82b');
 
-      // Upload to ImgBB
       const uploadResponse = await fetch('https://api.imgbb.com/1/upload', {
         method: 'POST',
         body: formData,
@@ -71,7 +67,6 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
           title: "Success",
           description: "Image uploaded successfully! URL copied to clipboard.",
         });
-        // Copy URL to clipboard
         await navigator.clipboard.writeText(data.data.url);
       } else {
         throw new Error(data.error?.message || 'Upload failed');
@@ -104,7 +99,7 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
             alt="Generated artwork"
             className="w-full h-full object-contain rounded-lg transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute bottom-6 right-6 flex gap-2">
+          <div className="absolute bottom-6 right-6 flex flex-col sm:flex-row gap-2">
             <Button
               onClick={handleUpload}
               className="bg-black/50 hover:bg-black/70 backdrop-blur-sm"
