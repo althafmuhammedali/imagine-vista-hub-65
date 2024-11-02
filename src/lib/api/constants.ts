@@ -1,29 +1,32 @@
 export const API_ENDPOINTS = {
   PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
   FALLBACK: "runwayml/stable-diffusion-v1-5",
-  ENHANCED: "stabilityai/stable-diffusion-xl-refiner-1.0"
 };
 
 export const API_CONFIG = {
   MAX_RETRIES: 3,
-  TIMEOUT_DURATION: 180000, // 3 minutes
-  INITIAL_RETRY_DELAY: 1000,
-  RATE_LIMIT: 5,
-  RATE_WINDOW: 60000, // 1 minute
+  TIMEOUT_DURATION: 90000, // Reduced from 180s to 90s for faster feedback
+  INITIAL_RETRY_DELAY: 500, // Reduced from 1000ms to 500ms
+  RATE_LIMIT: 10, // Increased from 5 to 10 requests per minute
+  RATE_WINDOW: 60000,
   DEFAULT_PARAMS: {
-    num_inference_steps: 50, // Increased from 30 for better quality
-    guidance_scale: 8.5, // Increased from 7.5 for stronger prompt adherence
-    scheduler: "DPMSolverMultistepScheduler",
+    num_inference_steps: 30, // Optimized for speed while maintaining quality
+    guidance_scale: 7.5,
+    scheduler: "EulerAncestralDiscreteScheduler", // Faster scheduler
     use_karras_sigmas: true,
     clip_skip: 2,
     tiling: false,
     use_safetensors: true,
+    options: {
+      wait_for_model: true,
+      use_gpu: true
+    }
   }
 };
 
 export const PROMPT_ENHANCERS = {
-  QUALITY: "masterpiece, best quality, highly detailed, ultra detailed, professional",
-  LIGHTING: "studio lighting, dramatic lighting, cinematic",
-  CAMERA: "8k uhd, dslr, soft focus, high resolution, detailed",
-  STYLE: "trending on artstation, award winning, professional"
+  QUALITY: "masterpiece, best quality, highly detailed",
+  LIGHTING: "studio lighting, dramatic lighting",
+  CAMERA: "8k uhd, dslr",
+  STYLE: "trending on artstation"
 };
