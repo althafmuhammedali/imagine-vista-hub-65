@@ -1,11 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { generateImage, GenerateImageParams } from "@/lib/api";
 import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImagePreview } from "./image-generator/ImagePreview";
 import { useQueryClient } from "@tanstack/react-query";
-import { useUser } from "@clerk/clerk-react";
-import { API_CONFIG } from "@/lib/api/constants";
 
 const resolutions = [
   { value: "1:1", width: 1024, height: 1024, label: "Square" },
@@ -33,15 +31,6 @@ export function ImageGenerator() {
       return;
     }
 
-    if (trimmedPrompt.length < 3) {
-      toast({
-        title: "Error",
-        description: "Prompt must be at least 3 characters long",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsLoading(true);
     setError(undefined);
 
@@ -59,16 +48,18 @@ export function ImageGenerator() {
         prompt: trimmedPrompt,
         width: selectedResolution.width,
         height: selectedResolution.height,
-        negativePrompt: negativePrompt.trim(),
+        negativePrompt: negativePrompt || undefined // Only send if it has a value
       };
 
       const imageUrl = await generateImage(params);
       setGeneratedImage(imageUrl);
 
+      // Prefetch next possible generation
       queryClient.prefetchQuery({
-        queryKey: ['image', { ...params, prompt: trimmedPrompt + " detailed" }],
-        queryFn: () => generateImage({ ...params, prompt: trimmedPrompt + " detailed" }),
-      }).catch(console.error);
+        queryKey: ['image', params],
+        queryFn: () => generateImage(params),
+        staleTime: 5 * 60 * 1000, // 5 minutes
+      });
 
       toast({
         title: "Success",
@@ -90,7 +81,7 @@ export function ImageGenerator() {
   return (
     <div className="container max-w-6xl py-2 sm:py-4 md:py-6 space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">
       <div className="grid gap-4 md:gap-6 lg:gap-8 lg:grid-cols-[1fr,1fr]">
-        <div className="order-2 lg:order-1 transition-all duration-300 hover:scale-[1.01]">
+        <div className="order-2 lg:order-1">
           <ImageSettings
             prompt={prompt}
             setPrompt={setPrompt}
@@ -103,7 +94,7 @@ export function ImageGenerator() {
             resolutions={resolutions}
           />
         </div>
-        <div className="order-1 lg:order-2 transition-all duration-300 hover:scale-[1.01]">
+        <div className="order-1 lg:order-2">
           <ImagePreview
             generatedImage={generatedImage}
             isLoading={isLoading}
