@@ -1,5 +1,5 @@
 import { toast } from "@/components/ui/use-toast";
-import { checkRateLimit, getRemainingRequests } from './rateLimit';
+import { checkRateLimit, getRemainingRequests, getResetTime } from './rateLimit';
 import { API_ENDPOINTS, API_CONFIG } from './constants';
 import { delay, sanitizeInput, validateDimensions } from './utils';
 import { enhancePrompt, enhanceNegativePrompt } from './promptEnhancer';
@@ -34,8 +34,8 @@ async function retryWithBackoff(fn: () => Promise<Response>): Promise<Response> 
 
 export async function generateImage({
   prompt,
-  width = 1024,
-  height = 1024,
+  width = 512,
+  height = 512,
   negativePrompt = "",
   seed,
 }: GenerateImageParams): Promise<string> {
@@ -77,6 +77,8 @@ export async function generateImage({
             negative_prompt: enhancedNegativePrompt,
             width: validatedWidth,
             height: validatedHeight,
+            num_inference_steps: 30,
+            guidance_scale: 7.5,
             seed: seed || Math.floor(Math.random() * 1000000),
             num_images_per_prompt: 1,
             ...API_CONFIG.DEFAULT_PARAMS
