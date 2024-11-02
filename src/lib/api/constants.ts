@@ -5,18 +5,18 @@ export const API_ENDPOINTS = {
 export const API_CONFIG = {
   API_URL: API_ENDPOINTS.PRIMARY,
   MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 30000, // 30 seconds
+  TIMEOUT_DURATION: 60000, // Increased to 60 seconds for larger images
   INITIAL_RETRY_DELAY: 300,
   RATE_LIMIT: {
     MAX_REQUESTS: 50,
     TIME_WINDOW: 3600000, // 1 hour
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 50, // Updated to match Python example
-    guidance_scale: 3.5, // Updated to match Python example
+    num_inference_steps: 50,
+    guidance_scale: 3.5,
     scheduler: "EulerAncestralDiscreteScheduler",
     use_safetensors: true,
-    max_sequence_length: 512, // Added from Python example
+    max_sequence_length: 512,
     options: {
       wait_for_model: true,
       use_gpu: true,
@@ -26,9 +26,8 @@ export const API_CONFIG = {
       },
       torch_compile: true,
       enable_vae_slicing: true,
-      enable_vae_tiling: false,
-      cross_attention_optimization: true,
-      enable_cuda_graph: true
+      enable_cuda_graph: true,
+      cross_attention_optimization: true
     }
   }
 };
