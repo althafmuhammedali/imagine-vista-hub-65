@@ -3,16 +3,16 @@ export const API_ENDPOINTS = {
 };
 
 export const API_CONFIG = {
-  MAX_RETRIES: 3,
-  TIMEOUT_DURATION: 180000, // 3 minutes
-  INITIAL_RETRY_DELAY: 1000,
+  MAX_RETRIES: 2, // Reduced from 3 to speed up error handling
+  TIMEOUT_DURATION: 90000, // Reduced from 180000 to 90000 (1.5 minutes)
+  INITIAL_RETRY_DELAY: 500, // Reduced from 1000 to 500ms
   RATE_LIMIT: {
     MAX_REQUESTS: 50,
     TIME_WINDOW: 3600000, // 1 hour
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 30,
-    guidance_scale: 9.5,
+    num_inference_steps: 20, // Reduced from 30 to 20 steps
+    guidance_scale: 7.5, // Reduced from 9.5 to 7.5 for faster generation
     scheduler: "DPMSolverMultistepScheduler",
     tiling: true,
     use_safetensors: true,
