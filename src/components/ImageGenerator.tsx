@@ -1,34 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { generateImage, GenerateImageParams } from "@/lib/api";
+import { generateImage } from "@/lib/api";
 import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImagePreview } from "./image-generator/ImagePreview";
 import { useQueryClient } from "@tanstack/react-query";
 
-const resolutions = [
-  { value: "1:1", width: 1024, height: 1024, label: "Square" },
-  { value: "16:9", width: 1024, height: 576, label: "Landscape" },
-  { value: "9:16", width: 576, height: 1024, label: "Portrait" },
-];
-
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
-  const [resolution, setResolution] = useState("1:1");
   const [negativePrompt, setNegativePrompt] = useState("");
-  const [seed, setSeed] = useState("");
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const queryClient = useQueryClient();
-
-  // Cleanup URLs when component unmounts or new image is generated
-  useEffect(() => {
-    return () => {
-      if (generatedImage) {
-        URL.revokeObjectURL(generatedImage);
-      }
-    };
-  }, [generatedImage]);
 
   const handleGenerate = useCallback(async () => {
     const trimmedPrompt = prompt.trim();
@@ -58,19 +41,16 @@ export function ImageGenerator() {
         URL.revokeObjectURL(generatedImage);
       }
 
-      const selectedResolution = resolutions.find((r) => r.value === resolution)!;
-      const params: GenerateImageParams = {
+      const params = {
         prompt: trimmedPrompt,
-        width: selectedResolution.width,
-        height: selectedResolution.height,
+        width: 1024,
+        height: 1024,
         negativePrompt: negativePrompt.trim(),
-        seed: seed ? parseInt(seed) : undefined,
       };
 
       const imageUrl = await generateImage(params);
       setGeneratedImage(imageUrl);
       
-      // Prefetch the next likely prompt
       queryClient.prefetchQuery({
         queryKey: ['image', { ...params, prompt: trimmedPrompt + " detailed" }],
         queryFn: () => generateImage({ ...params, prompt: trimmedPrompt + " detailed" }),
@@ -91,7 +71,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, resolution, negativePrompt, seed, generatedImage, queryClient]);
+  }, [prompt, negativePrompt, generatedImage, queryClient]);
 
   return (
     <div className="container max-w-6xl py-4 space-y-4 px-4 sm:px-6 md:px-8">
@@ -101,13 +81,8 @@ export function ImageGenerator() {
           setPrompt={setPrompt}
           negativePrompt={negativePrompt}
           setNegativePrompt={setNegativePrompt}
-          resolution={resolution}
-          setResolution={setResolution}
-          seed={seed}
-          setSeed={setSeed}
           onGenerate={handleGenerate}
           isLoading={isLoading}
-          resolutions={resolutions}
         />
         <ImagePreview
           generatedImage={generatedImage}
