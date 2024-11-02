@@ -5,7 +5,7 @@ export const API_ENDPOINTS = {
 
 export const API_CONFIG = {
   MAX_RETRIES: 2,
-  TIMEOUT_DURATION: 60000, // Increased to 60 seconds to allow for higher quality generation
+  TIMEOUT_DURATION: 300000, // Increased to 5 minutes to allow for maximum quality generation
   INITIAL_RETRY_DELAY: 1000,
   RATE_LIMIT: {
     MAX_REQUESTS: Infinity,
@@ -13,10 +13,10 @@ export const API_CONFIG = {
     FREE_TIER_MAX: Infinity,
   },
   GENERATION_PARAMS: {
-    num_inference_steps: 50, // Increased steps for maximum quality
-    guidance_scale: 9.0, // Higher guidance scale for better prompt adherence
+    num_inference_steps: 150, // Increased for maximum detail
+    guidance_scale: 12.0, // Increased for stronger prompt adherence
     scheduler: "DPMSolverMultistepScheduler", // Best quality scheduler
-    use_karras_sigmas: true, // Enabled for improved quality
+    use_karras_sigmas: true, // Enhanced sampling
     clip_skip: 2, // Optimal for better prompt understanding
     tiling: false,
     use_safetensors: true,
@@ -24,7 +24,7 @@ export const API_CONFIG = {
       wait_for_model: true,
       use_gpu: true,
       max_memory: {
-        'free': 0.95, // Using more memory for better quality
+        'free': 0.98, // Using almost all available memory for best quality
       }
     }
   }
