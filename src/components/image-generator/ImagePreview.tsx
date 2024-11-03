@@ -65,9 +65,8 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
       if (data.success) {
         toast({
           title: "Success",
-          description: "Image uploaded successfully! URL copied to clipboard.",
+          description: "Image uploaded successfully!",
         });
-        await navigator.clipboard.writeText(data.data.url);
       } else {
         throw new Error(data.error?.message || 'Upload failed');
       }
