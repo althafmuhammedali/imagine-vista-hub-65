@@ -37,7 +37,7 @@ async function getChatResponse(message: string): Promise<string> {
     If it's troubleshooting, provide step-by-step solutions.`;
 
   const response = await fetch(
-    "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
+    "https://api-inference.huggingface.co/models/HuggingFaceTB/SmolLM2-1.7B-Instruct",
     {
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -47,7 +47,10 @@ async function getChatResponse(message: string): Promise<string> {
       body: JSON.stringify({ 
         inputs: enhancedMessage,
         options: {
-          wait_for_model: true
+          wait_for_model: true,
+          use_cache: true,
+          temperature: 0.7,
+          max_new_tokens: 250
         }
       }),
     }
