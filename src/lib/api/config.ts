@@ -6,11 +6,11 @@ export const API_CONFIG = {
     "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
   },
   DEFAULT_PARAMS: {
-    num_inference_steps: 30,
-    guidance_scale: 7.5,
-    scheduler: "DPMSolverMultistepScheduler",
+    num_inference_steps: 50, // Increased from 30 for better quality
+    guidance_scale: 8.5, // Increased from 7.5 for more realistic adherence to prompt
+    scheduler: "EulerAncestralDiscreteScheduler", // Changed for better quality
     use_karras_sigmas: true,
-    clip_skip: 2,
+    clip_skip: 1, // Changed from 2 for better semantic understanding
     tiling: false,
     use_safetensors: true,
     options: {
