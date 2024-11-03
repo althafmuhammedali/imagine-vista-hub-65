@@ -19,6 +19,7 @@ interface RazorpayResponse {
 
 export function SocialLinks() {
   const { toast } = useToast();
+  
   const handleDonateClick = () => {
     if (!window.Razorpay) {
       toast({
@@ -161,6 +162,19 @@ export function SocialLinks() {
             </Tooltip>
           </TooltipProvider>
         </div>
+        
+        <a 
+          href="https://www.producthunt.com/posts/comicforgeai?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-comicforgeai"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:opacity-90 transition-opacity mt-4"
+        >
+          <img 
+            src="https://s3.producthunt.com/static/badges/daily1.svg"
+            alt="ComicForge AI - Daily #1 Product on Product Hunt"
+            className="h-10 w-auto"
+          />
+        </a>
       </div>
     </footer>
   );
