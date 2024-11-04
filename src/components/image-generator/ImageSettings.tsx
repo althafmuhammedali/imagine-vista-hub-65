@@ -11,6 +11,7 @@ interface ImageSettingsProps {
   setNegativePrompt: (value: string) => void;
   onGenerate: () => void;
   isLoading: boolean;
+  VoiceInput: React.ReactNode;
 }
 
 export function ImageSettings({
@@ -20,6 +21,7 @@ export function ImageSettings({
   setNegativePrompt,
   onGenerate,
   isLoading,
+  VoiceInput,
 }: ImageSettingsProps) {
   return (
     <Card className="backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl">
@@ -36,7 +38,10 @@ export function ImageSettings({
 
         <div className="space-y-4 sm:space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="prompt" className="text-white">Your Vision</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="prompt" className="text-white">Your Vision</Label>
+              {VoiceInput}
+            </div>
             <Textarea
               id="prompt"
               placeholder="Describe your dream image in detail..."
