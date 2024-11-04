@@ -14,10 +14,14 @@ export default {
       center: true,
       padding: {
         DEFAULT: '1rem',
-        sm: '1.5rem',
+        xs: '0.5rem',
+        sm: '1rem',
+        md: '1.5rem',
         lg: '2rem',
+        xl: '2.5rem',
       },
       screens: {
+        xs: '360px',
         sm: '640px',
         md: '768px',
         lg: '1024px',
@@ -95,6 +99,10 @@ export default {
         'safe-bottom': 'env(safe-area-inset-bottom)',
         'safe-left': 'env(safe-area-inset-left)',
         'safe-right': 'env(safe-area-inset-right)',
+        'dynamic-xs': 'clamp(0.5rem, 2vw, 1rem)',
+        'dynamic-sm': 'clamp(1rem, 3vw, 1.5rem)',
+        'dynamic-md': 'clamp(1.5rem, 4vw, 2rem)',
+        'dynamic-lg': 'clamp(2rem, 5vw, 3rem)',
       },
       fontSize: {
         'responsive-xs': 'clamp(0.75rem, 1.5vw, 0.875rem)',
@@ -103,6 +111,14 @@ export default {
         'responsive-lg': 'clamp(1.125rem, 3vw, 1.25rem)',
         'responsive-xl': 'clamp(1.25rem, 3.5vw, 1.5rem)',
         'responsive-2xl': 'clamp(1.5rem, 4vw, 2rem)',
+        'responsive-3xl': 'clamp(1.875rem, 5vw, 2.5rem)',
+        'responsive-4xl': 'clamp(2.25rem, 6vw, 3rem)',
+      },
+      minHeight: {
+        'touch': '44px',
+      },
+      minWidth: {
+        'touch': '44px',
       },
     },
   },
