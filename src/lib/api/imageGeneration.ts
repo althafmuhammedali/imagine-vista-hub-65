@@ -1,6 +1,6 @@
-import { toast } from "@/components/ui/use-toast";
 import { API_CONFIG } from './config';
-import { handleApiError } from './errorHandling';
+import { addWatermark } from './watermark';
+import { toast } from "@/components/ui/use-toast";
 import type { GenerateImageParams } from './types';
 
 export async function generateImage({
@@ -9,63 +9,50 @@ export async function generateImage({
   height = 1024,
   negativePrompt = "",
 }: GenerateImageParams): Promise<string> {
-  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
+  const userId = localStorage.getItem('userId') || 'anonymous';
   
-  if (!apiKey) {
-    throw new Error("Missing API key");
-  }
+  const response = await fetch(API_CONFIG.BASE_URL, {
+    method: "POST",
+    headers: {
+      ...API_CONFIG.HEADERS,
+      Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
+    },
+    body: JSON.stringify({
+      inputs: prompt,
+      parameters: {
+        ...API_CONFIG.DEFAULT_PARAMS,
+        negative_prompt: negativePrompt,
+        width,
+        height,
+      },
+    }),
+  });
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
-
-  try {
-    const enhancedPrompt = `${prompt}, high quality, detailed, professional`;
-    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, low quality, watermark, signature, text`;
-
-    const response = await fetch(
-      API_CONFIG.BASE_URL,
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "X-Request-ID": crypto.randomUUID(),
-        },
-        body: JSON.stringify({
-          inputs: enhancedPrompt,
-          parameters: {
-            negative_prompt: enhancedNegativePrompt,
-            width,
-            height,
-            ...API_CONFIG.DEFAULT_PARAMS
-          }
-        }),
-        signal: controller.signal
-      }
-    );
-
-    if (!response.ok) {
-      if (response.status === 503) {
-        const data = await response.json();
-        if (data.error?.includes("loading")) {
-          const waitTime = Math.min((data.estimated_time || 20) * 1000, 30000);
-          toast({
-            title: "Model is warming up",
-            description: `Please wait ${Math.ceil(waitTime/1000)} seconds...`,
-          });
-          throw new Error("model_busy");
-        }
-      }
-
+  if (!response.ok) {
+    if (response.status === 429) {
       const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to generate image");
+      const isBusy = errorData.error?.includes("loading") || errorData.estimated_time > 60;
+      
+      if (isBusy) {
+        toast({
+          title: "Model Busy",
+          description: "Model too busy, unable to get response in less than 60 second(s)",
+          variant: "destructive",
+        });
+        throw new Error("Model too busy, unable to get response in less than 60 second(s)");
+      }
+      
+      toast({
+        title: "Rate Limit Exceeded",
+        description: "Please wait before making more requests.",
+        variant: "destructive",
+      });
+      throw new Error('Rate limit exceeded');
     }
-
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
-  } catch (error) {
-    throw handleApiError(error);
-  } finally {
-    clearTimeout(timeoutId);
+    throw new Error('Failed to generate image');
   }
+
+  const originalBlob = await response.blob();
+  const watermarkedBlob = await addWatermark(originalBlob);
+  return URL.createObjectURL(watermarkedBlob);
 }
