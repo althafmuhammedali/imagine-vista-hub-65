@@ -97,6 +97,8 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
             src={generatedImage}
             alt="Generated artwork"
             className="w-full h-full object-contain rounded-lg transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute bottom-6 right-6 flex flex-col sm:flex-row gap-2">
             <Button
