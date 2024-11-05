@@ -35,21 +35,19 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    touch-action: pan-x pan-y;
-    height: 100%;
-    overflow-y: auto;
-    overscroll-behavior-y: none;
-    font-size: clamp(14px, 1vw, 16px);
+    touch-action: manipulation;
+    height: -webkit-fill-available;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
     min-height: -webkit-fill-available;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   input, textarea, select {
@@ -57,54 +55,38 @@
     font-size: max(16px, 1em);
   }
 
-  button, a, input[type="button"], input[type="submit"] {
-    @apply min-h-touch min-w-touch;
-    touch-action: manipulation;
+  button, a {
+    @apply select-none touch-manipulation;
+    min-height: 44px;
+    min-width: 44px;
   }
 
   img {
     @apply max-w-full h-auto;
     content-visibility: auto;
   }
-
-  @media (max-width: 640px) {
-    html, body {
-      @apply overflow-x-hidden;
-    }
-
-    input, select, textarea {
-      font-size: 16px !important;
-    }
-  }
 }
 
 @layer utilities {
-  .h-screen-safe {
-    height: 100vh;
-    height: -webkit-fill-available;
+  .touch-manipulation {
+    touch-action: manipulation;
   }
 
-  .p-safe {
-    padding: max(env(safe-area-inset-top), 0.5rem)
-             max(env(safe-area-inset-right), 0.5rem)
-             max(env(safe-area-inset-bottom), 0.5rem)
-             max(env(safe-area-inset-left), 0.5rem);
+  .select-none {
+    user-select: none;
+    -webkit-user-select: none;
   }
 
-  .responsive-container {
-    @apply w-full mx-auto px-dynamic-xs sm:px-dynamic-sm md:px-dynamic-md lg:px-dynamic-lg;
+  .fluid-container {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
     max-width: min(100vw - 2rem, theme('container.screens.2xl'));
   }
 
-  .responsive-text {
-    @apply text-responsive-base;
+  .fluid-text {
+    @apply text-fluid-base;
   }
 
-  .responsive-heading {
-    @apply text-responsive-2xl sm:text-responsive-3xl md:text-responsive-4xl;
-  }
-
-  .touch-target {
-    @apply min-h-touch min-w-touch p-2;
+  .fluid-heading {
+    @apply text-fluid-xl sm:text-fluid-2xl;
   }
 }

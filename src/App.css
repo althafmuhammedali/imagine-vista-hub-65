@@ -1,15 +1,16 @@
 #root {
   max-width: 100%;
   margin: 0 auto;
-  padding: max(env(safe-area-inset-top, 8px), 0.5rem) 
-           max(env(safe-area-inset-right, 8px), 0.5rem) 
-           max(env(safe-area-inset-bottom, 8px), 0.5rem) 
-           max(env(safe-area-inset-left, 8px), 0.5rem);
+  padding: max(env(safe-area-inset-top), 0.5rem) 
+           max(env(safe-area-inset-right), 0.5rem) 
+           max(env(safe-area-inset-bottom), 0.5rem) 
+           max(env(safe-area-inset-left), 0.5rem);
   text-align: center;
   min-height: calc(var(--vh, 1vh) * 100);
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .logo {
@@ -22,106 +23,45 @@
   -webkit-user-drag: none;
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
 .card {
-  padding: var(--dynamic-padding, clamp(0.25em, 1.5vw, 0.75em));
+  padding: clamp(0.5rem, 2vw, 1.5rem);
   width: 100%;
-  max-width: min(100vw - var(--dynamic-padding, 2rem), 1200px);
+  max-width: min(100vw - 2rem, 1200px);
   margin: 0 auto;
   box-sizing: border-box;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
 }
 
-.read-the-docs {
-  color: #888;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-}
-
-/* Mobile optimizations */
 @media (max-width: 640px) {
-  #root {
-    padding: max(env(safe-area-inset-top, 4px), 0.25rem) 
-             max(env(safe-area-inset-right, 4px), 0.25rem) 
-             max(env(safe-area-inset-bottom, 4px), 0.25rem) 
-             max(env(safe-area-inset-left, 4px), 0.25rem);
-  }
-  
-  .card {
-    --dynamic-padding: 0.5rem;
-  }
-
-  button, 
-  input[type="button"], 
-  input[type="submit"],
-  select,
-  .clickable {
-    min-height: 44px;
-    min-width: 44px;
-    padding: clamp(8px, 2vw, 12px);
-  }
-
   * {
     user-select: none;
     -webkit-touch-callout: none;
   }
 
-  input, 
-  textarea {
+  input, textarea {
     user-select: text;
     -webkit-user-select: text;
     font-size: 16px !important;
   }
 
-  a, button {
+  button, a {
     touch-action: manipulation;
+    min-height: 44px;
+    min-width: 44px;
+    padding: clamp(8px, 2vw, 12px);
   }
 }
 
-/* Tablet optimizations */
-@media (min-width: 641px) and (max-width: 1024px) {
-  .card {
-    --dynamic-padding: 1rem;
+@media (prefers-reduced-motion: no-preference) {
+  .logo {
+    transition: transform 0.2s ease;
   }
 }
 
-/* Desktop optimizations */
-@media (min-width: 1025px) {
-  .card {
-    --dynamic-padding: 1.5rem;
-  }
-}
-
-/* Landscape mode optimizations */
-@media screen and (orientation: landscape) and (max-height: 500px) {
-  .card {
-    max-height: calc(var(--vh, 1vh) * 100 - 60px);
-    overflow-y: auto;
-  }
-}
-
-/* High-DPI screen optimizations */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  img {
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
+@supports (padding: max(0px)) {
+  .safe-area-padding {
+    padding: max(env(safe-area-inset-top), 1rem)
+             max(env(safe-area-inset-right), 1rem)
+             max(env(safe-area-inset-bottom), 1rem)
+             max(env(safe-area-inset-left), 1rem);
   }
 }
