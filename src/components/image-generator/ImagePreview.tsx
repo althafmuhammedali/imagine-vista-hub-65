@@ -52,7 +52,7 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
       const response = await fetch(generatedImage);
       const blob = await response.blob();
       const formData = new FormData();
-      formData.append('image', blob);
+      formData.append('image', blob, `comicforgeai_${Date.now()}.png`);
       formData.append('key', '73ffc7abc53c74281c83c278d6a9a82b');
 
       const uploadResponse = await fetch('https://api.imgbb.com/1/upload', {
@@ -96,7 +96,7 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
           <img
             src={generatedImage}
             alt="Generated artwork"
-            className="w-full h-full object-contain rounded-lg transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-contain rounded-lg transition-transform duration-500 group-hover:scale-105 pointer-events-none"
             loading="lazy"
             decoding="async"
           />
