@@ -11,6 +11,8 @@
   flex-direction: column;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  background: linear-gradient(to bottom right, rgba(26, 26, 26, 0.8), rgba(45, 45, 45, 0.8), rgba(26, 26, 26, 0.8));
+  backdrop-filter: blur(10px);
 }
 
 .logo {
@@ -21,6 +23,7 @@
   touch-action: manipulation;
   user-select: none;
   -webkit-user-drag: none;
+  filter: drop-shadow(0 0 0.5em rgba(245, 158, 11, 0.5));
 }
 
 .card {
@@ -29,6 +32,17 @@
   max-width: min(100vw - 2rem, 1200px);
   margin: 0 auto;
   box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(245, 158, 11, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(245, 158, 11, 0.1);
 }
 
 @media (max-width: 640px) {
@@ -55,6 +69,10 @@
   .logo {
     transition: transform 0.2s ease;
   }
+
+  .logo:hover {
+    transform: scale(1.05);
+  }
 }
 
 @supports (padding: max(0px)) {
@@ -64,4 +82,25 @@
              max(env(safe-area-inset-bottom), 1rem)
              max(env(safe-area-inset-left), 1rem);
   }
+}
+
+/* Premium animations */
+@keyframes gradient-x {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 15s ease infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
 }
