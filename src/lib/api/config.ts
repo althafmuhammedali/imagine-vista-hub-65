@@ -6,8 +6,8 @@ export const API_CONFIG = {
     "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
   },
   DEFAULT_PARAMS: {
-    num_inference_steps: 50, // Increased steps for better quality
-    guidance_scale: 9.0, // Increased for more photorealistic results
+    num_inference_steps: 50,
+    guidance_scale: 9.0,
     scheduler: "DPMSolverMultistepScheduler",
     use_karras_sigmas: true,
     clip_skip: 1,

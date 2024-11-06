@@ -5,6 +5,7 @@ import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImagePreview } from "./image-generator/ImagePreview";
 import { useQueryClient } from "@tanstack/react-query";
 import { VoiceInput } from "./VoiceInput";
+import { enhancePrompt, enhanceNegativePrompt } from "@/lib/api/promptEnhancer";
 
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
@@ -43,10 +44,10 @@ export function ImageGenerator() {
       generatedImages.forEach(url => URL.revokeObjectURL(url));
 
       const params = {
-        prompt: trimmedPrompt,
+        prompt: enhancePrompt(trimmedPrompt),
         width: 1024,
         height: 1024,
-        negativePrompt: negativePrompt.trim(),
+        negativePrompt: enhanceNegativePrompt(negativePrompt.trim()),
       };
 
       // Generate exactly 1 image
