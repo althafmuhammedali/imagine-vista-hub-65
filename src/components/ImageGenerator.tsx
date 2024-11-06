@@ -6,12 +6,36 @@ import { ImagePreview } from "./image-generator/ImagePreview";
 import { VoiceInput } from "./VoiceInput";
 import { enhancePrompt, enhanceNegativePrompt } from "@/lib/api/promptEnhancer";
 
+const translateToEnglish = async (text: string, sourceLang: string): Promise<string> => {
+  try {
+    const response = await fetch(`https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-${sourceLang}-en`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ inputs: text }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Translation failed');
+    }
+
+    const result = await response.json();
+    return result[0].translation_text;
+  } catch (error) {
+    console.error('Translation error:', error);
+    throw new Error('Failed to translate prompt');
+  }
+};
+
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
   const [negativePrompt, setNegativePrompt] = useState("");
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
 
   const handleGenerate = useCallback(async () => {
     const trimmedPrompt = prompt.trim();
@@ -40,8 +64,24 @@ export function ImageGenerator() {
       // Clear previous URLs
       generatedImages.forEach(url => URL.revokeObjectURL(url));
 
+      // Translate prompt if not in English
+      let translatedPrompt = trimmedPrompt;
+      if (selectedLanguage !== "en") {
+        try {
+          translatedPrompt = await translateToEnglish(trimmedPrompt, selectedLanguage);
+        } catch (error) {
+          toast({
+            title: "Translation Error",
+            description: "Failed to translate prompt. Please try again.",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
+
       const params = {
-        prompt: enhancePrompt(trimmedPrompt),
+        prompt: enhancePrompt(translatedPrompt),
         width: 1024,
         height: 1024,
         negativePrompt: enhanceNegativePrompt(negativePrompt.trim()),
@@ -65,7 +105,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, negativePrompt, generatedImages]);
+  }, [prompt, negativePrompt, generatedImages, selectedLanguage]);
 
   const handleVoiceInput = useCallback((transcript: string) => {
     setPrompt(transcript);
@@ -84,6 +124,8 @@ export function ImageGenerator() {
           numImages={1}
           setNumImages={() => {}}
           VoiceInput={<VoiceInput onTranscript={handleVoiceInput} />}
+          selectedLanguage={selectedLanguage}
+          setSelectedLanguage={setSelectedLanguage}
         />
         <ImagePreview
           generatedImage={generatedImages[0] || null}
