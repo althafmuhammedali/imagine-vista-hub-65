@@ -1,5 +1,4 @@
 import { API_CONFIG } from './config';
-import { addWatermark } from './watermark';
 import { toast } from "@/components/ui/use-toast";
 import type { GenerateImageParams } from './types';
 
@@ -9,50 +8,66 @@ export async function generateImage({
   height = 1024,
   negativePrompt = "",
 }: GenerateImageParams): Promise<string> {
-  const userId = localStorage.getItem('userId') || 'anonymous';
-  
-  const response = await fetch(API_CONFIG.BASE_URL, {
-    method: "POST",
-    headers: {
-      ...API_CONFIG.HEADERS,
-      Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
-    },
-    body: JSON.stringify({
-      inputs: prompt,
-      parameters: {
-        ...API_CONFIG.DEFAULT_PARAMS,
-        negative_prompt: negativePrompt,
-        width,
-        height,
-      },
-    }),
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
 
-  if (!response.ok) {
-    if (response.status === 429) {
-      const errorData = await response.json();
-      const isBusy = errorData.error?.includes("loading") || errorData.estimated_time > 60;
-      
-      if (isBusy) {
+  try {
+    const response = await fetch(API_CONFIG.BASE_URL, {
+      method: "POST",
+      headers: API_CONFIG.HEADERS,
+      signal: controller.signal,
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: {
+          ...API_CONFIG.DEFAULT_PARAMS,
+          negative_prompt: negativePrompt,
+          width,
+          height,
+        },
+      }),
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        const errorData = await response.json();
+        const isBusy = errorData.error?.includes("loading") || errorData.estimated_time > 30;
+        
+        if (isBusy) {
+          toast({
+            title: "Model Busy",
+            description: "The model is currently busy. Please try again in a few moments.",
+            variant: "destructive",
+          });
+          throw new Error("Model too busy");
+        }
+        
         toast({
-          title: "Model Busy",
-          description: "Model too busy, unable to get response in less than 60 second(s)",
+          title: "Rate Limited",
+          description: "Please wait before making more requests.",
           variant: "destructive",
         });
-        throw new Error("Model too busy, unable to get response in less than 60 second(s)");
+        throw new Error("Rate limit exceeded");
       }
-      
-      toast({
-        title: "Rate Limit Exceeded",
-        description: "Please wait before making more requests.",
-        variant: "destructive",
-      });
-      throw new Error('Rate limit exceeded');
+      throw new Error('Failed to generate image');
+    }
+
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        toast({
+          title: "Request Timeout",
+          description: "The request took too long. Please try again with a simpler prompt.",
+          variant: "destructive",
+        });
+        throw new Error('Request timed out - please try again with a simpler prompt');
+      }
+      throw error;
     }
     throw new Error('Failed to generate image');
   }
-
-  const originalBlob = await response.blob();
-  const watermarkedBlob = await addWatermark(originalBlob);
-  return URL.createObjectURL(watermarkedBlob);
 }

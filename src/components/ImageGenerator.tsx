@@ -1,9 +1,8 @@
 import { useState, useCallback } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { generateImage } from "@/lib/api";
+import { generateImage } from "@/lib/api/imageGeneration";
 import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImagePreview } from "./image-generator/ImagePreview";
-import { useQueryClient } from "@tanstack/react-query";
 import { VoiceInput } from "./VoiceInput";
 import { enhancePrompt, enhanceNegativePrompt } from "@/lib/api/promptEnhancer";
 
@@ -13,8 +12,6 @@ export function ImageGenerator() {
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
-  const [numImages, setNumImages] = useState(1);
-  const queryClient = useQueryClient();
 
   const handleGenerate = useCallback(async () => {
     const trimmedPrompt = prompt.trim();
@@ -50,17 +47,15 @@ export function ImageGenerator() {
         negativePrompt: enhanceNegativePrompt(negativePrompt.trim()),
       };
 
-      // Generate exactly 1 image
-      const imagePromises = Array(1).fill(null).map(() => generateImage(params));
-      const imageUrls = await Promise.all(imagePromises);
-      setGeneratedImages(imageUrls);
+      const imageUrl = await generateImage(params);
+      setGeneratedImages([imageUrl]);
 
       toast({
         title: "Success",
-        description: "1 image generated successfully!",
+        description: "Image generated successfully!",
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to generate images";
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate image";
       setError(errorMessage);
       toast({
         title: "Error",
@@ -70,7 +65,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, negativePrompt, generatedImages, queryClient]);
+  }, [prompt, negativePrompt, generatedImages]);
 
   const handleVoiceInput = useCallback((transcript: string) => {
     setPrompt(transcript);
@@ -86,21 +81,16 @@ export function ImageGenerator() {
           setNegativePrompt={setNegativePrompt}
           onGenerate={handleGenerate}
           isLoading={isLoading}
-          numImages={numImages}
+          numImages={1}
           setNumImages={() => {}}
           VoiceInput={<VoiceInput onTranscript={handleVoiceInput} />}
         />
-        <div className="grid grid-cols-1 gap-4 auto-rows-fr">
-          {Array(1).fill(null).map((_, index) => (
-            <ImagePreview
-              key={index}
-              generatedImage={generatedImages[index] || null}
-              isLoading={isLoading}
-              error={error}
-              prompt={prompt}
-            />
-          ))}
-        </div>
+        <ImagePreview
+          generatedImage={generatedImages[0] || null}
+          isLoading={isLoading}
+          error={error}
+          prompt={prompt}
+        />
       </div>
     </div>
   );
