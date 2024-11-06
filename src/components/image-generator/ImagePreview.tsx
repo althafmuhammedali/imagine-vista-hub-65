@@ -4,14 +4,49 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { SocialShareButton } from "./SocialShareButton";
+import { useMemo } from "react";
 
 interface ImagePreviewProps {
   generatedImage: string | null;
   isLoading: boolean;
   error?: string;
+  prompt?: string;
 }
 
-export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewProps) {
+export function ImagePreview({ generatedImage, isLoading, error, prompt = "" }: ImagePreviewProps) {
+  const getStyleFromPrompt = useMemo(() => {
+    const promptLower = prompt.toLowerCase();
+    
+    // Define style categories
+    const styles = {
+      fantasy: promptLower.includes('fantasy') || promptLower.includes('magical') || promptLower.includes('dragon'),
+      scifi: promptLower.includes('sci-fi') || promptLower.includes('futuristic') || promptLower.includes('cyber'),
+      nature: promptLower.includes('nature') || promptLower.includes('landscape') || promptLower.includes('forest'),
+      portrait: promptLower.includes('portrait') || promptLower.includes('character') || promptLower.includes('person'),
+      abstract: promptLower.includes('abstract') || promptLower.includes('surreal') || promptLower.includes('artistic'),
+    };
+
+    // Return appropriate style classes
+    if (styles.fantasy) {
+      return "bg-gradient-to-br from-purple-900/30 via-indigo-900/30 to-blue-900/30 border-indigo-800/50";
+    }
+    if (styles.scifi) {
+      return "bg-gradient-to-br from-cyan-900/30 via-blue-900/30 to-purple-900/30 border-cyan-800/50";
+    }
+    if (styles.nature) {
+      return "bg-gradient-to-br from-green-900/30 via-emerald-900/30 to-teal-900/30 border-green-800/50";
+    }
+    if (styles.portrait) {
+      return "bg-gradient-to-br from-amber-900/30 via-orange-900/30 to-red-900/30 border-amber-800/50";
+    }
+    if (styles.abstract) {
+      return "bg-gradient-to-br from-pink-900/30 via-purple-900/30 to-indigo-900/30 border-pink-800/50";
+    }
+    
+    // Default style
+    return "bg-black/10 border-gray-800";
+  }, [prompt]);
+
   const handleDownload = async () => {
     if (!generatedImage) return;
 
@@ -80,7 +115,7 @@ export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewP
   };
 
   return (
-    <Card className="relative overflow-hidden backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl min-h-[300px] md:min-h-[400px] group transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
+    <Card className={`relative overflow-hidden backdrop-blur-sm shadow-xl min-h-[300px] md:min-h-[400px] group transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] ${getStyleFromPrompt}`}>
       {error && (
         <Alert variant="destructive" className="m-4 animate-fade-in">
           <AlertDescription>{error}</AlertDescription>

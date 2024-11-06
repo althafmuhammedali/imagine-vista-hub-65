@@ -12,7 +12,7 @@ export function ImageGenerator() {
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
-  const [numImages, setNumImages] = useState(1); // Fixed to 1 image
+  const [numImages, setNumImages] = useState(1);
   const queryClient = useQueryClient();
 
   const handleGenerate = useCallback(async () => {
@@ -86,7 +86,7 @@ export function ImageGenerator() {
           onGenerate={handleGenerate}
           isLoading={isLoading}
           numImages={numImages}
-          setNumImages={() => {}} // Disable changing number of images
+          setNumImages={() => {}}
           VoiceInput={<VoiceInput onTranscript={handleVoiceInput} />}
         />
         <div className="grid grid-cols-1 gap-4 auto-rows-fr">
@@ -96,6 +96,7 @@ export function ImageGenerator() {
               generatedImage={generatedImages[index] || null}
               isLoading={isLoading}
               error={error}
+              prompt={prompt}
             />
           ))}
         </div>
