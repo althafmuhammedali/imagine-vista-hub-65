@@ -12,7 +12,7 @@
   contain: content;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
-  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--muted)));
+  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--secondary)));
 }
 
 .logo {
@@ -32,6 +32,7 @@
   background: hsl(var(--card));
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }
 
 @media (max-width: 640px) {

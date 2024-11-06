@@ -26,7 +26,7 @@ export function AuthButtons() {
         ) : (
           <div className="flex gap-2">
             <SignInButton mode="modal">
-              <Button variant="outline" className="border-border bg-background/95 hover:bg-primary/10 hover:border-primary text-foreground">
+              <Button variant="outline" className="bg-background/95 hover:bg-primary/10">
                 Sign in
               </Button>
             </SignInButton>
