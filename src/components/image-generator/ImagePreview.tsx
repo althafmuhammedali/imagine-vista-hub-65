@@ -17,7 +17,6 @@ export function ImagePreview({ generatedImage, isLoading, error, prompt = "" }: 
   const getStyleFromPrompt = useMemo(() => {
     const promptLower = prompt.toLowerCase();
     
-    // Define style categories
     const styles = {
       fantasy: promptLower.includes('fantasy') || promptLower.includes('magical') || promptLower.includes('dragon'),
       scifi: promptLower.includes('sci-fi') || promptLower.includes('futuristic') || promptLower.includes('cyber'),
@@ -26,25 +25,23 @@ export function ImagePreview({ generatedImage, isLoading, error, prompt = "" }: 
       abstract: promptLower.includes('abstract') || promptLower.includes('surreal') || promptLower.includes('artistic'),
     };
 
-    // Return appropriate style classes
     if (styles.fantasy) {
-      return "bg-gradient-to-br from-purple-900/30 via-indigo-900/30 to-blue-900/30 border-indigo-800/50";
+      return "bg-gradient-to-br from-purple-900/40 via-indigo-900/40 to-blue-900/40 border-indigo-800/50";
     }
     if (styles.scifi) {
-      return "bg-gradient-to-br from-cyan-900/30 via-blue-900/30 to-purple-900/30 border-cyan-800/50";
+      return "bg-gradient-to-br from-cyan-900/40 via-blue-900/40 to-purple-900/40 border-cyan-800/50";
     }
     if (styles.nature) {
-      return "bg-gradient-to-br from-green-900/30 via-emerald-900/30 to-teal-900/30 border-green-800/50";
+      return "bg-gradient-to-br from-green-900/40 via-emerald-900/40 to-teal-900/40 border-green-800/50";
     }
     if (styles.portrait) {
-      return "bg-gradient-to-br from-amber-900/30 via-orange-900/30 to-red-900/30 border-amber-800/50";
+      return "bg-gradient-to-br from-amber-900/40 via-orange-900/40 to-red-900/40 border-amber-800/50";
     }
     if (styles.abstract) {
-      return "bg-gradient-to-br from-pink-900/30 via-purple-900/30 to-indigo-900/30 border-pink-800/50";
+      return "bg-gradient-to-br from-pink-900/40 via-purple-900/40 to-indigo-900/40 border-pink-800/50";
     }
     
-    // Default style
-    return "bg-black/10 border-gray-800";
+    return "bg-black/20 border-gray-800/50";
   }, [prompt]);
 
   const handleDownload = async () => {
@@ -115,7 +112,7 @@ export function ImagePreview({ generatedImage, isLoading, error, prompt = "" }: 
   };
 
   return (
-    <Card className={`relative overflow-hidden backdrop-blur-sm shadow-xl min-h-[300px] md:min-h-[400px] group transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] ${getStyleFromPrompt}`}>
+    <Card className={`relative overflow-hidden backdrop-blur-xl shadow-2xl min-h-[400px] md:min-h-[500px] group transition-all duration-700 hover:shadow-amber-500/20 ${getStyleFromPrompt}`}>
       {error && (
         <Alert variant="destructive" className="m-4 animate-fade-in">
           <AlertDescription>{error}</AlertDescription>
@@ -123,45 +120,47 @@ export function ImagePreview({ generatedImage, isLoading, error, prompt = "" }: 
       )}
       
       {isLoading ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="text-amber-400 animate-pulse">Generating your masterpiece...</div>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="text-amber-400 animate-pulse text-lg sm:text-xl">Creating your masterpiece...</div>
         </div>
       ) : generatedImage ? (
-        <div className="h-full p-4 animate-fade-in relative">
+        <div className="h-full p-6 animate-fade-in relative">
           <img
             src={generatedImage}
             alt="Generated artwork"
-            className="w-full h-full object-contain rounded-lg transition-transform duration-500 group-hover:scale-105 pointer-events-none"
+            className="w-full h-full object-contain rounded-lg transition-all duration-700 group-hover:scale-105 pointer-events-none shadow-2xl"
             loading="lazy"
             decoding="async"
           />
-          <div className="absolute bottom-6 right-6 flex flex-col sm:flex-row gap-2">
+          <div className="absolute bottom-8 right-8 flex flex-col sm:flex-row gap-3">
             <Button
               onClick={handleUpload}
-              className="bg-black/50 hover:bg-black/70 backdrop-blur-sm"
-              size="sm"
+              className="bg-black/70 hover:bg-black/90 backdrop-blur-sm transition-all duration-300"
+              size="lg"
             >
-              <Upload className="w-4 h-4 mr-2" />
+              <Upload className="w-5 h-5 mr-2" />
               Upload
             </Button>
             <Button
               onClick={handleDownload}
-              className="bg-black/50 hover:bg-black/70 backdrop-blur-sm"
-              size="sm"
+              className="bg-black/70 hover:bg-black/90 backdrop-blur-sm transition-all duration-300"
+              size="lg"
             >
-              <Download className="w-4 h-4 mr-2" />
+              <Download className="w-5 h-5 mr-2" />
               Download
             </Button>
           </div>
           <SocialShareButton imageUrl={generatedImage} />
         </div>
       ) : !error && (
-        <div className="flex items-center justify-center h-full min-h-[300px] md:min-h-[400px] text-gray-400">
-          <div className="text-center space-y-4 p-4 animate-fade-in">
-            <ImageIcon className="w-12 h-12 mx-auto opacity-50" />
+        <div className="flex items-center justify-center h-full min-h-[400px] md:min-h-[500px] text-gray-400">
+          <div className="text-center space-y-6 p-6 animate-fade-in">
+            <ImageIcon className="w-16 h-16 mx-auto opacity-50 text-amber-400" />
             <div>
-              <p className="text-lg font-medium text-amber-400">Your Canvas Awaits</p>
-              <p className="text-sm text-gray-500 max-w-md mx-auto">Enter your prompt and let our AI bring your vision to life</p>
+              <p className="text-2xl font-medium text-amber-400 mb-2">Your Canvas Awaits</p>
+              <p className="text-base text-gray-500 max-w-md mx-auto">
+                Enter your prompt and let our AI bring your vision to life with stunning detail
+              </p>
             </div>
           </div>
         </div>

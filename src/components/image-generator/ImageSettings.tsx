@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Sparkles, Wand2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -26,44 +26,44 @@ export function ImageSettings({
   VoiceInput,
 }: ImageSettingsProps) {
   return (
-    <Card className="backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl">
-      <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-        <CardHeader className="p-0">
-          <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl text-amber-300">
-            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+    <Card className="backdrop-blur-xl bg-black/20 border-gray-800/50 shadow-2xl hover:shadow-amber-500/10 transition-all duration-500">
+      <CardContent className="p-6 space-y-6">
+        <CardHeader className="p-0 space-y-3">
+          <CardTitle className="flex items-center gap-2 text-2xl sm:text-3xl font-bold bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent animate-gradient-x">
+            <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-amber-400" />
             Create Your Masterpiece
           </CardTitle>
-          <CardDescription className="text-sm sm:text-base text-gray-400">
-            Generate 1 image from a single prompt
+          <CardDescription className="text-base sm:text-lg text-gray-400">
+            Transform your imagination into stunning artwork
           </CardDescription>
         </CardHeader>
 
-        <div className="space-y-4 sm:space-y-6">
-          <div className="space-y-2">
+        <div className="space-y-6">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label htmlFor="prompt" className="text-white">Your Vision</Label>
+              <Label htmlFor="prompt" className="text-lg text-amber-200 font-medium">Your Vision</Label>
               {VoiceInput}
             </div>
             <Textarea
               id="prompt"
-              placeholder="Describe your dream image in detail..."
+              placeholder="Describe your dream image in vivid detail..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="h-20 sm:h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
+              className="h-32 resize-none bg-black/30 border-gray-800/50 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-base transition-all duration-300 hover:bg-black/40"
             />
           </div>
 
-          <div className="space-y-2 text-left">
-            <Label htmlFor="negative-prompt" className="text-white flex items-center gap-2">
+          <div className="space-y-3">
+            <Label htmlFor="negative-prompt" className="text-lg text-amber-200 font-medium flex items-center gap-2">
               Refine Your Image
-              <span className="text-xs text-gray-400">(Optional)</span>
+              <span className="text-sm text-gray-400">(Optional)</span>
             </Label>
             <Textarea
               id="negative-prompt"
               placeholder="Specify what you don't want in the image..."
               value={negativePrompt}
               onChange={(e) => setNegativePrompt(e.target.value)}
-              className="h-20 sm:h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
+              className="h-32 resize-none bg-black/30 border-gray-800/50 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-base transition-all duration-300 hover:bg-black/40"
             />
           </div>
 
