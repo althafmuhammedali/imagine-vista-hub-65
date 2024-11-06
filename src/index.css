@@ -68,17 +68,6 @@
     @apply max-w-full h-auto;
     content-visibility: auto;
   }
-
-  @media (max-width: 640px) {
-    * {
-      @apply touch-manipulation;
-    }
-
-    input, textarea, select {
-      @apply text-base;
-      font-size: 16px !important;
-    }
-  }
 }
 
 @layer utilities {
