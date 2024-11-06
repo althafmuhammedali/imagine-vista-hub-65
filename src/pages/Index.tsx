@@ -135,29 +135,32 @@ const Index = () => {
             </div>
 
             {/* Feedback Form Section */}
-            <Card className="p-4 sm:p-6 backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl transition-all duration-500 hover:scale-[1.01]">
-              <h2 className="text-xl sm:text-2xl font-bold text-amber-400 mb-4 flex items-center gap-2">
-                <Heart className="w-5 h-5" />
+            <Card className="p-4 sm:p-6 md:p-8 backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl transition-all duration-500 hover:scale-[1.01] mx-auto max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%]">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-amber-400 mb-4 flex items-center gap-2 justify-center sm:justify-start">
+                <Heart className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                 Share Your Feedback
               </h2>
-              <p className="text-gray-400 text-sm sm:text-base mb-6">
+              <p className="text-gray-400 text-sm sm:text-base md:text-lg mb-6 text-center sm:text-left">
                 Help us improve ComicForge AI by sharing your thoughts and suggestions
               </p>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 <Textarea
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
                   placeholder="Type your feedback here..."
-                  className="min-h-[150px] bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white resize-none"
+                  className="min-h-[150px] sm:min-h-[200px] bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white resize-none w-full rounded-lg text-sm sm:text-base p-3 sm:p-4"
                   required
+                  aria-label="Feedback message"
                 />
-                <Button 
-                  type="submit"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600"
-                >
-                  <Send className="w-4 h-4" />
-                  Send Feedback
-                </Button>
+                <div className="flex justify-center sm:justify-start">
+                  <Button 
+                    type="submit"
+                    className="w-full sm:w-auto px-6 py-3 flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 transition-colors duration-300 text-base sm:text-lg rounded-lg font-medium shadow-lg hover:shadow-xl active:transform active:scale-95"
+                  >
+                    <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                    Send Feedback
+                  </Button>
+                </div>
               </form>
             </Card>
 
