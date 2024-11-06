@@ -123,7 +123,7 @@ export function ImageGenerator() {
           isLoading={isLoading}
           numImages={1}
           setNumImages={() => {}}
-          VoiceInput={<VoiceInput onTranscript={handleVoiceInput} />}
+          VoiceInput={<VoiceInput onTranscript={handleVoiceInput} selectedLanguage={selectedLanguage} />}
           selectedLanguage={selectedLanguage}
           setSelectedLanguage={setSelectedLanguage}
         />

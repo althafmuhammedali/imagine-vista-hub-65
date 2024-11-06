@@ -5,9 +5,18 @@ import { toast } from "@/components/ui/use-toast";
 
 interface VoiceInputProps {
   onTranscript: (text: string) => void;
+  selectedLanguage: string;
 }
 
-export function VoiceInput({ onTranscript }: VoiceInputProps) {
+const languageCodes = {
+  en: 'en-US',
+  mal: 'ml-IN',
+  hi: 'hi-IN',
+  mr: 'mr-IN',
+  ur: 'ur-PK'
+};
+
+export function VoiceInput({ onTranscript, selectedLanguage }: VoiceInputProps) {
   const [isListening, setIsListening] = useState(false);
 
   const startListening = useCallback(() => {
@@ -23,7 +32,7 @@ export function VoiceInput({ onTranscript }: VoiceInputProps) {
     const recognition = new (window as any).webkitSpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = 'en-US';
+    recognition.lang = languageCodes[selectedLanguage as keyof typeof languageCodes] || 'en-US';
 
     recognition.onstart = () => {
       setIsListening(true);
@@ -57,7 +66,7 @@ export function VoiceInput({ onTranscript }: VoiceInputProps) {
     };
 
     recognition.start();
-  }, [onTranscript]);
+  }, [onTranscript, selectedLanguage]);
 
   return (
     <Button
