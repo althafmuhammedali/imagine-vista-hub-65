@@ -1,20 +1,13 @@
-/* Optimize performance with hardware acceleration */
 #root {
   max-width: 100%;
   margin: 0 auto;
-  padding: max(env(safe-area-inset-top), 0.5rem) 
-           max(env(safe-area-inset-right), 0.5rem) 
-           max(env(safe-area-inset-bottom), 0.5rem) 
-           max(env(safe-area-inset-left), 0.5rem);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   text-align: center;
   min-height: calc(var(--vh, 1vh) * 100);
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
   transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000;
   will-change: transform;
   contain: content;
 }
@@ -22,13 +15,9 @@
 .logo {
   height: clamp(2em, 3vw, 3.5em);
   padding: clamp(0.25em, 1vw, 0.75em);
-  will-change: filter, transform;
-  transition: filter 300ms, transform 300ms;
-  touch-action: manipulation;
-  user-select: none;
-  -webkit-user-drag: none;
-  transform: translateZ(0);
-  contain: size layout;
+  will-change: filter;
+  transition: filter 300ms;
+  contain: strict;
 }
 
 .card {
@@ -36,69 +25,44 @@
   width: 100%;
   max-width: min(100vw - 2rem, 1200px);
   margin: 0 auto;
-  box-sizing: border-box;
-  transform: translateZ(0);
-  will-change: transform;
   contain: content;
 }
 
-/* Optimize mobile performance */
+/* Mobile optimizations */
 @media (max-width: 640px) {
   * {
-    user-select: none;
-    -webkit-touch-callout: none;
+    touch-action: manipulation;
   }
 
   input, textarea {
-    user-select: text;
-    -webkit-user-select: text;
     font-size: 16px !important;
   }
 
   button, a {
-    touch-action: manipulation;
     min-height: 44px;
     min-width: 44px;
-    padding: clamp(8px, 2vw, 12px);
   }
 }
 
-/* Optimize animations */
-@media (prefers-reduced-motion: no-preference) {
-  .logo {
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-}
-
-/* Optimize safe area handling */
-@supports (padding: max(0px)) {
-  .safe-area-padding {
-    padding: max(env(safe-area-inset-top), 1rem)
-             max(env(safe-area-inset-right), 1rem)
-             max(env(safe-area-inset-bottom), 1rem)
-             max(env(safe-area-inset-left), 1rem);
-  }
-}
-
-/* Add content-visibility for better performance */
+/* Content visibility optimizations */
 img {
   content-visibility: auto;
   contain: size layout;
 }
 
-/* Optimize paint performance */
+/* Paint containment */
 * {
   transform: translateZ(0);
-  contain: content;
+  contain: paint;
 }
 
-/* Optimize layout shifts */
+/* Layout shift prevention */
 [data-loading] {
   min-height: 1px;
   contain: size layout;
 }
 
-/* Optimize interaction handling */
+/* Touch optimization */
 button, 
 a, 
 input, 
@@ -108,7 +72,7 @@ textarea {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Prevent CLS */
+/* CLS prevention */
 main {
   contain-intrinsic-size: 0 500px;
   content-visibility: auto;

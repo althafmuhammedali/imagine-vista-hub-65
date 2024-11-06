@@ -7,7 +7,7 @@ const ASSETS = [
   '/pwa-512x512.png'
 ];
 
-// Optimize installation
+// Optimized installation
 self.addEventListener('install', e => {
   e.waitUntil(
     Promise.all([
@@ -17,7 +17,7 @@ self.addEventListener('install', e => {
   );
 });
 
-// Optimize activation
+// Optimized activation
 self.addEventListener('activate', e => {
   e.waitUntil(
     Promise.all([
@@ -31,7 +31,7 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Optimize fetch handling with streaming responses
+// Optimized fetch handling with streaming responses
 self.addEventListener('fetch', e => {
   e.respondWith(
     (async () => {
@@ -59,7 +59,7 @@ self.addEventListener('fetch', e => {
   );
 });
 
-// Optimize background sync
+// Optimized background sync
 self.addEventListener('sync', e => {
   if (e.tag === 'sync-data') {
     e.waitUntil(
@@ -69,7 +69,7 @@ self.addEventListener('sync', e => {
   }
 });
 
-// Optimize push notifications
+// Optimized push notifications
 self.addEventListener('push', e => {
   if (e.data) {
     const options = {
