@@ -85,6 +85,18 @@ const Index = () => {
               <ImageGenerator />
             </div>
 
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+              <FAQ />
+            </div>
+
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+              <Documentation />
+            </div>
+
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+              <PlatformBudget />
+            </div>
+
             {/* Feedback Form Section */}
             <Card className="p-4 sm:p-6 backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl transition-all duration-500 hover:scale-[1.01]">
               <h2 className="text-xl sm:text-2xl font-bold text-amber-400 mb-4 flex items-center gap-2">
@@ -103,18 +115,6 @@ const Index = () => {
                 ></iframe>
               </div>
             </Card>
-
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <FAQ />
-            </div>
-
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <Documentation />
-            </div>
-
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <PlatformBudget />
-            </div>
 
             <div>
               <SocialLinks />
