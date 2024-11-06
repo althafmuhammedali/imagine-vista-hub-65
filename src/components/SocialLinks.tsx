@@ -1,4 +1,4 @@
-import { Instagram, Linkedin, Phone, Facebook, X, MessageSquare } from "lucide-react";
+import { Instagram, Linkedin, Phone, Facebook, X, MessageSquare, Globe } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { ReferralShare } from "./ReferralShare";
@@ -120,9 +120,15 @@ export function SocialLinks() {
   return (
     <footer className="w-full py-8 mt-12 border-t border-gray-800">
       <div className="container flex flex-col items-center gap-6">
+        <div className="flex items-center gap-2 text-amber-400">
+          <Globe className="h-5 w-5" />
+          <p className="text-sm">Kerala's First AI Image Generation Platform</p>
+        </div>
+
         <p className="text-sm text-gray-400">
           Built and maintained by Muhammed Adnan
         </p>
+
         <div className="flex justify-center items-center gap-4">
           <TooltipProvider>
             {socialLinks.map((link) => (
