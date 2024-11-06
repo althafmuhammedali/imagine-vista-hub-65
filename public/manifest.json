@@ -1,7 +1,7 @@
 {
-  "name": "ComicForge AI",
+  "name": "ComicForge AI - Professional 40K AI Art Generator",
   "short_name": "ComicForge",
-  "description": "Create stunning Warhammer 40K artwork with AI",
+  "description": "Create stunning Warhammer 40K artwork with AI - Professional AI art generator for tabletop gaming and fan art",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1a1a",
@@ -9,7 +9,16 @@
   "orientation": "any",
   "scope": "/",
   "prefer_related_applications": false,
-  "categories": ["art", "entertainment", "photo"],
+  "categories": ["art", "entertainment", "photo", "productivity"],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "ComicForge AI Homepage"
+    }
+  ],
   "icons": [
     {
       "src": "/pwa-192x192.png",
@@ -29,6 +38,13 @@
       "name": "Generate Art",
       "url": "/",
       "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "protocol_handlers": [
+    {
+      "protocol": "web+comicforge",
+      "url": "/?action=%s"
     }
   ]
 }

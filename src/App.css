@@ -10,6 +10,8 @@
   transform: translateZ(0);
   will-change: transform;
   contain: content;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 .logo {
@@ -18,6 +20,7 @@
   will-change: filter;
   transition: filter 300ms;
   contain: strict;
+  transform: translateZ(0);
 }
 
 .card {
@@ -26,9 +29,10 @@
   max-width: min(100vw - 2rem, 1200px);
   margin: 0 auto;
   contain: content;
+  transform: translateZ(0);
 }
 
-/* Mobile optimizations */
+/* Responsive Design Optimizations */
 @media (max-width: 640px) {
   * {
     touch-action: manipulation;
@@ -36,33 +40,40 @@
 
   input, textarea {
     font-size: 16px !important;
+    -webkit-appearance: none;
+    border-radius: 0;
   }
 
   button, a {
     min-height: 44px;
     min-width: 44px;
+    padding: 12px;
   }
 }
 
-/* Content visibility optimizations */
+/* Performance Optimizations */
 img {
   content-visibility: auto;
   contain: size layout;
+  aspect-ratio: attr(width) / attr(height);
+  loading: lazy;
+  decoding: async;
 }
 
-/* Paint containment */
+/* Paint Containment */
 * {
   transform: translateZ(0);
   contain: paint;
+  backface-visibility: hidden;
 }
 
-/* Layout shift prevention */
+/* Layout Shift Prevention */
 [data-loading] {
   min-height: 1px;
   contain: size layout;
 }
 
-/* Touch optimization */
+/* Touch Optimization */
 button, 
 a, 
 input, 
@@ -70,10 +81,36 @@ select,
 textarea {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
 }
 
-/* CLS prevention */
+/* CLS Prevention */
 main {
   contain-intrinsic-size: 0 500px;
   content-visibility: auto;
+}
+
+/* Responsive Typography */
+html {
+  font-size: clamp(14px, 1vw + 8px, 18px);
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 2rem;
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* High Contrast Mode */
+@media (forced-colors: active) {
+  * {
+    forced-color-adjust: none;
+  }
 }
