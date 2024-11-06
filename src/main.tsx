@@ -1,11 +1,9 @@
 import { createRoot } from 'react-dom/client';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import './index.css';
 
-// Lazy load the main App component with preload
 const App = lazy(() => {
   const preloadPromise = import('./App');
-  // Preload other critical components
   import('./components/ImageGenerator');
   import('./components/LoadingSpinner');
   return preloadPromise;
@@ -17,24 +15,55 @@ const setVH = () => {
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 };
 
-// Register service worker with immediate activation
+// PWA install prompt
+const PWAPrompt = () => {
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    });
+  }, []);
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    }
+  };
+
+  if (!deferredPrompt) return null;
+
+  return (
+    <div className="fixed bottom-4 right-4 bg-amber-500 text-white p-4 rounded-lg shadow-lg">
+      <p>Install ComicForge AI app?</p>
+      <button 
+        onClick={handleInstall}
+        className="mt-2 bg-white text-amber-500 px-4 py-2 rounded"
+      >
+        Install
+      </button>
+    </div>
+  );
+};
+
+// Register service worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', { immediate: true })
+    navigator.serviceWorker.register('/sw.js')
       .then(registration => {
-        registration.addEventListener('activate', () => {
-          // Claim clients and refresh for immediate SW control
-          registration.active?.clients.claim();
-        });
+        console.log('ServiceWorker registration successful');
       })
       .catch(error => {
-        console.error('Service worker registration failed:', error);
+        console.error('ServiceWorker registration failed:', error);
       });
     
-    // Initial VH calculation
     setVH();
     
-    // Debounced resize handler
     let resizeTimeout: number;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
@@ -47,13 +76,15 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Create root with concurrent mode
 createRoot(document.getElementById('root')!).render(
   <Suspense fallback={
     <div className="min-h-screen flex items-center justify-center">
       <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-amber-500"></div>
     </div>
   }>
-    <App />
+    <>
+      <App />
+      <PWAPrompt />
+    </>
   </Suspense>
 );
