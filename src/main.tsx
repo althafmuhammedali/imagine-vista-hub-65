@@ -4,26 +4,32 @@ import './index.css';
 
 const App = lazy(() => {
   const preloadPromise = import('./App');
+  // Preload critical components
   import('./components/ImageGenerator');
   import('./components/LoadingSpinner');
   return preloadPromise;
 });
 
-// Fix mobile viewport height
+// Fix mobile viewport height with debounced handler
 const setVH = () => {
-  const vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
+  requestAnimationFrame(() => {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  });
 };
 
-// PWA install prompt
+// PWA install prompt with optimized interaction
 const PWAPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
-    window.addEventListener('beforeinstallprompt', (e) => {
+    const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
-    });
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt, { passive: true });
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
   }, []);
 
   const handleInstall = async () => {
@@ -51,7 +57,7 @@ const PWAPrompt = () => {
   );
 };
 
-// Register service worker
+// Register service worker with optimized event handling
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
@@ -62,21 +68,32 @@ if ('serviceWorker' in navigator) {
         console.error('ServiceWorker registration failed:', error);
       });
     
+    // Initial viewport height
     setVH();
     
+    // Debounced resize handler
     let resizeTimeout: number;
     window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = window.setTimeout(setVH, 150);
-    });
+      if (resizeTimeout) {
+        cancelAnimationFrame(resizeTimeout);
+      }
+      resizeTimeout = requestAnimationFrame(setVH);
+    }, { passive: true });
     
+    // Optimized orientation change handler
     window.addEventListener('orientationchange', () => {
-      setTimeout(setVH, 100);
-    });
+      requestAnimationFrame(() => {
+        setTimeout(setVH, 100);
+      });
+    }, { passive: true });
   });
 }
 
-createRoot(document.getElementById('root')!).render(
+// Create root with optimized hydration
+const root = createRoot(document.getElementById('root')!);
+
+// Render with optimized loading state
+root.render(
   <Suspense fallback={
     <div className="min-h-screen flex items-center justify-center">
       <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-amber-500"></div>

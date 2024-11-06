@@ -16,6 +16,7 @@
   backface-visibility: hidden;
   perspective: 1000;
   will-change: transform;
+  contain: content;
 }
 
 .logo {
@@ -27,6 +28,7 @@
   user-select: none;
   -webkit-user-drag: none;
   transform: translateZ(0);
+  contain: size layout;
 }
 
 .card {
@@ -37,6 +39,7 @@
   box-sizing: border-box;
   transform: translateZ(0);
   will-change: transform;
+  contain: content;
 }
 
 /* Optimize mobile performance */
@@ -80,9 +83,33 @@
 /* Add content-visibility for better performance */
 img {
   content-visibility: auto;
+  contain: size layout;
 }
 
 /* Optimize paint performance */
 * {
   transform: translateZ(0);
+  contain: content;
+}
+
+/* Optimize layout shifts */
+[data-loading] {
+  min-height: 1px;
+  contain: size layout;
+}
+
+/* Optimize interaction handling */
+button, 
+a, 
+input, 
+select, 
+textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent CLS */
+main {
+  contain-intrinsic-size: 0 500px;
+  content-visibility: auto;
 }
