@@ -12,6 +12,7 @@
   contain: content;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
+  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--muted)));
 }
 
 .logo {
@@ -28,6 +29,9 @@
   max-width: min(100vw - 2rem, 1200px);
   margin: 0 auto;
   contain: content;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
 }
 
 @media (max-width: 640px) {

@@ -16,22 +16,22 @@ export function AuthButtons() {
             afterSignOutUrl="/"
             appearance={{
               elements: {
-                rootBox: "shadow-xl",
-                card: "bg-black/20 backdrop-blur-sm border-gray-800",
-                userPreviewMainIdentifier: "text-amber-400",
-                userPreviewSecondaryIdentifier: "text-gray-400",
+                rootBox: "shadow-lg",
+                card: "bg-background/95 backdrop-blur-sm border-border",
+                userPreviewMainIdentifier: "text-primary",
+                userPreviewSecondaryIdentifier: "text-muted-foreground",
               }
             }}
           />
         ) : (
           <div className="flex gap-2">
             <SignInButton mode="modal">
-              <Button variant="outline" className="border-gray-800 bg-black/20 hover:bg-amber-500/20 hover:border-amber-500 text-gray-300">
+              <Button variant="outline" className="border-border bg-background/95 hover:bg-primary/10 hover:border-primary text-foreground">
                 Sign in
               </Button>
             </SignInButton>
             <SignUpButton mode="modal">
-              <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 Sign up
               </Button>
             </SignUpButton>
