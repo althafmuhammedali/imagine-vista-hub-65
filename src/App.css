@@ -67,3 +67,56 @@
     0 4px 6px -4px rgb(0 0 0 / 0.1);
   transform: translateY(-2px);
 }
+
+/* Mobile-first responsive design */
+@media (max-width: 640px) {
+  .card {
+    padding: 1rem;
+    border-radius: calc(var(--radius) * 0.75);
+  }
+}
+
+/* Better touch targets on mobile */
+@media (hover: none) and (pointer: coarse) {
+  button, 
+  [role="button"],
+  a {
+    @apply min-h-[44px] min-w-[44px] p-2;
+  }
+}
+
+/* Prevent pull-to-refresh on mobile */
+@media (pointer: coarse) {
+  body {
+    overscroll-behavior-y: none;
+  }
+}
+
+/* Improved scrolling performance */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Better form inputs on mobile */
+input,
+select,
+textarea {
+  @apply appearance-none;
+  -webkit-appearance: none;
+  border-radius: var(--radius);
+}
+
+/* Prevent iOS zoom on input focus */
+@supports (-webkit-touch-callout: none) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

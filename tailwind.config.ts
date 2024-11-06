@@ -88,6 +88,11 @@ export default {
       maxHeight: {
         screen: ['100vh', '100dvh'],
       },
+      screens: {
+        'xs': '360px',
+        'touch': {'raw': '(hover: none) and (pointer: coarse)'},
+        'hover': {'raw': '(hover: hover)'},
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

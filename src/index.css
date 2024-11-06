@@ -44,11 +44,6 @@
     @apply antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', sans-serif;
-    @apply font-semibold tracking-tight;
-  }
-
   body {
     @apply bg-background text-foreground;
     min-height: 100vh;
@@ -67,6 +62,25 @@
   @supports (height: 100dvh) {
     body {
       min-height: 100dvh;
+    }
+  }
+
+  /* Improved touch targets for mobile */
+  button, a {
+    @apply min-h-[44px] min-w-[44px];
+    touch-action: manipulation;
+  }
+
+  /* Better form controls on mobile */
+  input, select, textarea {
+    @apply text-base;
+    font-size: max(16px, 1em);
+  }
+
+  /* Prevent zoom on focus in iOS */
+  @supports (-webkit-touch-callout: none) {
+    input, select, textarea {
+      font-size: 16px;
     }
   }
 }
@@ -89,5 +103,9 @@
   .fluid-text {
     font-size: clamp(0.875rem, 1vw + 0.5rem, 1.125rem);
     line-height: clamp(1.25, 1.5vw + 1, 1.75);
+  }
+
+  .safe-area-inset {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 }
