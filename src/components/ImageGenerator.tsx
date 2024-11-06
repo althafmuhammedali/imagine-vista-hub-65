@@ -9,7 +9,7 @@ import { VoiceInput } from "./VoiceInput";
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
   const [negativePrompt, setNegativePrompt] = useState("");
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const queryClient = useQueryClient();
@@ -38,9 +38,8 @@ export function ImageGenerator() {
     setError(undefined);
 
     try {
-      if (generatedImage) {
-        URL.revokeObjectURL(generatedImage);
-      }
+      // Clear previous URLs
+      generatedImages.forEach(url => URL.revokeObjectURL(url));
 
       const params = {
         prompt: trimmedPrompt,
@@ -49,20 +48,17 @@ export function ImageGenerator() {
         negativePrompt: negativePrompt.trim(),
       };
 
-      const imageUrl = await generateImage(params);
-      setGeneratedImage(imageUrl);
-      
-      queryClient.prefetchQuery({
-        queryKey: ['image', { ...params, prompt: trimmedPrompt + " detailed" }],
-        queryFn: () => generateImage({ ...params, prompt: trimmedPrompt + " detailed" }),
-      });
+      // Generate 4 images in parallel
+      const imagePromises = Array(4).fill(null).map(() => generateImage(params));
+      const imageUrls = await Promise.all(imagePromises);
+      setGeneratedImages(imageUrls);
 
       toast({
         title: "Success",
-        description: "Image generated successfully!",
+        description: "Images generated successfully!",
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to generate image";
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate images";
       setError(errorMessage);
       toast({
         title: "Error",
@@ -72,7 +68,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, negativePrompt, generatedImage, queryClient]);
+  }, [prompt, negativePrompt, generatedImages, queryClient]);
 
   const handleVoiceInput = useCallback((transcript: string) => {
     setPrompt(transcript);
@@ -80,7 +76,7 @@ export function ImageGenerator() {
 
   return (
     <div className="container max-w-6xl py-4 space-y-4 px-4 sm:px-6 md:px-8">
-      <div className="grid gap-4 md:gap-8 lg:grid-cols-[1fr,1fr]">
+      <div className="grid gap-4 md:gap-8 lg:grid-cols-[1fr,2fr]">
         <ImageSettings
           prompt={prompt}
           setPrompt={setPrompt}
@@ -90,11 +86,16 @@ export function ImageGenerator() {
           isLoading={isLoading}
           VoiceInput={<VoiceInput onTranscript={handleVoiceInput} />}
         />
-        <ImagePreview
-          generatedImage={generatedImage}
-          isLoading={isLoading}
-          error={error}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          {Array(4).fill(null).map((_, index) => (
+            <ImagePreview
+              key={index}
+              generatedImage={generatedImages[index] || null}
+              isLoading={isLoading}
+              error={error}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
