@@ -26,12 +26,17 @@ export function AuthButtons() {
         ) : (
           <div className="flex gap-2">
             <SignInButton mode="modal">
-              <Button variant="outline" className="bg-background/95 hover:bg-primary/10">
+              <Button 
+                variant="outline" 
+                className="bg-background/95 backdrop-blur-sm hover:bg-primary/5 transition-colors"
+              >
                 Sign in
               </Button>
             </SignInButton>
             <SignUpButton mode="modal">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Button 
+                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-colors"
+              >
                 Sign up
               </Button>
             </SignUpButton>

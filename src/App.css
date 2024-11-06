@@ -12,7 +12,10 @@
   contain: content;
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
-  background: linear-gradient(to bottom, hsl(var(--background)), hsl(var(--secondary)));
+  background: linear-gradient(180deg, 
+    hsl(var(--background)) 0%,
+    hsl(var(--secondary)) 100%
+  );
 }
 
 .logo {
