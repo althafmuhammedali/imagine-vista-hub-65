@@ -112,19 +112,19 @@ export function ImagePreview({ generatedImage, isLoading, error, prompt = "" }: 
   };
 
   return (
-    <Card className={`relative overflow-hidden backdrop-blur-xl shadow-2xl min-h-[400px] md:min-h-[500px] group transition-all duration-700 hover:shadow-amber-500/20 ${getStyleFromPrompt}`}>
+    <Card className={`relative overflow-hidden backdrop-blur-xl shadow-2xl min-h-[300px] sm:min-h-[400px] md:min-h-[450px] group transition-all duration-700 hover:shadow-amber-500/20 ${getStyleFromPrompt}`}>
       {error && (
-        <Alert variant="destructive" className="m-4 animate-fade-in">
+        <Alert variant="destructive" className="m-2 sm:m-4 animate-fade-in">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       
       {isLoading ? (
         <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="text-amber-400 animate-pulse text-lg sm:text-xl">Creating your masterpiece...</div>
+          <div className="text-amber-400 animate-pulse text-sm sm:text-base md:text-lg">Creating your masterpiece...</div>
         </div>
       ) : generatedImage ? (
-        <div className="h-full p-6 animate-fade-in relative">
+        <div className="h-full p-3 sm:p-4 md:p-6 animate-fade-in relative">
           <img
             src={generatedImage}
             alt="Generated artwork"
@@ -132,33 +132,33 @@ export function ImagePreview({ generatedImage, isLoading, error, prompt = "" }: 
             loading="lazy"
             decoding="async"
           />
-          <div className="absolute bottom-8 right-8 flex flex-col sm:flex-row gap-3">
+          <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Button
               onClick={handleUpload}
-              className="bg-black/70 hover:bg-black/90 backdrop-blur-sm transition-all duration-300"
-              size="lg"
+              className="bg-black/70 hover:bg-black/90 backdrop-blur-sm transition-all duration-300 text-xs sm:text-sm"
+              size="sm"
             >
-              <Upload className="w-5 h-5 mr-2" />
+              <Upload className="w-4 h-4 mr-1 sm:mr-2" />
               Upload
             </Button>
             <Button
               onClick={handleDownload}
-              className="bg-black/70 hover:bg-black/90 backdrop-blur-sm transition-all duration-300"
-              size="lg"
+              className="bg-black/70 hover:bg-black/90 backdrop-blur-sm transition-all duration-300 text-xs sm:text-sm"
+              size="sm"
             >
-              <Download className="w-5 h-5 mr-2" />
+              <Download className="w-4 h-4 mr-1 sm:mr-2" />
               Download
             </Button>
           </div>
           <SocialShareButton imageUrl={generatedImage} />
         </div>
       ) : !error && (
-        <div className="flex items-center justify-center h-full min-h-[400px] md:min-h-[500px] text-gray-400">
-          <div className="text-center space-y-6 p-6 animate-fade-in">
-            <ImageIcon className="w-16 h-16 mx-auto opacity-50 text-amber-400" />
+        <div className="flex items-center justify-center h-full min-h-[300px] sm:min-h-[400px] md:min-h-[450px] text-gray-400">
+          <div className="text-center space-y-4 sm:space-y-6 p-4 sm:p-6 animate-fade-in">
+            <ImageIcon className="w-12 h-12 sm:w-16 sm:h-16 mx-auto opacity-50 text-amber-400" />
             <div>
-              <p className="text-2xl font-medium text-amber-400 mb-2">Your Canvas Awaits</p>
-              <p className="text-base text-gray-500 max-w-md mx-auto">
+              <p className="text-xl sm:text-2xl font-medium text-amber-400 mb-2">Your Canvas Awaits</p>
+              <p className="text-sm sm:text-base text-gray-500 max-w-md mx-auto">
                 Enter your prompt and let our AI bring your vision to life with stunning detail
               </p>
             </div>

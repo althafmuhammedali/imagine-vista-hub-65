@@ -139,27 +139,31 @@ export function ImageGenerator() {
   }, []);
 
   return (
-    <div className="relative w-full max-w-7xl mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 backdrop-blur-xl bg-gradient-to-b from-background/10 via-background/50 to-background/10 border border-border/50 rounded-lg shadow-2xl">
+    <div className="relative w-full max-w-7xl mx-auto py-2 sm:py-4 md:py-6 lg:py-8 px-2 sm:px-4 lg:px-6 backdrop-blur-xl bg-gradient-to-b from-background/10 via-background/50 to-background/10 border border-border/50 rounded-lg shadow-2xl">
       <div className="grid gap-4 md:gap-6 lg:grid-cols-[1.2fr,0.8fr]">
-        <ImageSettings
-          prompt={prompt}
-          setPrompt={setPrompt}
-          negativePrompt={negativePrompt}
-          setNegativePrompt={setNegativePrompt}
-          onGenerate={handleGenerate}
-          isLoading={isLoading}
-          numImages={1}
-          setNumImages={() => {}}
-          VoiceInput={<VoiceInput onTranscript={handleVoiceInput} selectedLanguage={selectedLanguage} />}
-          selectedLanguage={selectedLanguage}
-          setSelectedLanguage={setSelectedLanguage}
-        />
-        <ImagePreview
-          generatedImage={generatedImages[0] || null}
-          isLoading={isLoading}
-          error={error}
-          prompt={prompt}
-        />
+        <div className="order-2 lg:order-1">
+          <ImageSettings
+            prompt={prompt}
+            setPrompt={setPrompt}
+            negativePrompt={negativePrompt}
+            setNegativePrompt={setNegativePrompt}
+            onGenerate={handleGenerate}
+            isLoading={isLoading}
+            numImages={1}
+            setNumImages={() => {}}
+            VoiceInput={<VoiceInput onTranscript={handleVoiceInput} selectedLanguage={selectedLanguage} />}
+            selectedLanguage={selectedLanguage}
+            setSelectedLanguage={setSelectedLanguage}
+          />
+        </div>
+        <div className="order-1 lg:order-2">
+          <ImagePreview
+            generatedImage={generatedImages[0] || null}
+            isLoading={isLoading}
+            error={error}
+            prompt={prompt}
+          />
+        </div>
       </div>
     </div>
   );
