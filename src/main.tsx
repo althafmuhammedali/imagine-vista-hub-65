@@ -16,7 +16,10 @@ const setVH = () => {
   });
 };
 
-if ('serviceWorker' in navigator) {
+// Check if we're running as an extension
+const isExtension = window.chrome && chrome.runtime && chrome.runtime.id;
+
+if ('serviceWorker' in navigator && !isExtension) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js', { 
       scope: '/',
