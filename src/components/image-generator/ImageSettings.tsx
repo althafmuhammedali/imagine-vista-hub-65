@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { GenerateButton } from "./settings/GenerateButton";
+import { Input } from "@/components/ui/input";
 
 interface ImageSettingsProps {
   prompt: string;
@@ -11,6 +12,8 @@ interface ImageSettingsProps {
   setNegativePrompt: (value: string) => void;
   onGenerate: () => void;
   isLoading: boolean;
+  numImages: number;
+  setNumImages: (value: number) => void;
   VoiceInput: React.ReactNode;
 }
 
@@ -21,6 +24,8 @@ export function ImageSettings({
   setNegativePrompt,
   onGenerate,
   isLoading,
+  numImages,
+  setNumImages,
   VoiceInput,
 }: ImageSettingsProps) {
   return (
@@ -62,6 +67,21 @@ export function ImageSettings({
               value={negativePrompt}
               onChange={(e) => setNegativePrompt(e.target.value)}
               className="h-20 sm:h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="num-images" className="text-white">
+              Number of Images
+            </Label>
+            <Input
+              id="num-images"
+              type="number"
+              min="1"
+              max="12"
+              value={numImages}
+              onChange={(e) => setNumImages(Math.min(12, Math.max(1, parseInt(e.target.value) || 1)))}
+              className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 text-white"
             />
           </div>
 

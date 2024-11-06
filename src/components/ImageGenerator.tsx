@@ -12,6 +12,7 @@ export function ImageGenerator() {
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const [numImages, setNumImages] = useState(4); // Default number of images
   const queryClient = useQueryClient();
 
   const handleGenerate = useCallback(async () => {
@@ -48,14 +49,14 @@ export function ImageGenerator() {
         negativePrompt: negativePrompt.trim(),
       };
 
-      // Generate 4 images in parallel
-      const imagePromises = Array(4).fill(null).map(() => generateImage(params));
+      // Generate images in parallel based on user selection
+      const imagePromises = Array(numImages).fill(null).map(() => generateImage(params));
       const imageUrls = await Promise.all(imagePromises);
       setGeneratedImages(imageUrls);
 
       toast({
         title: "Success",
-        description: "Images generated successfully!",
+        description: `${numImages} images generated successfully!`,
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to generate images";
@@ -68,7 +69,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, negativePrompt, generatedImages, queryClient]);
+  }, [prompt, negativePrompt, generatedImages, queryClient, numImages]);
 
   const handleVoiceInput = useCallback((transcript: string) => {
     setPrompt(transcript);
@@ -76,7 +77,7 @@ export function ImageGenerator() {
 
   return (
     <div className="container max-w-6xl py-4 space-y-4 px-4 sm:px-6 md:px-8">
-      <div className="grid gap-4 md:gap-8 lg:grid-cols-[1fr,2fr]">
+      <div className="grid gap-4 md:gap-8 lg:grid-cols-[1fr,auto]">
         <ImageSettings
           prompt={prompt}
           setPrompt={setPrompt}
@@ -84,10 +85,12 @@ export function ImageGenerator() {
           setNegativePrompt={setNegativePrompt}
           onGenerate={handleGenerate}
           isLoading={isLoading}
+          numImages={numImages}
+          setNumImages={setNumImages}
           VoiceInput={<VoiceInput onTranscript={handleVoiceInput} />}
         />
-        <div className="grid grid-cols-2 gap-4">
-          {Array(4).fill(null).map((_, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-fr">
+          {Array(numImages).fill(null).map((_, index) => (
             <ImagePreview
               key={index}
               generatedImage={generatedImages[index] || null}
