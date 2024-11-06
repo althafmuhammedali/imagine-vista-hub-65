@@ -17,7 +17,7 @@ const setVH = () => {
 };
 
 // Check if we're running as an extension
-const isExtension = window.chrome && chrome.runtime && chrome.runtime.id;
+const isExtension = typeof chrome !== 'undefined' && chrome?.runtime?.id;
 
 if ('serviceWorker' in navigator && !isExtension) {
   window.addEventListener('load', () => {
