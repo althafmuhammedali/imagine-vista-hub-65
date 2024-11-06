@@ -48,12 +48,9 @@
 }
 
 img {
-  content-visibility: auto;
-  contain: size layout;
-  aspect-ratio: attr(width) / attr(height);
   max-width: 100%;
   height: auto;
-  loading: lazy;
+  aspect-ratio: attr(width) / attr(height);
 }
 
 * {
@@ -67,41 +64,14 @@ img {
   contain: size layout;
 }
 
-button, 
-a, 
-input, 
-select, 
-textarea {
+button, a, input, select, textarea {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
 }
 
 main {
-  contain-intrinsic-size: 0 500px;
-  content-visibility: auto;
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
-}
-
-@media print {
-  .no-print {
-    display: none !important;
-  }
-}
-
-@media (forced-colors: active) {
-  * {
-    forced-color-adjust: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
 }

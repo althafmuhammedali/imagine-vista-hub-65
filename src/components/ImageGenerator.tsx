@@ -11,11 +11,15 @@ const supportedLanguages = {
   mal: "Malayalam",
   hi: "Hindi",
   mr: "Marathi",
-  ur: "Urdu"
+  ur: "Urdu",
+  ta: "Tamil",
+  te: "Telugu",
+  kn: "Kannada",
+  bn: "Bengali"
 };
 
 const translateToEnglish = async (text: string, sourceLang: string): Promise<string> => {
-  if (sourceLang === 'en') return text;
+  if (sourceLang === 'en' || !text.trim()) return text;
   
   try {
     const response = await fetch(`https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-${sourceLang}-en`, {
@@ -105,8 +109,8 @@ export function ImageGenerator() {
 
       const params = {
         prompt: enhancePrompt(translatedPrompt),
-        width: 1024,
-        height: 1024,
+        width: window.innerWidth >= 1024 ? 1024 : 512,
+        height: window.innerWidth >= 1024 ? 1024 : 512,
         negativePrompt: enhanceNegativePrompt(translatedNegativePrompt.trim()),
       };
 
@@ -135,8 +139,8 @@ export function ImageGenerator() {
   }, []);
 
   return (
-    <div className="relative w-full max-w-7xl mx-auto py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8 backdrop-blur-xl bg-gradient-to-b from-background/10 via-background/50 to-background/10 border border-border/50 rounded-lg shadow-2xl">
-      <div className="grid gap-6 md:gap-8 lg:grid-cols-[1.2fr,0.8fr]">
+    <div className="relative w-full max-w-7xl mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 backdrop-blur-xl bg-gradient-to-b from-background/10 via-background/50 to-background/10 border border-border/50 rounded-lg shadow-2xl">
+      <div className="grid gap-4 md:gap-6 lg:grid-cols-[1.2fr,0.8fr]">
         <ImageSettings
           prompt={prompt}
           setPrompt={setPrompt}
