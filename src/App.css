@@ -3,7 +3,7 @@
   margin: 0 auto;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   text-align: center;
-  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
@@ -20,7 +20,6 @@
   will-change: filter;
   transition: filter 300ms;
   contain: strict;
-  transform: translateZ(0);
 }
 
 .card {
@@ -29,13 +28,6 @@
   max-width: min(100vw - 2rem, 1200px);
   margin: 0 auto;
   contain: content;
-  transform: translateZ(0);
-}
-
-@supports (height: 100dvh) {
-  #root {
-    min-height: 100dvh;
-  }
 }
 
 @media (max-width: 640px) {
@@ -52,10 +44,6 @@
     min-height: 44px;
     min-width: 44px;
     padding: max(12px, 0.75em);
-  }
-
-  .card {
-    padding: clamp(0.75rem, 2vw, 1.5rem);
   }
 }
 
