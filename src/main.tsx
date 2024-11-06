@@ -2,6 +2,16 @@ import { createRoot } from 'react-dom/client';
 import { lazy, Suspense } from 'react';
 import './index.css';
 
+declare global {
+  interface Window {
+    chrome?: {
+      runtime?: {
+        id?: string;
+      };
+    };
+  }
+}
+
 const App = lazy(() => {
   const preloadPromise = import('./App');
   import('./components/ImageGenerator');
