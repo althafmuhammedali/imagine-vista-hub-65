@@ -32,6 +32,12 @@
   transform: translateZ(0);
 }
 
+@supports (height: 100dvh) {
+  #root {
+    min-height: 100dvh;
+  }
+}
+
 @media (max-width: 640px) {
   * {
     touch-action: manipulation;
@@ -47,12 +53,19 @@
     min-width: 44px;
     padding: max(12px, 0.75em);
   }
+
+  .card {
+    padding: clamp(0.75rem, 2vw, 1.5rem);
+  }
 }
 
 img {
   content-visibility: auto;
   contain: size layout;
   aspect-ratio: attr(width) / attr(height);
+  max-width: 100%;
+  height: auto;
+  loading: lazy;
 }
 
 * {
@@ -79,6 +92,9 @@ textarea {
 main {
   contain-intrinsic-size: 0 500px;
   content-visibility: auto;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 @media print {
@@ -90,5 +106,14 @@ main {
 @media (forced-colors: active) {
   * {
     forced-color-adjust: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

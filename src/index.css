@@ -23,13 +23,14 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --radius: clamp(0.375rem, 2vw, 0.5rem);
   }
 
   * {
     @apply border-border;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    scroll-behavior: smooth;
   }
 
   html {
@@ -55,18 +56,27 @@
   input, textarea, select {
     @apply appearance-none;
     font-size: max(16px, 1em);
+    padding: clamp(0.5rem, 2vw, 1rem);
   }
 
   button, a {
     @apply select-none touch-manipulation;
-    min-height: 44px;
-    min-width: 44px;
-    padding: max(8px, 0.5em);
+    min-height: clamp(44px, 6vh, 56px);
+    min-width: clamp(44px, 6vw, 56px);
+    padding: clamp(0.5rem, 2vw, 1rem);
   }
 
   img {
     @apply max-w-full h-auto;
     content-visibility: auto;
+    aspect-ratio: attr(width) / attr(height);
+    loading: lazy;
+  }
+
+  @supports (height: 100dvh) {
+    body {
+      min-height: 100dvh;
+    }
   }
 }
 
@@ -86,14 +96,28 @@
   }
 
   .fluid-text {
-    @apply text-fluid-base;
+    font-size: clamp(0.875rem, 1vw + 0.5rem, 1.125rem);
+    line-height: clamp(1.25, 1.5vw + 1, 1.75);
   }
 
   .fluid-heading {
-    @apply text-fluid-xl sm:text-fluid-2xl;
+    font-size: clamp(1.5rem, 3vw + 1rem, 2.5rem);
+    line-height: clamp(1.75, 2vw + 1.25, 2.25);
   }
 
   .safe-paddings {
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  .fluid-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: clamp(1rem, 3vw, 2rem);
+  }
+
+  .fluid-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(0.5rem, 2vw, 1rem);
   }
 }
