@@ -1,8 +1,32 @@
 {
   "manifest_version": 3,
   "name": "ComicForge AI - Professional AI Art Generator",
+  "short_name": "ComicForge",
   "version": "1.0.0",
   "description": "Create stunning artwork with AI - Professional AI art generator for digital art and illustrations",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#F59E0B",
+  "background_color": "#1a1a1a",
+  "prefer_related_applications": false,
+  "categories": ["art", "productivity", "entertainment"],
+  "screenshots": [
+    {
+      "src": "screenshot-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "ComicForge AI Dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Creation",
+      "url": "/create",
+      "description": "Start a new AI art creation"
+    }
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -11,11 +35,20 @@
       "128": "pwa-512x512.png"
     }
   },
-  "icons": {
-    "16": "pwa-192x192.png",
-    "48": "pwa-192x192.png",
-    "128": "pwa-512x512.png"
-  },
+  "icons": [
+    {
+      "src": "pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
   "permissions": [
     "storage",
     "clipboardWrite"
