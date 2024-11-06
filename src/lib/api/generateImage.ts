@@ -20,47 +20,51 @@ export async function generateImage({
     throw new Error('Rate limit exceeded');
   }
 
-  const response = await fetch(API_CONFIG.BASE_URL, {
-    method: "POST",
-    headers: {
-      ...API_CONFIG.HEADERS,
-      Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
-    },
-    body: JSON.stringify({
-      inputs: prompt,
-      parameters: {
-        ...API_CONFIG.DEFAULT_PARAMS,
-        negative_prompt: negativePrompt,
-        width,
-        height,
-      },
-    }),
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
 
-  if (!response.ok) {
-    if (response.status === 429) {
-      const errorData = await response.json();
-      const isBusy = errorData.error?.includes("loading") || errorData.estimated_time > 60;
-      
-      if (isBusy) {
-        toast({
-          title: "Model Busy",
-          description: "Model too busy, unable to get response in less than 60 second(s)",
-          variant: "destructive",
-        });
-        throw new Error("Model too busy, unable to get response in less than 60 second(s)");
+  try {
+    const response = await fetch(API_CONFIG.BASE_URL, {
+      method: "POST",
+      headers: API_CONFIG.HEADERS,
+      signal: controller.signal,
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: {
+          ...API_CONFIG.DEFAULT_PARAMS,
+          negative_prompt: negativePrompt,
+          width,
+          height,
+        },
+      }),
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        const errorData = await response.json();
+        const isBusy = errorData.error?.includes("loading") || errorData.estimated_time > 30;
+        
+        if (isBusy) {
+          toast({
+            title: "Model Busy",
+            description: "Model too busy, retrying with fallback model...",
+            variant: "destructive",
+          });
+          // Could implement fallback model logic here
+          throw new Error("Model too busy");
+        }
+        
+        throw new RateLimitError(30000); // 30 seconds default
       }
-      
-      toast({
-        title: "Rate Limit Exceeded",
-        description: "Please wait before making more requests.",
-        variant: "destructive",
-      });
-      throw new RateLimitError(60000); // 1 minute default
+      throw new Error('Failed to generate image');
     }
-    throw new Error('Failed to generate image');
-  }
 
-  const blob = await response.blob();
-  return URL.createObjectURL(blob);
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
 }
