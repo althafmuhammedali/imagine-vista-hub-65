@@ -12,7 +12,7 @@ export function ImageGenerator() {
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
-  const [numImages, setNumImages] = useState(4); // Default number of images
+  const [numImages, setNumImages] = useState(2); // Fixed to 2 images
   const queryClient = useQueryClient();
 
   const handleGenerate = useCallback(async () => {
@@ -49,14 +49,14 @@ export function ImageGenerator() {
         negativePrompt: negativePrompt.trim(),
       };
 
-      // Generate images in parallel based on user selection
-      const imagePromises = Array(numImages).fill(null).map(() => generateImage(params));
+      // Generate exactly 2 images
+      const imagePromises = Array(2).fill(null).map(() => generateImage(params));
       const imageUrls = await Promise.all(imagePromises);
       setGeneratedImages(imageUrls);
 
       toast({
         title: "Success",
-        description: `${numImages} images generated successfully!`,
+        description: "2 images generated successfully!",
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to generate images";
@@ -69,7 +69,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, negativePrompt, generatedImages, queryClient, numImages]);
+  }, [prompt, negativePrompt, generatedImages, queryClient]);
 
   const handleVoiceInput = useCallback((transcript: string) => {
     setPrompt(transcript);
@@ -86,11 +86,11 @@ export function ImageGenerator() {
           onGenerate={handleGenerate}
           isLoading={isLoading}
           numImages={numImages}
-          setNumImages={setNumImages}
+          setNumImages={() => {}} // Disable changing number of images
           VoiceInput={<VoiceInput onTranscript={handleVoiceInput} />}
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-fr">
-          {Array(numImages).fill(null).map((_, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 auto-rows-fr">
+          {Array(2).fill(null).map((_, index) => (
             <ImagePreview
               key={index}
               generatedImage={generatedImages[index] || null}

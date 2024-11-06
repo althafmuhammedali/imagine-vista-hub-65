@@ -37,7 +37,7 @@ export function ImageSettings({
             Create Your Masterpiece
           </CardTitle>
           <CardDescription className="text-sm sm:text-base text-gray-400">
-            Let your imagination run wild and create stunning artwork
+            Generate 2 images from a single prompt
           </CardDescription>
         </CardHeader>
 
@@ -67,21 +67,6 @@ export function ImageSettings({
               value={negativePrompt}
               onChange={(e) => setNegativePrompt(e.target.value)}
               className="h-20 sm:h-24 resize-none bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="num-images" className="text-white">
-              Number of Images
-            </Label>
-            <Input
-              id="num-images"
-              type="number"
-              min="1"
-              max="12"
-              value={numImages}
-              onChange={(e) => setNumImages(Math.min(12, Math.max(1, parseInt(e.target.value) || 1)))}
-              className="bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 text-white"
             />
           </div>
 
