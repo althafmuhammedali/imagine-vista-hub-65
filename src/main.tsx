@@ -3,21 +3,19 @@ import { lazy, Suspense } from 'react';
 import './index.css';
 
 const App = lazy(() => {
-  // Preload critical components
   const preloadPromise = import('./App');
   import('./components/ImageGenerator');
   import('./components/LoadingSpinner');
   return preloadPromise;
 });
 
-// Optimized viewport height handler
 const setVH = () => {
   requestAnimationFrame(() => {
-    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
   });
 };
 
-// PWA registration with performance optimizations
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js', { 
@@ -25,10 +23,8 @@ if ('serviceWorker' in navigator) {
       type: 'module'
     });
     
-    // Initial viewport height
     setVH();
     
-    // Optimized resize handler
     let resizeTimeout: number;
     window.addEventListener('resize', () => {
       if (resizeTimeout) {
@@ -37,7 +33,6 @@ if ('serviceWorker' in navigator) {
       resizeTimeout = requestAnimationFrame(setVH);
     }, { passive: true });
     
-    // Optimized orientation change handler
     window.addEventListener('orientationchange', () => {
       requestAnimationFrame(() => {
         setTimeout(setVH, 100);
@@ -46,10 +41,8 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Create root with optimized hydration
 const root = createRoot(document.getElementById('root')!);
 
-// Render with optimized loading state
 root.render(
   <Suspense fallback={
     <div className="min-h-screen flex items-center justify-center">

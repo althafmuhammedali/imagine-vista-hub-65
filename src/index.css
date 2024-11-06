@@ -39,15 +39,17 @@
     height: -webkit-fill-available;
     overflow-x: hidden;
     scroll-behavior: smooth;
+    @apply antialiased;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground;
     min-height: 100vh;
     min-height: -webkit-fill-available;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   input, textarea, select {
@@ -59,11 +61,23 @@
     @apply select-none touch-manipulation;
     min-height: 44px;
     min-width: 44px;
+    padding: max(8px, 0.5em);
   }
 
   img {
     @apply max-w-full h-auto;
     content-visibility: auto;
+  }
+
+  @media (max-width: 640px) {
+    * {
+      @apply touch-manipulation;
+    }
+
+    input, textarea, select {
+      @apply text-base;
+      font-size: 16px !important;
+    }
   }
 }
 
@@ -88,5 +102,9 @@
 
   .fluid-heading {
     @apply text-fluid-xl sm:text-fluid-2xl;
+  }
+
+  .safe-paddings {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 }
