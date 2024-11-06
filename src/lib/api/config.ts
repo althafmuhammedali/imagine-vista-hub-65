@@ -1,22 +1,22 @@
 export const API_CONFIG = {
   BASE_URL: "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
-  TIMEOUT: 90000, // Reduced to 90 seconds for faster timeout
+  TIMEOUT: 90000,
   HEADERS: {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
   },
   DEFAULT_PARAMS: {
-    num_inference_steps: 30, // Reduced steps for faster generation
-    guidance_scale: 7.5, // Optimized for speed/quality balance
-    scheduler: "DPMSolverMultistepScheduler", // Faster scheduler
+    num_inference_steps: 50, // Increased steps for better quality
+    guidance_scale: 9.0, // Increased for more photorealistic results
+    scheduler: "DPMSolverMultistepScheduler",
     use_karras_sigmas: true,
     clip_skip: 1,
     tiling: false,
     use_safetensors: true,
     options: {
-      wait_for_model: false, // Don't wait for model to load
+      wait_for_model: true,
       use_gpu: true,
-      stream_progress: true // Enable progress streaming
+      stream_progress: true
     }
   }
 };
