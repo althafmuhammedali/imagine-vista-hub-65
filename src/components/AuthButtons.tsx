@@ -17,9 +17,9 @@ export function AuthButtons() {
             appearance={{
               elements: {
                 rootBox: "shadow-lg",
-                card: "bg-background/95 backdrop-blur-sm border-border",
-                userPreviewMainIdentifier: "text-primary",
-                userPreviewSecondaryIdentifier: "text-muted-foreground",
+                card: "bg-black/95 backdrop-blur-sm border-amber-500/50",
+                userPreviewMainIdentifier: "text-amber-400",
+                userPreviewSecondaryIdentifier: "text-amber-200/70",
               }
             }}
           />
@@ -28,14 +28,14 @@ export function AuthButtons() {
             <SignInButton mode="modal">
               <Button 
                 variant="outline" 
-                className="bg-background/95 backdrop-blur-sm hover:bg-primary/5 transition-colors"
+                className="bg-black/95 backdrop-blur-sm border-amber-500/50 hover:bg-amber-500/10 text-amber-400 transition-colors"
               >
                 Sign in
               </Button>
             </SignInButton>
             <SignUpButton mode="modal">
               <Button 
-                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-colors"
+                className="bg-amber-500 hover:bg-amber-600 text-black font-semibold shadow-lg transition-colors"
               >
                 Sign up
               </Button>
