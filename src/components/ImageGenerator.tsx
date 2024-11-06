@@ -6,7 +6,17 @@ import { ImagePreview } from "./image-generator/ImagePreview";
 import { VoiceInput } from "./VoiceInput";
 import { enhancePrompt, enhanceNegativePrompt } from "@/lib/api/promptEnhancer";
 
+const supportedLanguages = {
+  en: "English",
+  mal: "Malayalam",
+  hi: "Hindi",
+  mr: "Marathi",
+  ur: "Urdu"
+};
+
 const translateToEnglish = async (text: string, sourceLang: string): Promise<string> => {
+  if (sourceLang === 'en') return text;
+  
   try {
     const response = await fetch(`https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-${sourceLang}-en`, {
       method: 'POST',
@@ -25,7 +35,12 @@ const translateToEnglish = async (text: string, sourceLang: string): Promise<str
     return result[0].translation_text;
   } catch (error) {
     console.error('Translation error:', error);
-    throw new Error('Failed to translate prompt');
+    toast({
+      title: "Translation Error",
+      description: "Failed to translate prompt. Proceeding with original text.",
+      variant: "destructive",
+    });
+    return text;
   }
 };
 
@@ -66,17 +81,25 @@ export function ImageGenerator() {
 
       // Translate prompt if not in English
       let translatedPrompt = trimmedPrompt;
+      let translatedNegativePrompt = negativePrompt;
+
       if (selectedLanguage !== "en") {
         try {
           translatedPrompt = await translateToEnglish(trimmedPrompt, selectedLanguage);
+          if (negativePrompt) {
+            translatedNegativePrompt = await translateToEnglish(negativePrompt, selectedLanguage);
+          }
+          
+          toast({
+            title: "Translation Complete",
+            description: "Your prompt has been translated for better results.",
+          });
         } catch (error) {
           toast({
-            title: "Translation Error",
-            description: "Failed to translate prompt. Please try again.",
+            title: "Translation Warning",
+            description: "Using original prompt as translation failed.",
             variant: "destructive",
           });
-          setIsLoading(false);
-          return;
         }
       }
 
@@ -84,7 +107,7 @@ export function ImageGenerator() {
         prompt: enhancePrompt(translatedPrompt),
         width: 1024,
         height: 1024,
-        negativePrompt: enhanceNegativePrompt(negativePrompt.trim()),
+        negativePrompt: enhanceNegativePrompt(translatedNegativePrompt.trim()),
       };
 
       const imageUrl = await generateImage(params);
