@@ -8,6 +8,7 @@ import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
 import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
 
 const Index = () => {
   return (
@@ -83,6 +84,25 @@ const Index = () => {
             <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
               <ImageGenerator />
             </div>
+
+            {/* Feedback Form Section */}
+            <Card className="p-4 sm:p-6 backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl transition-all duration-500 hover:scale-[1.01]">
+              <h2 className="text-xl sm:text-2xl font-bold text-amber-400 mb-4 flex items-center gap-2">
+                <Heart className="w-5 h-5" />
+                Share Your Feedback
+              </h2>
+              <p className="text-gray-400 text-sm sm:text-base mb-6">
+                Help us improve ComicForge AI by sharing your thoughts and suggestions
+              </p>
+              <div className="w-full aspect-[4/3] sm:aspect-[16/9]">
+                <iframe
+                  src="https://formbold.com/s/9XDVY"
+                  className="w-full h-full rounded-lg"
+                  title="Feedback Form"
+                  loading="lazy"
+                ></iframe>
+              </div>
+            </Card>
 
             <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
               <FAQ />
