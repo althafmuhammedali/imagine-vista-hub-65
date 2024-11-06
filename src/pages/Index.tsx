@@ -6,11 +6,48 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info } from "lucide-react";
+import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info, Send } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
 const Index = () => {
+  const { toast } = useToast();
+  const [feedback, setFeedback] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch("https://formbold.com/s/9XDVY", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: feedback }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Thank you!",
+          description: "Your feedback has been submitted successfully.",
+        });
+        setFeedback("");
+      } else {
+        throw new Error("Failed to submit feedback");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit feedback. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a] animate-gradient-x">
       <Alert className="rounded-none border-none bg-amber-500/10 backdrop-blur-sm">
@@ -106,14 +143,22 @@ const Index = () => {
               <p className="text-gray-400 text-sm sm:text-base mb-6">
                 Help us improve ComicForge AI by sharing your thoughts and suggestions
               </p>
-              <div className="w-full aspect-[4/3] sm:aspect-[16/9]">
-                <iframe
-                  src="https://formbold.com/s/9XDVY"
-                  className="w-full h-full rounded-lg"
-                  title="Feedback Form"
-                  loading="lazy"
-                ></iframe>
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <Textarea
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  placeholder="Type your feedback here..."
+                  className="min-h-[150px] bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white resize-none"
+                  required
+                />
+                <Button 
+                  type="submit"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600"
+                >
+                  <Send className="w-4 h-4" />
+                  Send Feedback
+                </Button>
+              </form>
             </Card>
 
             <div>
