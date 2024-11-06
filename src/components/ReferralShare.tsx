@@ -35,6 +35,14 @@ export function ReferralShare() {
     }
   };
 
+  const handleShare = (platform: keyof typeof shareLinks) => {
+    window.open(shareLinks[platform], '_blank');
+    toast({
+      title: "Sharing",
+      description: `Opening ${platform} to share ComicForge AI`,
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -49,25 +57,25 @@ export function ReferralShare() {
       <DropdownMenuContent align="end" className="bg-black/90 border-gray-800">
         <DropdownMenuItem
           className="text-gray-400 hover:text-amber-400 cursor-pointer"
-          onClick={() => window.open(shareLinks.twitter, '_blank')}
+          onClick={() => handleShare('twitter')}
         >
           Share on Twitter
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-gray-400 hover:text-amber-400 cursor-pointer"
-          onClick={() => window.open(shareLinks.facebook, '_blank')}
+          onClick={() => handleShare('facebook')}
         >
           Share on Facebook
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-gray-400 hover:text-amber-400 cursor-pointer"
-          onClick={() => window.open(shareLinks.linkedin, '_blank')}
+          onClick={() => handleShare('linkedin')}
         >
           Share on LinkedIn
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-gray-400 hover:text-amber-400 cursor-pointer"
-          onClick={() => window.open(shareLinks.whatsapp, '_blank')}
+          onClick={() => handleShare('whatsapp')}
         >
           Share on WhatsApp
         </DropdownMenuItem>

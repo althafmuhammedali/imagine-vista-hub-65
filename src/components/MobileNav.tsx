@@ -1,12 +1,21 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/clerk-react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { toast } from "./ui/use-toast";
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const { isSignedIn } = useAuth();
+
+  const handleMenuClick = () => {
+    setIsOpen(true);
+    toast({
+      title: "Menu opened",
+      description: "Navigation menu is now accessible",
+    });
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -14,6 +23,7 @@ export function MobileNav() {
         <Button
           variant="ghost"
           className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 lg:hidden"
+          onClick={handleMenuClick}
         >
           <Menu className="h-6 w-6" />
           <span className="sr-only">Toggle menu</span>
@@ -38,12 +48,31 @@ export function MobileNav() {
           ) : (
             <>
               <SignInButton mode="modal">
-                <Button variant="ghost" className="w-full justify-start">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start hover:bg-amber-500/10"
+                  onClick={() => {
+                    setIsOpen(false);
+                    toast({
+                      title: "Sign In",
+                      description: "Opening sign in modal",
+                    });
+                  }}
+                >
                   Sign in
                 </Button>
               </SignInButton>
               <SignUpButton mode="modal">
-                <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700">
+                <Button 
+                  className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
+                  onClick={() => {
+                    setIsOpen(false);
+                    toast({
+                      title: "Sign Up",
+                      description: "Opening sign up modal",
+                    });
+                  }}
+                >
                   Sign up
                 </Button>
               </SignUpButton>

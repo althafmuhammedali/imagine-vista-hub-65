@@ -1,9 +1,24 @@
 import { useAuth, SignInButton, SignUpButton, UserButton } from "@clerk/clerk-react";
 import { Button } from "./ui/button";
 import { MobileNav } from "./MobileNav";
+import { toast } from "./ui/use-toast";
 
 export function AuthButtons() {
   const { isSignedIn } = useAuth();
+
+  const handleSignIn = () => {
+    toast({
+      title: "Sign In",
+      description: "Opening sign in modal",
+    });
+  };
+
+  const handleSignUp = () => {
+    toast({
+      title: "Sign Up",
+      description: "Opening sign up modal",
+    });
+  };
 
   return (
     <div className="fixed top-4 right-4 z-50">
@@ -29,6 +44,7 @@ export function AuthButtons() {
               <Button 
                 variant="outline" 
                 className="bg-black/95 backdrop-blur-sm border-amber-500/50 hover:bg-amber-500/10 text-amber-400 transition-colors"
+                onClick={handleSignIn}
               >
                 Sign in
               </Button>
@@ -36,6 +52,7 @@ export function AuthButtons() {
             <SignUpButton mode="modal">
               <Button 
                 className="bg-amber-500 hover:bg-amber-600 text-black font-semibold shadow-lg transition-colors"
+                onClick={handleSignUp}
               >
                 Sign up
               </Button>
