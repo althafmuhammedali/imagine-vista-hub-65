@@ -12,7 +12,7 @@ export function ImageGenerator() {
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
-  const [numImages, setNumImages] = useState(2); // Fixed to 2 images
+  const [numImages, setNumImages] = useState(1); // Fixed to 1 image
   const queryClient = useQueryClient();
 
   const handleGenerate = useCallback(async () => {
@@ -49,14 +49,14 @@ export function ImageGenerator() {
         negativePrompt: negativePrompt.trim(),
       };
 
-      // Generate exactly 2 images
-      const imagePromises = Array(2).fill(null).map(() => generateImage(params));
+      // Generate exactly 1 image
+      const imagePromises = Array(1).fill(null).map(() => generateImage(params));
       const imageUrls = await Promise.all(imagePromises);
       setGeneratedImages(imageUrls);
 
       toast({
         title: "Success",
-        description: "2 images generated successfully!",
+        description: "1 image generated successfully!",
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to generate images";
@@ -89,8 +89,8 @@ export function ImageGenerator() {
           setNumImages={() => {}} // Disable changing number of images
           VoiceInput={<VoiceInput onTranscript={handleVoiceInput} />}
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 auto-rows-fr">
-          {Array(2).fill(null).map((_, index) => (
+        <div className="grid grid-cols-1 gap-4 auto-rows-fr">
+          {Array(1).fill(null).map((_, index) => (
             <ImagePreview
               key={index}
               generatedImage={generatedImages[index] || null}

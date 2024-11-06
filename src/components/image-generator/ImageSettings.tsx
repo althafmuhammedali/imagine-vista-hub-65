@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { GenerateButton } from "./settings/GenerateButton";
-import { Input } from "@/components/ui/input";
 
 interface ImageSettingsProps {
   prompt: string;
@@ -24,8 +23,6 @@ export function ImageSettings({
   setNegativePrompt,
   onGenerate,
   isLoading,
-  numImages,
-  setNumImages,
   VoiceInput,
 }: ImageSettingsProps) {
   return (
@@ -37,7 +34,7 @@ export function ImageSettings({
             Create Your Masterpiece
           </CardTitle>
           <CardDescription className="text-sm sm:text-base text-gray-400">
-            Generate 2 images from a single prompt
+            Generate 1 image from a single prompt
           </CardDescription>
         </CardHeader>
 
