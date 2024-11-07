@@ -3,7 +3,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { X } from 'lucide-react';
 import { Button } from './ui/button';
 
-const AD_REFRESH_INTERVAL = 1000; // Changed to 1 second
+const AD_REFRESH_INTERVAL = 5000; // 5 seconds
 
 const STATIC_ADS = [
   {
@@ -20,6 +20,11 @@ const STATIC_ADS = [
     display_url: "https://i.ibb.co/8MydcJj/image-removebg-preview-1.png",
     title: "Great Learning - Transform Your Career",
     redirect_url: "https://www.mygreatlearning.com/academy?referrer_code=GLL44ZJATMMKQ"
+  },
+  {
+    display_url: "https://i.ibb.co/TmpvKQ7/image-removebg-preview-2.png",
+    title: "Digital Growth Community",
+    redirect_url: "https://digitalgrowthcommunity.in/home-9400?am_id=muhammad5507"
   }
 ];
 
