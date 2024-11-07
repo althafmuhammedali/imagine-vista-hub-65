@@ -26,16 +26,6 @@ const STATIC_ADS = [
 export function DynamicAdDisplay() {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -80,7 +70,7 @@ export function DynamicAdDisplay() {
                 className="cursor-pointer transition-all hover:scale-105 relative"
                 onClick={handleAdClick}
               >
-                <div className={`relative ${isMobile ? 'w-[468px] h-[60px]' : 'w-[468px] h-[60px]'}`}>
+                <div className="w-[468px] h-[60px] relative">
                   <img
                     src={currentAd.display_url}
                     alt={currentAd.title}

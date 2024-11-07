@@ -17,6 +17,7 @@
     hsl(var(--secondary)) 100%
   );
   position: relative;
+  padding-bottom: calc(60px + env(safe-area-inset-bottom)); /* Add space for ad banner */
 }
 
 #root::before {
@@ -66,113 +67,20 @@
     0 0 0 1px hsl(var(--primary)/0.2),
     0 10px 15px -3px rgb(0 0 0 / 0.1),
     0 4px 6px -4px rgb(0 0 0 / 0.1);
-  Certainly! I'll update the code to improve image quality and enhance the platform's responsiveness for better mobile compatibility. We'll focus on making the necessary changes to ensure a fully responsive design across all devices.
+}
 
-<lov-code>
-To improve image quality and responsiveness, we'll update the following files:
+/* Main content wrapper */
+.main-content {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
 
-1. Update the DynamicAdDisplay component for better image handling:
-
-<lov-write file_path="src/components/DynamicAdDisplay.tsx">
-import { useState, useEffect } from 'react';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { X } from 'lucide-react';
-import { Button } from './ui/button';
-
-const AD_REFRESH_INTERVAL = 5000; // 5 seconds
-
-const STATIC_ADS = [
-  {
-    display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png",
-    title: "Vyapar App - Business Accounting Software",
-    redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
-  },
-  {
-    display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png",
-    title: "Vyapar App - Simplify Your Business",
-    redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
-  },
-  {
-    display_url: "https://i.ibb.co/8MydcJj/image-removebg-preview-1.png",
-    title: "Great Learning - Transform Your Career",
-    redirect_url: "https://www.mygreatlearning.com/academy?referrer_code=GLL44ZJATMMKQ"
-  },
-  {
-    display_url: "https://i.ibb.co/TmpvKQ7/image-removebg-preview-2.png",
-    title: "Digital Growth Community",
-    redirect_url: "https://digitalgrowthcommunity.in/home-9400?am_id=muhammad5507"
-  }
-];
-
-export function DynamicAdDisplay() {
-  const [currentAdIndex, setCurrentAdIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentAdIndex((prev) => (prev + 1) % STATIC_ADS.length);
-    }, AD_REFRESH_INTERVAL / STATIC_ADS.length);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!isVisible) return null;
-
-  const handleAdClick = () => {
-    const currentAd = STATIC_ADS[currentAdIndex];
-    if (currentAd?.redirect_url) {
-      window.open(currentAd.redirect_url, '_blank');
-    }
-  };
-
-  const handleRemove = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsVisible(false);
-  };
-
-  const currentAd = STATIC_ADS[currentAdIndex];
-  if (!currentAd) return null;
-
-  return (
-    <div className="w-full py-2 sm:py-3 md:py-4 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
-      <div className="container max-w-4xl mx-auto px-4 relative">
-        <div className="relative">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute -top-2 -right-2 bg-black/80 hover:bg-black text-white rounded-full z-10 transition-colors"
-            onClick={handleRemove}
-          >
-            <X className="h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <div 
-                className="cursor-pointer transition-all hover:scale-105 relative"
-                onClick={handleAdClick}
-              >
-                <img
-                  src={currentAd.display_url}
-                  alt="Advertisement"
-                  className="w-full max-w-xs h-12 sm:h-16 md:h-20 object-contain rounded-lg shadow-lg mx-auto royal-shadow"
-                  loading="lazy"
-                />
-              </div>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-48 sm:w-64 md:w-72 bg-black/90 border-gray-800">
-              <div className="space-y-2">
-                <h4 className="text-xs sm:text-sm md:text-base font-semibold text-amber-400">{currentAd.title}</h4>
-                <img
-                  src={currentAd.display_url}
-                  alt="Advertisement"
-                  className="w-full h-auto rounded-lg"
-                  loading="lazy"
-                />
-              </div>
-            </HoverCardContent>
-          </HoverCard>
-        </div>
-      </div>
-    </div>
-  );
+/* Footer spacing */
+.footer-space {
+  height: calc(60px + 2rem); /* Height of ad banner plus some spacing */
+  width: 100%;
 }
