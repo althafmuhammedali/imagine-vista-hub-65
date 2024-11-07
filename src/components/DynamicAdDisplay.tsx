@@ -69,8 +69,8 @@ export function DynamicAdDisplay() {
   if (!currentAd) return null;
 
   return (
-    <div className="w-full py-2 sm:py-4 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
-      <div className="container max-w-6xl mx-auto px-4 relative">
+    <div className="w-full py-1 sm:py-2 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
+      <div className="container max-w-4xl mx-auto px-4 relative">
         <HoverCard>
           <HoverCardTrigger asChild>
             <div 
@@ -80,7 +80,7 @@ export function DynamicAdDisplay() {
               <img
                 src={currentAd.display_url}
                 alt="Advertisement"
-                className="w-full max-w-md h-16 sm:h-24 object-cover rounded-lg shadow-lg mx-auto royal-shadow"
+                className="w-full max-w-xs h-12 sm:h-16 object-contain rounded-lg shadow-lg mx-auto royal-shadow"
                 loading="lazy"
               />
               <Button
@@ -89,13 +89,13 @@ export function DynamicAdDisplay() {
                 className="absolute -top-2 -right-2 bg-black/80 hover:bg-black text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={handleRemove}
               >
-                <X className="h-4 w-4" />
+                <X className="h-3 w-3" />
               </Button>
             </div>
           </HoverCardTrigger>
-          <HoverCardContent className="w-64 sm:w-80 bg-black/90 border-gray-800">
+          <HoverCardContent className="w-48 sm:w-64 bg-black/90 border-gray-800">
             <div className="space-y-2">
-              <h4 className="text-sm font-semibold text-amber-400">{currentAd.title}</h4>
+              <h4 className="text-xs font-semibold text-amber-400">{currentAd.title}</h4>
               <img
                 src={currentAd.display_url}
                 alt="Advertisement"
