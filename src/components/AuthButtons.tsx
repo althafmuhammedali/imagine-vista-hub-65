@@ -21,7 +21,7 @@ export function AuthButtons() {
   };
 
   return (
-    <div className="fixed top-4 right-4 z-50">
+    <div className="fixed top-safe-top right-safe-right z-50 p-4">
       <div className="lg:hidden">
         <MobileNav />
       </div>

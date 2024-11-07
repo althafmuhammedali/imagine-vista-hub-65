@@ -68,20 +68,14 @@
   transform: translateY(-2px);
 }
 
-/* Mobile-first responsive design */
-@media (max-width: 640px) {
-  .card {
-    padding: 1rem;
-    border-radius: calc(var(--radius) * 0.75);
-  }
-}
-
 /* Better touch targets on mobile */
 @media (hover: none) and (pointer: coarse) {
   button, 
   [role="button"],
   a {
-    @apply min-h-[44px] min-w-[44px] p-2;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem;
   }
 }
 
@@ -101,22 +95,7 @@
 input,
 select,
 textarea {
-  @apply appearance-none;
-  -webkit-appearance: none;
+  appearance: none;
   border-radius: var(--radius);
-}
-
-/* Prevent iOS zoom on input focus */
-@supports (-webkit-touch-callout: none) {
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="url"],
-  select,
-  textarea {
-    font-size: 16px !important;
-  }
+  font-size: 16px !important;
 }
