@@ -7,7 +7,7 @@ import { Button } from './ui/button';
 
 const AD_REFRESH_INTERVAL = 5 * 60 * 1000;
 const VYAPAR_AD = {
-  display_url: "https://i.ibb.co/9gDWPXT/image.png",
+  display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png", // Updated image URL
   title: "Vyapar App - Business Accounting Software",
   redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
 };
