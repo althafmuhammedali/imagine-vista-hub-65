@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { useQuery } from '@tanstack/react-query';
-import { LoadingSpinner } from './LoadingSpinner';
 import { X } from 'lucide-react';
 import { Button } from './ui/button';
 
@@ -25,31 +23,9 @@ const STATIC_ADS = [
   }
 ];
 
-interface ImgBBResponse {
-  data: {
-    display_url: string;
-    title: string;
-  }[];
-}
-
-const IMGBB_API_KEY = '73ffc7abc53c74281c83c278d6a9a82b';
-
-const fetchAds = async (): Promise<ImgBBResponse> => {
-  const response = await fetch(`https://api.imgbb.com/1/account/images?key=${IMGBB_API_KEY}`);
-  if (!response.ok) throw new Error('Failed to fetch ads');
-  return response.json();
-};
-
 export function DynamicAdDisplay() {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-
-  const { data: dynamicAds, isLoading, error } = useQuery({
-    queryKey: ['ads'],
-    queryFn: fetchAds,
-    refetchInterval: AD_REFRESH_INTERVAL,
-    staleTime: AD_REFRESH_INTERVAL,
-  });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -59,7 +35,7 @@ export function DynamicAdDisplay() {
     return () => clearInterval(interval);
   }, []);
 
-  if (!isVisible || isLoading || error) return null;
+  if (!isVisible) return null;
 
   const handleAdClick = () => {
     const currentAd = STATIC_ADS[currentAdIndex];
