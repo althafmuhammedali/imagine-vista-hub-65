@@ -13,7 +13,7 @@ const STATIC_ADS = [
   },
   {
     display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png",
-    title: "Vyapar Business",
+    title: "Vyapar",
     redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
   },
   {
@@ -58,16 +58,16 @@ export function DynamicAdDisplay() {
   if (!currentAd) return null;
 
   return (
-    <div className="w-full py-1 sm:py-2 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
-      <div className="container max-w-xl mx-auto px-2 relative">
+    <div className="w-full py-0.5 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
+      <div className="container max-w-lg mx-auto px-1 relative">
         <div className="relative">
           <Button
             variant="ghost"
             size="icon"
-            className="absolute -top-1 -right-1 bg-black/80 hover:bg-black text-white rounded-full z-10 transition-colors w-4 h-4 sm:w-6 sm:h-6"
+            className="absolute -top-1 -right-1 bg-black/80 hover:bg-black text-white rounded-full z-10 transition-colors w-3 h-3 sm:w-4 sm:h-4 min-h-0 min-w-0 p-0.5"
             onClick={handleRemove}
           >
-            <X className="h-2 w-2 sm:h-3 sm:w-3" />
+            <X className="h-2 w-2" />
           </Button>
           <HoverCard>
             <HoverCardTrigger asChild>
@@ -78,21 +78,21 @@ export function DynamicAdDisplay() {
                 <img
                   src={currentAd.display_url}
                   alt={currentAd.title}
-                  className="w-full max-w-[120px] h-8 sm:h-10 object-contain rounded-lg shadow-lg mx-auto royal-shadow"
+                  className="w-full max-w-[100px] h-6 sm:h-8 object-contain rounded-md shadow-sm mx-auto"
                   loading="lazy"
                 />
               </div>
             </HoverCardTrigger>
             <HoverCardContent 
-              className="w-36 sm:w-48 bg-black/90 border-gray-800"
+              className="w-32 sm:w-40 bg-black/90 border-gray-800"
               side="top"
             >
               <div className="space-y-1">
-                <h4 className="text-xs font-semibold text-amber-400">{currentAd.title}</h4>
+                <h4 className="text-[10px] sm:text-xs font-medium text-amber-400">{currentAd.title}</h4>
                 <img
                   src={currentAd.display_url}
                   alt={currentAd.title}
-                  className="w-full h-auto rounded-lg"
+                  className="w-full h-auto rounded-md"
                   loading="lazy"
                 />
               </div>
