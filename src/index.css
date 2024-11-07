@@ -10,19 +10,19 @@
     --card-foreground: 225 100% 98%;
     --popover: 240 45% 5%;
     --popover-foreground: 225 100% 98%;
-    --primary: 255 90% 65%;
+    --primary: 47 95% 55%;  /* Majestic gold */
     --primary-foreground: 240 50% 3%;
     --secondary: 240 30% 10%;
     --secondary-foreground: 225 100% 98%;
     --muted: 240 30% 10%;
     --muted-foreground: 225 100% 98%;
-    --accent: 190 100% 50%;
+    --accent: 291 100% 50%;  /* Royal purple */
     --accent-foreground: 240 50% 3%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 225 100% 98%;
-    --border: 255 90% 65%;
-    --input: 255 90% 65%;
-    --ring: 255 90% 65%;
+    --border: 47 95% 55%;
+    --input: 47 95% 55%;
+    --ring: 47 95% 55%;
     --radius: clamp(0.5rem, 3vw, 0.75rem);
   }
 
@@ -52,6 +52,11 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    background-image: 
+      radial-gradient(circle at 50% 50%, hsl(var(--primary)/0.15), transparent 25%),
+      linear-gradient(to bottom right, hsl(var(--primary)/0.1) 0%, transparent 40%),
+      linear-gradient(to bottom left, hsl(var(--accent)/0.1) 0%, transparent 40%);
+    background-attachment: fixed;
   }
 
   @supports (height: 100dvh) {
@@ -91,5 +96,14 @@
   .fluid-text {
     font-size: clamp(0.875rem, 1vw + 0.5rem, 1.125rem);
     line-height: clamp(1.25, 1.5vw + 1, 1.75);
+  }
+
+  .majestic-gradient {
+    @apply bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600;
+  }
+
+  .royal-shadow {
+    box-shadow: 0 0 20px hsl(var(--primary)/0.2),
+                0 0 40px hsl(var(--accent)/0.1);
   }
 }

@@ -2,6 +2,7 @@ import { useAuth, SignInButton, SignUpButton, UserButton } from "@clerk/clerk-re
 import { Button } from "./ui/button";
 import { MobileNav } from "./MobileNav";
 import { toast } from "./ui/use-toast";
+import { Crown } from "lucide-react";
 
 export function AuthButtons() {
   const { isSignedIn } = useAuth();
@@ -31,10 +32,10 @@ export function AuthButtons() {
             afterSignOutUrl="/"
             appearance={{
               elements: {
-                rootBox: "shadow-lg",
-                card: "bg-black/95 backdrop-blur-sm border-amber-500/50",
-                userPreviewMainIdentifier: "text-amber-400",
-                userPreviewSecondaryIdentifier: "text-amber-200/70",
+                rootBox: "shadow-lg royal-shadow",
+                card: "bg-black/95 backdrop-blur-sm border-primary/50",
+                userPreviewMainIdentifier: "text-primary",
+                userPreviewSecondaryIdentifier: "text-primary/70",
               }
             }}
           />
@@ -43,7 +44,7 @@ export function AuthButtons() {
             <SignInButton mode="modal">
               <Button 
                 variant="outline" 
-                className="bg-black/95 backdrop-blur-sm border-amber-500/50 hover:bg-amber-500/10 text-amber-400 transition-colors"
+                className="bg-black/95 backdrop-blur-sm border-primary/50 hover:bg-primary/10 text-primary transition-colors flex items-center gap-2"
                 onClick={handleSignIn}
               >
                 Sign in
@@ -51,9 +52,10 @@ export function AuthButtons() {
             </SignInButton>
             <SignUpButton mode="modal">
               <Button 
-                className="bg-amber-500 hover:bg-amber-600 text-black font-semibold shadow-lg transition-colors"
+                className="majestic-gradient text-black font-semibold shadow-lg transition-colors flex items-center gap-2"
                 onClick={handleSignUp}
               >
+                <Crown className="w-4 h-4" />
                 Sign up
               </Button>
             </SignUpButton>
