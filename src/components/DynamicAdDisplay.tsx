@@ -53,8 +53,8 @@ export function DynamicAdDisplay() {
   if (!currentAd) return null;
 
   return (
-    <div className="w-full py-2 sm:py-3 md:py-4 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
-      <div className="container max-w-4xl mx-auto px-4 relative">
+    <div className="w-full py-2 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
+      <div className="container max-w-[468px] mx-auto px-4 relative">
         <div className="relative flex justify-center">
           <Button
             variant="ghost"

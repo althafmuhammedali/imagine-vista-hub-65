@@ -17,7 +17,7 @@
     hsl(var(--secondary)) 100%
   );
   position: relative;
-  padding-bottom: calc(60px + env(safe-area-inset-bottom)); /* Add space for ad banner */
+  padding-bottom: calc(80px + env(safe-area-inset-bottom)); /* Adjusted for standard banner ad height plus padding */
 }
 
 #root::before {
