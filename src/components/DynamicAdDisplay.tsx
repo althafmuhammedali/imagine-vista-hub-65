@@ -8,22 +8,17 @@ const AD_REFRESH_INTERVAL = 5000;
 const STATIC_ADS = [
   {
     display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png",
-    title: "Vyapar App",
-    redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
-  },
-  {
-    display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png",
     title: "Vyapar",
     redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
   },
   {
     display_url: "https://i.ibb.co/8MydcJj/image-removebg-preview-1.png",
-    title: "Great Learning",
+    title: "Learning",
     redirect_url: "https://www.mygreatlearning.com/academy?referrer_code=GLL44ZJATMMKQ"
   },
   {
     display_url: "https://i.ibb.co/TmpvKQ7/image-removebg-preview-2.png",
-    title: "Digital Growth",
+    title: "Growth",
     redirect_url: "https://digitalgrowthcommunity.in/home-9400?am_id=muhammad5507"
   }
 ];
@@ -58,16 +53,16 @@ export function DynamicAdDisplay() {
   if (!currentAd) return null;
 
   return (
-    <div className="w-full py-0.5 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
-      <div className="container max-w-lg mx-auto px-1 relative">
+    <div className="w-full py-0.5 bg-black/5 backdrop-blur-[2px] fixed bottom-0 left-0 z-50">
+      <div className="container max-w-md mx-auto px-0.5 relative">
         <div className="relative">
           <Button
             variant="ghost"
             size="icon"
-            className="absolute -top-1 -right-1 bg-black/80 hover:bg-black text-white rounded-full z-10 transition-colors w-3 h-3 sm:w-4 sm:h-4 min-h-0 min-w-0 p-0.5"
+            className="absolute -top-0.5 -right-0.5 bg-black/70 hover:bg-black text-white rounded-full z-10 transition-colors w-2.5 h-2.5 sm:w-3 sm:h-3 min-h-0 min-w-0 p-0.5"
             onClick={handleRemove}
           >
-            <X className="h-2 w-2" />
+            <X className="h-1.5 w-1.5" />
           </Button>
           <HoverCard>
             <HoverCardTrigger asChild>
@@ -78,21 +73,21 @@ export function DynamicAdDisplay() {
                 <img
                   src={currentAd.display_url}
                   alt={currentAd.title}
-                  className="w-full max-w-[100px] h-6 sm:h-8 object-contain rounded-md shadow-sm mx-auto"
+                  className="w-full max-w-[80px] h-4 sm:h-6 object-contain rounded shadow-sm mx-auto"
                   loading="lazy"
                 />
               </div>
             </HoverCardTrigger>
             <HoverCardContent 
-              className="w-32 sm:w-40 bg-black/90 border-gray-800"
+              className="w-28 sm:w-32 bg-black/80 border-gray-800"
               side="top"
             >
-              <div className="space-y-1">
-                <h4 className="text-[10px] sm:text-xs font-medium text-amber-400">{currentAd.title}</h4>
+              <div className="space-y-0.5">
+                <h4 className="text-[8px] sm:text-[10px] font-medium text-amber-400">{currentAd.title}</h4>
                 <img
                   src={currentAd.display_url}
                   alt={currentAd.title}
-                  className="w-full h-auto rounded-md"
+                  className="w-full h-auto rounded"
                   loading="lazy"
                 />
               </div>
