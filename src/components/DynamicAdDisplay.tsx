@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useQuery } from '@tanstack/react-query';
 import { LoadingSpinner } from './LoadingSpinner';
+import { X } from 'lucide-react';
+import { Button } from './ui/button';
 
 const AD_REFRESH_INTERVAL = 5 * 60 * 1000;
 const VYAPAR_AD = {
@@ -28,6 +30,7 @@ const fetchAds = async (): Promise<ImgBBResponse> => {
 export function DynamicAdDisplay() {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [showVyaparAd, setShowVyaparAd] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
 
   const { data: ads, isLoading, error } = useQuery({
     queryKey: ['ads'],
@@ -49,8 +52,7 @@ export function DynamicAdDisplay() {
     return () => clearInterval(interval);
   }, [ads?.data?.length, showVyaparAd]);
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error && !showVyaparAd) return null;
+  if (!isVisible || isLoading || (error && !showVyaparAd)) return null;
 
   const handleAdClick = () => {
     if (showVyaparAd) {
@@ -58,16 +60,21 @@ export function DynamicAdDisplay() {
     }
   };
 
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsVisible(false);
+  };
+
   const currentAd = showVyaparAd ? VYAPAR_AD : (ads?.data?.[currentAdIndex]);
   if (!currentAd) return null;
 
   return (
     <div className="w-full py-2 sm:py-4 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
-      <div className="container max-w-6xl mx-auto px-4">
+      <div className="container max-w-6xl mx-auto px-4 relative">
         <HoverCard>
           <HoverCardTrigger asChild>
             <div 
-              className="cursor-pointer transition-all hover:scale-105"
+              className="cursor-pointer transition-all hover:scale-105 relative group"
               onClick={handleAdClick}
             >
               <img
@@ -76,6 +83,14 @@ export function DynamicAdDisplay() {
                 className="w-full max-w-md h-16 sm:h-24 object-cover rounded-lg shadow-lg mx-auto royal-shadow"
                 loading="lazy"
               />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute -top-2 -right-2 bg-black/80 hover:bg-black text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={handleRemove}
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </div>
           </HoverCardTrigger>
           <HoverCardContent className="w-64 sm:w-80 bg-black/90 border-gray-800">
