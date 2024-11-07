@@ -63,8 +63,8 @@ export function DynamicAdDisplay() {
   if (!currentAd) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 w-full z-50 bg-black/5 backdrop-blur-sm">
-      <div className="container mx-auto px-2 relative">
+    <div className="fixed bottom-0 left-0 w-full z-50 bg-black/5 backdrop-blur-sm py-2">
+      <div className="container mx-auto px-4 relative">
         <div className="relative flex justify-center">
           <Button
             variant="ghost"
@@ -72,7 +72,7 @@ export function DynamicAdDisplay() {
             className="absolute -top-2 -right-2 bg-black/50 hover:bg-black text-white rounded-full z-10 transition-colors"
             onClick={handleRemove}
           >
-            <X className="h-3 w-3" />
+            <X className="h-4 w-4" />
           </Button>
           <HoverCard>
             <HoverCardTrigger asChild>
@@ -80,7 +80,7 @@ export function DynamicAdDisplay() {
                 className="cursor-pointer transition-all hover:scale-105 relative"
                 onClick={handleAdClick}
               >
-                <div className={`relative ${isMobile ? 'w-[320px] h-[50px]' : 'w-[300px] h-[250px]'}`}>
+                <div className={`relative ${isMobile ? 'w-[468px] h-[60px]' : 'w-[468px] h-[60px]'}`}>
                   <img
                     src={currentAd.display_url}
                     alt={currentAd.title}
