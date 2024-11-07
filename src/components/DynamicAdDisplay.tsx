@@ -63,13 +63,13 @@ export function DynamicAdDisplay() {
   if (!currentAd) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 w-full z-50 bg-black/5 backdrop-blur-sm py-2">
-      <div className="container mx-auto px-4 relative">
+    <div className="w-full py-2 sm:py-3 md:py-4 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
+      <div className="container max-w-4xl mx-auto px-4 relative">
         <div className="relative flex justify-center">
           <Button
             variant="ghost"
             size="icon"
-            className="absolute -top-2 -right-2 bg-black/50 hover:bg-black text-white rounded-full z-10 transition-colors"
+            className="absolute -top-2 -right-2 bg-black/80 hover:bg-black text-white rounded-full z-10 transition-colors"
             onClick={handleRemove}
           >
             <X className="h-4 w-4" />
