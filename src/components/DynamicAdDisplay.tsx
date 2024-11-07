@@ -3,7 +3,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { X } from 'lucide-react';
 import { Button } from './ui/button';
 
-const AD_REFRESH_INTERVAL = 5 * 60 * 1000;
+const AD_REFRESH_INTERVAL = 1000; // Changed to 1 second
 
 const STATIC_ADS = [
   {
