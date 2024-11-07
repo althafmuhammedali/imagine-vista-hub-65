@@ -26,6 +26,16 @@ const STATIC_ADS = [
 export function DynamicAdDisplay() {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -53,16 +63,16 @@ export function DynamicAdDisplay() {
   if (!currentAd) return null;
 
   return (
-    <div className="w-full py-[0.5px] bg-black/5 backdrop-blur-[0.5px] fixed bottom-0 left-0 z-50">
-      <div className="container max-w-xs mx-auto px-[0.5px] relative">
-        <div className="relative">
+    <div className="fixed bottom-0 left-0 w-full z-50 bg-black/5 backdrop-blur-sm">
+      <div className="container mx-auto px-2 relative">
+        <div className="relative flex justify-center">
           <Button
             variant="ghost"
             size="icon"
-            className="absolute -top-[0.5px] -right-[0.5px] bg-black/50 hover:bg-black text-white rounded-full z-10 transition-colors w-1.5 h-1.5 sm:w-2 sm:h-2 min-h-0 min-w-0 p-[0.5px]"
+            className="absolute -top-2 -right-2 bg-black/50 hover:bg-black text-white rounded-full z-10 transition-colors"
             onClick={handleRemove}
           >
-            <X className="h-[3px] w-[3px] sm:h-1 sm:w-1" />
+            <X className="h-3 w-3" />
           </Button>
           <HoverCard>
             <HoverCardTrigger asChild>
@@ -70,20 +80,22 @@ export function DynamicAdDisplay() {
                 className="cursor-pointer transition-all hover:scale-105 relative"
                 onClick={handleAdClick}
               >
-                <img
-                  src={currentAd.display_url}
-                  alt={currentAd.title}
-                  className="w-full max-w-[40px] h-2 sm:h-3 object-contain rounded shadow-sm mx-auto"
-                  loading="lazy"
-                />
+                <div className={`relative ${isMobile ? 'w-[320px] h-[50px]' : 'w-[300px] h-[250px]'}`}>
+                  <img
+                    src={currentAd.display_url}
+                    alt={currentAd.title}
+                    className="w-full h-full object-contain"
+                    loading="lazy"
+                  />
+                </div>
               </div>
             </HoverCardTrigger>
             <HoverCardContent 
-              className="w-20 sm:w-24 bg-black/60 border-gray-800"
+              className="w-64 bg-black/60 border-gray-800"
               side="top"
             >
-              <div className="space-y-[0.5px]">
-                <h4 className="text-[4px] sm:text-[6px] font-medium text-amber-400">{currentAd.title}</h4>
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-amber-400">{currentAd.title}</h4>
                 <img
                   src={currentAd.display_url}
                   alt={currentAd.title}
