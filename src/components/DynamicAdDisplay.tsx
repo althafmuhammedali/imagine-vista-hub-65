@@ -6,11 +6,24 @@ import { X } from 'lucide-react';
 import { Button } from './ui/button';
 
 const AD_REFRESH_INTERVAL = 5 * 60 * 1000;
-const VYAPAR_AD = {
-  display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png",
-  title: "Vyapar App - Business Accounting Software",
-  redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
-};
+
+const STATIC_ADS = [
+  {
+    display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png",
+    title: "Vyapar App - Business Accounting Software",
+    redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
+  },
+  {
+    display_url: "https://i.ibb.co/8MydcJj/image-removebg-preview-1.png",
+    title: "Great Learning - Online Courses",
+    redirect_url: "https://www.mygreatlearning.com/academy?referrer_code=GLL44ZJATMMKQ"
+  },
+  {
+    display_url: "https://i.ibb.co/8MydcJj/image-removebg-preview-1.png",
+    title: "Great Learning - Transform Your Career",
+    redirect_url: "https://www.mygreatlearning.com/academy?referrer_code=GLL44ZJATMMKQ"
+  }
+];
 
 interface ImgBBResponse {
   data: {
@@ -29,10 +42,9 @@ const fetchAds = async (): Promise<ImgBBResponse> => {
 
 export function DynamicAdDisplay() {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
-  const [showVyaparAd, setShowVyaparAd] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
 
-  const { data: ads, isLoading, error } = useQuery({
+  const { data: dynamicAds, isLoading, error } = useQuery({
     queryKey: ['ads'],
     queryFn: fetchAds,
     refetchInterval: AD_REFRESH_INTERVAL,
@@ -41,22 +53,18 @@ export function DynamicAdDisplay() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (ads?.data?.length) {
-        setShowVyaparAd(prev => !prev);
-        if (!showVyaparAd) {
-          setCurrentAdIndex((prev) => (prev + 1) % ads.data.length);
-        }
-      }
-    }, AD_REFRESH_INTERVAL);
+      setCurrentAdIndex((prev) => (prev + 1) % STATIC_ADS.length);
+    }, AD_REFRESH_INTERVAL / STATIC_ADS.length);
 
     return () => clearInterval(interval);
-  }, [ads?.data?.length, showVyaparAd]);
+  }, []);
 
-  if (!isVisible || isLoading || (error && !showVyaparAd)) return null;
+  if (!isVisible || isLoading || error) return null;
 
   const handleAdClick = () => {
-    if (showVyaparAd) {
-      window.open(VYAPAR_AD.redirect_url, '_blank');
+    const currentAd = STATIC_ADS[currentAdIndex];
+    if (currentAd?.redirect_url) {
+      window.open(currentAd.redirect_url, '_blank');
     }
   };
 
@@ -65,7 +73,7 @@ export function DynamicAdDisplay() {
     setIsVisible(false);
   };
 
-  const currentAd = showVyaparAd ? VYAPAR_AD : (ads?.data?.[currentAdIndex]);
+  const currentAd = STATIC_ADS[currentAdIndex];
   if (!currentAd) return null;
 
   return (
