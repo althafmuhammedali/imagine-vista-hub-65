@@ -7,7 +7,7 @@ import { Button } from './ui/button';
 
 const AD_REFRESH_INTERVAL = 5 * 60 * 1000;
 const VYAPAR_AD = {
-  display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png", // Updated image URL
+  display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png",
   title: "Vyapar App - Business Accounting Software",
   redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
 };
@@ -71,11 +71,11 @@ export function DynamicAdDisplay() {
   return (
     <div className="w-full py-1 sm:py-2 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
       <div className="container max-w-4xl mx-auto px-4 relative">
-        <div className="relative group">
+        <div className="relative">
           <Button
             variant="ghost"
             size="icon"
-            className="absolute -top-2 -right-2 bg-black/80 hover:bg-black text-white rounded-full z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute -top-2 -right-2 bg-black/80 hover:bg-black text-white rounded-full z-10 transition-colors"
             onClick={handleRemove}
           >
             <X className="h-3 w-3" />
