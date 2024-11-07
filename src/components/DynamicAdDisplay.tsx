@@ -12,9 +12,9 @@ const STATIC_ADS = [
     redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
   },
   {
-    display_url: "https://i.ibb.co/8MydcJj/image-removebg-preview-1.png",
-    title: "Great Learning - Online Courses",
-    redirect_url: "https://www.mygreatlearning.com/academy?referrer_code=GLL44ZJATMMKQ"
+    display_url: "https://i.ibb.co/BTB2sfN/image-removebg-preview.png",
+    title: "Vyapar App - Simplify Your Business",
+    redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
   },
   {
     display_url: "https://i.ibb.co/8MydcJj/image-removebg-preview-1.png",
