@@ -4,6 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { LoadingSpinner } from './LoadingSpinner';
 
 const AD_REFRESH_INTERVAL = 5 * 60 * 1000;
+const VYAPAR_AD = {
+  display_url: "https://i.ibb.co/9gDWPXT/image.png",
+  title: "Vyapar App - Business Accounting Software",
+  redirect_url: "https://vyaparapp.in/?referrer_code=NVZ52VY"
+};
 
 interface ImgBBResponse {
   data: {
@@ -22,6 +27,7 @@ const fetchAds = async (): Promise<ImgBBResponse> => {
 
 export function DynamicAdDisplay() {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
+  const [showVyaparAd, setShowVyaparAd] = useState(true);
 
   const { data: ads, isLoading, error } = useQuery({
     queryKey: ['ads'],
@@ -33,29 +39,41 @@ export function DynamicAdDisplay() {
   useEffect(() => {
     const interval = setInterval(() => {
       if (ads?.data?.length) {
-        setCurrentAdIndex((prev) => (prev + 1) % ads.data.length);
+        setShowVyaparAd(prev => !prev);
+        if (!showVyaparAd) {
+          setCurrentAdIndex((prev) => (prev + 1) % ads.data.length);
+        }
       }
     }, AD_REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [ads?.data?.length]);
+  }, [ads?.data?.length, showVyaparAd]);
 
   if (isLoading) return <LoadingSpinner />;
-  if (error) return null;
-  if (!ads?.data?.length) return null;
+  if (error && !showVyaparAd) return null;
 
-  const currentAd = ads.data[currentAdIndex];
+  const handleAdClick = () => {
+    if (showVyaparAd) {
+      window.open(VYAPAR_AD.redirect_url, '_blank');
+    }
+  };
+
+  const currentAd = showVyaparAd ? VYAPAR_AD : (ads?.data?.[currentAdIndex]);
+  if (!currentAd) return null;
 
   return (
-    <div className="w-full py-2 sm:py-4 bg-black/10 backdrop-blur-sm">
+    <div className="w-full py-2 sm:py-4 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
       <div className="container max-w-6xl mx-auto px-4">
         <HoverCard>
           <HoverCardTrigger asChild>
-            <div className="cursor-pointer transition-all hover:scale-105">
+            <div 
+              className="cursor-pointer transition-all hover:scale-105"
+              onClick={handleAdClick}
+            >
               <img
                 src={currentAd.display_url}
                 alt="Advertisement"
-                className="w-full max-w-md h-16 sm:h-24 object-cover rounded-lg shadow-lg mx-auto"
+                className="w-full max-w-md h-16 sm:h-24 object-cover rounded-lg shadow-lg mx-auto royal-shadow"
                 loading="lazy"
               />
             </div>
