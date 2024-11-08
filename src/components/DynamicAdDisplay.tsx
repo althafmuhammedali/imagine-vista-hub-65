@@ -53,7 +53,7 @@ export function DynamicAdDisplay() {
   if (!currentAd) return null;
 
   return (
-    <div className="w-full py-2 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
+    <div className="w-full py-1 bg-black/10 backdrop-blur-sm fixed bottom-0 left-0 z-50">
       <div className="container max-w-[468px] mx-auto px-4 relative">
         <div className="relative flex justify-center">
           <Button
@@ -70,7 +70,7 @@ export function DynamicAdDisplay() {
                 className="cursor-pointer transition-all hover:scale-105 relative"
                 onClick={handleAdClick}
               >
-                <div className="w-[468px] h-[60px] relative">
+                <div className="w-[468px] h-[40px] relative">
                   <img
                     src={currentAd.display_url}
                     alt={currentAd.title}

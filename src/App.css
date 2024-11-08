@@ -17,7 +17,7 @@
     hsl(var(--secondary)) 100%
   );
   position: relative;
-  padding-bottom: calc(80px + env(safe-area-inset-bottom)); /* Adjusted for standard banner ad height plus padding */
+  padding-bottom: calc(50px + env(safe-area-inset-bottom)); /* Reduced padding for shorter ad */
 }
 
 #root::before {
@@ -79,8 +79,7 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Footer spacing */
 .footer-space {
-  height: calc(60px + 2rem); /* Height of ad banner plus some spacing */
+  height: calc(40px + 1rem); /* Reduced height for shorter ad banner */
   width: 100%;
 }
