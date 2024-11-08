@@ -14,7 +14,10 @@ export async function generateImage({
   try {
     const response = await fetch(API_CONFIG.BASE_URL, {
       method: "POST",
-      headers: API_CONFIG.HEADERS,
+      headers: {
+        ...API_CONFIG.HEADERS,
+        'Cache-Control': 'no-cache',
+      },
       signal: controller.signal,
       body: JSON.stringify({
         inputs: prompt,
@@ -32,42 +35,42 @@ export async function generateImage({
     if (!response.ok) {
       if (response.status === 429) {
         const errorData = await response.json();
-        const isBusy = errorData.error?.includes("loading") || errorData.estimated_time > 30;
+        const isBusy = errorData.error?.includes("loading") || (errorData.estimated_time && errorData.estimated_time > 30);
         
         if (isBusy) {
-          toast({
-            title: "Model Busy",
-            description: "The model is currently busy. Please try again in a few moments.",
-            variant: "destructive",
-          });
-          throw new Error("Model too busy");
+          throw new Error("The AI model is currently busy. Please try again in a few moments.");
         }
         
-        toast({
-          title: "Rate Limited",
-          description: "Please wait before making more requests.",
-          variant: "destructive",
-        });
-        throw new Error("Rate limit exceeded");
+        throw new Error("You've reached the rate limit. Please wait a moment before trying again.");
       }
-      throw new Error('Failed to generate image');
+
+      if (response.status === 401) {
+        throw new Error("Authentication failed. Please check your API key.");
+      }
+
+      if (response.status === 413) {
+        throw new Error("The prompt is too long. Please try a shorter prompt.");
+      }
+
+      throw new Error(`Failed to generate image (Status: ${response.status})`);
     }
 
     const blob = await response.blob();
+    if (blob.size === 0) {
+      throw new Error("Generated image is empty. Please try again.");
+    }
+
     return URL.createObjectURL(blob);
   } catch (error) {
     clearTimeout(timeoutId);
+    
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        toast({
-          title: "Request Timeout",
-          description: "The request took too long. Please try again with a simpler prompt.",
-          variant: "destructive",
-        });
-        throw new Error('Request timed out - please try again with a simpler prompt');
+        throw new Error('The request took too long. Please try again with a simpler prompt.');
       }
       throw error;
     }
-    throw new Error('Failed to generate image');
+    
+    throw new Error('Failed to generate image. Please try again.');
   }
 }

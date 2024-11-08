@@ -19,6 +19,7 @@ export function ImageGenerator({ mode = 'create' }: ImageGeneratorProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState("realistic");
   const [prompt, setPrompt] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useUser();
 
@@ -33,6 +34,7 @@ export function ImageGenerator({ mode = 'create' }: ImageGeneratorProps) {
     }
 
     setIsGenerating(true);
+    setError(null);
     setGeneratedImages([]); // Clear previous images
     
     try {
@@ -54,9 +56,11 @@ export function ImageGenerator({ mode = 'create' }: ImageGeneratorProps) {
         description: mode === 'enhance' ? "Image enhanced successfully!" : "Image generated successfully!",
       });
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate image";
+      setError(errorMessage);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to generate images",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -66,7 +70,7 @@ export function ImageGenerator({ mode = 'create' }: ImageGeneratorProps) {
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-8">
-      <Card className="p-6 bg-background/60 backdrop-blur-sm border-primary/20">
+      <Card className="p-6 bg-background/60 backdrop-blur-sm border-blue-900/20">
         <div className="space-y-6">
           <StyleControls
             selectedStyle={selectedStyle}
@@ -89,6 +93,7 @@ export function ImageGenerator({ mode = 'create' }: ImageGeneratorProps) {
         <ImagePreview
           generatedImage={generatedImages[0]}
           isLoading={isGenerating}
+          error={error}
           prompt={prompt}
         />
       )}
