@@ -30,16 +30,19 @@ export function ImageGenerator({ mode = 'create' }: ImageGeneratorProps) {
     }
 
     setIsGenerating(true);
+    // Clear previous images before generating new ones
+    setGeneratedImages([]);
+    
     try {
       const image = await generateImage({
         prompt,
         negativePrompt,
         userId: user?.id,
       });
-      setGeneratedImages(prev => [...prev, image]);
+      setGeneratedImages([image]);
       toast({
         title: "Success",
-        description: "Images generated successfully!",
+        description: "Image generated successfully!",
       });
     } catch (error) {
       toast({
