@@ -15,15 +15,18 @@ export async function generateImage({
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
 
   try {
+    const enhancedPrompt = `${prompt}, high quality, detailed, 8k uhd, professional photography`;
+    const finalNegativePrompt = `${API_CONFIG.DEFAULT_PARAMS.negative_prompt}${negativePrompt ? `, ${negativePrompt}` : ''}`;
+
     const response = await fetch(API_CONFIG.BASE_URL, {
       method: "POST",
       headers: API_CONFIG.HEADERS,
       signal: controller.signal,
       body: JSON.stringify({
-        inputs: prompt,
+        inputs: enhancedPrompt,
         parameters: {
           ...API_CONFIG.DEFAULT_PARAMS,
-          negative_prompt: negativePrompt,
+          negative_prompt: finalNegativePrompt,
         },
       }),
     });
