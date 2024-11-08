@@ -10,13 +10,13 @@
     --card-foreground: 225 100% 98%;
     --popover: 240 45% 5%;
     --popover-foreground: 225 100% 98%;
-    --primary: 47 95% 55%;  /* Majestic gold */
+    --primary: 47 95% 55%;
     --primary-foreground: 240 50% 3%;
     --secondary: 240 30% 10%;
     --secondary-foreground: 225 100% 98%;
     --muted: 240 30% 10%;
     --muted-foreground: 225 100% 98%;
-    --accent: 291 100% 50%;  /* Royal purple */
+    --accent: 291 100% 50%;
     --accent-foreground: 240 50% 3%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 225 100% 98%;
@@ -63,18 +63,6 @@
     body {
       min-height: 100dvh;
     }
-  }
-
-  /* Improved touch targets */
-  button, a {
-    @apply min-h-[44px] min-w-[44px];
-    touch-action: manipulation;
-  }
-
-  /* Better form controls */
-  input, select, textarea {
-    @apply text-base;
-    font-size: max(16px, 1em);
   }
 }
 

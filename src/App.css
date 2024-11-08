@@ -17,7 +17,7 @@
     hsl(var(--secondary)) 100%
   );
   position: relative;
-  padding-bottom: calc(50px + env(safe-area-inset-bottom)); /* Reduced padding for shorter ad */
+  padding-bottom: calc(50px + env(safe-area-inset-bottom));
 }
 
 #root::before {
@@ -69,7 +69,6 @@
     0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-/* Main content wrapper */
 .main-content {
   flex: 1;
   width: 100%;
@@ -80,6 +79,6 @@
 }
 
 .footer-space {
-  height: calc(40px + 1rem); /* Reduced height for shorter ad banner */
+  height: calc(40px + 1rem);
   width: 100%;
 }
