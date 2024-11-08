@@ -6,6 +6,7 @@ import { Sparkles } from "lucide-react";
 interface PromptSuggestionsProps {
   inputText: string;
   onSuggestionClick: (suggestion: string) => void;
+  selectedStyle: string;
 }
 
 const basePrompts = {
@@ -15,7 +16,7 @@ const basePrompts = {
   mood: ["dramatic", "peaceful", "mysterious", "energetic"],
 };
 
-export function PromptSuggestions({ inputText, onSuggestionClick }: PromptSuggestionsProps) {
+export function PromptSuggestions({ inputText, onSuggestionClick, selectedStyle }: PromptSuggestionsProps) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
   useEffect(() => {
