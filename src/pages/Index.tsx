@@ -7,10 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sparkles, Wand2 } from 'lucide-react';
 import { PlatformBudget } from '@/components/PlatformBudget';
 import { SocialLinks } from '@/components/SocialLinks';
+import { PopupAd } from '@/components/PopupAd';
 
 const IndexPage: React.FC = () => {
   return (
     <div className="min-h-screen p-4 sm:p-6 lg:p-8 fluid-container">
+      <PopupAd />
       <header className="mb-8 text-center">
         <h1 className="text-4xl sm:text-5xl font-bold mb-4 futuristic-gradient">
           ComicForge AI
