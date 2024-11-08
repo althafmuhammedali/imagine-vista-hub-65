@@ -20,28 +20,6 @@ export default {
       },
     },
     extend: {
-      animation: {
-        blob: "blob 7s infinite",
-      },
-      keyframes: {
-        blob: {
-          "0%": {
-            transform: "translate(0px, 0px) scale(1)",
-          },
-          "33%": {
-            transform: "translate(30px, -50px) scale(1.1)",
-          },
-          "66%": {
-            transform: "translate(-20px, 20px) scale(0.9)",
-          },
-          "100%": {
-            transform: "translate(0px, 0px) scale(1)",
-          },
-        },
-      },
-      fontFamily: {
-        sans: ['system-ui', '-apple-system', 'sans-serif'],
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -76,21 +54,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-      },
-      spacing: {
-        'safe-top': 'env(safe-area-inset-top)',
-        'safe-bottom': 'env(safe-area-inset-bottom)',
-        'safe-left': 'env(safe-area-inset-left)',
-        'safe-right': 'env(safe-area-inset-right)',
-      },
-      fontSize: {
-        'fluid-xs': 'clamp(0.75rem, 1.5vw, 0.875rem)',
-        'fluid-sm': 'clamp(0.875rem, 2vw, 1rem)',
-        'fluid-base': 'clamp(1rem, 2.5vw, 1.125rem)',
-        'fluid-lg': 'clamp(1.125rem, 3vw, 1.25rem)',
-        'fluid-xl': 'clamp(1.25rem, 3.5vw, 1.5rem)',
-        'fluid-2xl': 'clamp(1.5rem, 4vw, 2rem)',
-        'fluid-3xl': 'clamp(1.875rem, 5vw, 2.25rem)',
       },
       borderRadius: {
         lg: "var(--radius)",
