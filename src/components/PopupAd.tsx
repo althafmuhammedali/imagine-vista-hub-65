@@ -17,21 +17,21 @@ export const PopupAd = () => {
   const ads = [
     {
       title: "Grow Your Business with Vyapar! 📊",
-      icon: <Building2 className="w-8 h-8 sm:w-12 sm:h-12 text-primary" />,
+      icon: <Building2 className="w-8 h-8 sm:w-12 sm:h-12 text-primary animate-pulse" />,
       description: "India's #1 GST Billing, Inventory & Accounting Software for Small Businesses",
       cta: "Try Vyapar Free",
       link: "https://vyapar.in"
     },
     {
       title: "Learn from Industry Experts! 🎓",
-      icon: <GraduationCap className="w-8 h-8 sm:w-12 sm:h-12 text-primary" />,
+      icon: <GraduationCap className="w-8 h-8 sm:w-12 sm:h-12 text-primary animate-pulse" />,
       description: "Great Learning: Transform your career with our Professional Certification Programs",
       cta: "Explore Courses",
       link: "https://www.greatlearning.in"
     },
     {
       title: "Join Digital Growth Community! 🚀",
-      icon: <Users className="w-8 h-8 sm:w-12 sm:h-12 text-primary" />,
+      icon: <Users className="w-8 h-8 sm:w-12 sm:h-12 text-primary animate-pulse" />,
       description: "Connect with digital marketers, entrepreneurs, and growth hackers",
       cta: "Join Community",
       link: "https://example.com/community"
@@ -65,6 +65,15 @@ export const PopupAd = () => {
       document.addEventListener('mouseleave', handleMouseLeave);
     }
 
+    // Reset popup after 24 hours
+    const lastShown = localStorage.getItem('lastShownPopup');
+    if (lastShown) {
+      const hoursSinceLastShown = (Date.now() - parseInt(lastShown)) / (1000 * 60 * 60);
+      if (hoursSinceLastShown >= 24) {
+        localStorage.removeItem('hasSeenPopup');
+      }
+    }
+
     return () => {
       clearTimeout(timer);
       document.removeEventListener('mouseleave', handleMouseLeave);
@@ -74,6 +83,7 @@ export const PopupAd = () => {
   const handleAdClick = (link: string) => {
     window.open(link, '_blank');
     setIsOpen(false);
+    localStorage.setItem('lastShownPopup', Date.now().toString());
     toast({
       title: "Thank you for your interest!",
       description: "You'll be redirected to the partner website.",
@@ -92,7 +102,7 @@ export const PopupAd = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-md w-[95vw] max-w-[95vw] sm:w-full p-4 sm:p-6 bg-background/95 backdrop-blur-sm border border-primary/20 shadow-xl">
+      <DialogContent className="sm:max-w-md w-[95vw] max-w-[95vw] sm:w-full p-4 sm:p-6 bg-background/95 backdrop-blur-sm border border-primary/20 shadow-xl motion-safe:animate-fadeIn">
         <DialogHeader className="space-y-3">
           <DialogTitle className="text-xl sm:text-2xl font-bold flex items-center justify-center gap-4 flex-wrap">
             {ads[currentAd].icon}
@@ -100,7 +110,7 @@ export const PopupAd = () => {
           </DialogTitle>
           <Button
             variant="ghost"
-            className="absolute right-2 top-2 sm:right-4 sm:top-4 h-8 w-8 p-0 rounded-full"
+            className="absolute right-2 top-2 sm:right-4 sm:top-4 h-8 w-8 p-0 rounded-full hover:bg-destructive/10"
             onClick={() => setIsOpen(false)}
           >
             <X className="h-4 w-4" />
@@ -109,20 +119,20 @@ export const PopupAd = () => {
         </DialogHeader>
         <div className="p-2 sm:p-4">
           <div className="space-y-4">
-            <p className="text-sm sm:text-base text-muted-foreground text-center">
+            <p className="text-sm sm:text-base text-muted-foreground text-center leading-relaxed">
               {ads[currentAd].description}
             </p>
             <div className="flex flex-col gap-2">
               <Button 
                 variant="default"
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
                 onClick={() => handleAdClick(ads[currentAd].link)}
               >
                 {ads[currentAd].cta}
               </Button>
               <Button 
                 variant="outline"
-                className="w-full"
+                className="w-full hover:bg-accent/10 transition-all duration-300"
                 onClick={handleNext}
               >
                 See Other Offers
