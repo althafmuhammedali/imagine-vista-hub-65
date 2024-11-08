@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 0 0% 20%;
-    --card: 0 0% 96%;
-    --card-foreground: 0 0% 20%;
-    --popover: 0 0% 96%;
-    --popover-foreground: 0 0% 20%;
-    --primary: 0 0% 20%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 82%;
-    --secondary-foreground: 0 0% 20%;
-    --muted: 0 0% 82%;
-    --muted-foreground: 0 0% 20%;
-    --accent: 0 0% 66%;
-    --accent-foreground: 0 0% 20%;
+    --background: 217 71% 10%;
+    --foreground: 210 40% 98%;
+    --card: 217 65% 15%;
+    --card-foreground: 210 40% 98%;
+    --popover: 217 65% 15%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217 65% 20%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 65% 20%;
+    --muted-foreground: 210 40% 98%;
+    --accent: 221 83% 53%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 82%;
-    --input: 0 0% 82%;
-    --ring: 0 0% 82%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 221 83% 53%;
+    --input: 221 83% 53%;
+    --ring: 221 83% 53%;
     --radius: clamp(0.5rem, 3vw, 0.75rem);
   }
 
@@ -53,10 +53,10 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     background-image: 
-      radial-gradient(circle at 50% 0%, hsl(0 0% 20% / 0.15), transparent 50%),
-      radial-gradient(circle at 0% 50%, hsl(0 0% 66% / 0.1), transparent 50%),
-      linear-gradient(to bottom right, hsl(0 0% 82% / 0.2), transparent),
-      linear-gradient(to top left, hsl(0 0% 66% / 0.1), transparent);
+      radial-gradient(circle at 50% 0%, hsl(var(--primary)/0.15), transparent 50%),
+      radial-gradient(circle at 0% 50%, hsl(var(--accent)/0.1), transparent 50%),
+      linear-gradient(to bottom right, hsl(217 65% 20% / 0.2), transparent),
+      linear-gradient(to top left, hsl(221 83% 53% / 0.1), transparent);
     background-attachment: fixed;
   }
 
