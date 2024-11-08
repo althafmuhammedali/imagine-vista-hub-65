@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: "https://api-inference.huggingface.co/models",
+  BASE_URL: "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
   TIMEOUT: 90000, // 90 seconds
   HEADERS: {
     "Content-Type": "application/json",
@@ -7,7 +7,7 @@ export const API_CONFIG = {
   },
   DEFAULT_PARAMS: {
     num_inference_steps: 50,
-    guidance_scale: 7.5,
+    guidance_scale: 8.5,
     scheduler: "DPMSolverMultistepScheduler",
     use_karras_sigmas: true,
     clip_skip: 2,

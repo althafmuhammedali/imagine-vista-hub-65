@@ -6,6 +6,7 @@ import { Sparkles } from "lucide-react";
 interface PromptSuggestionsProps {
   inputText: string;
   onSuggestionClick: (suggestion: string) => void;
+  selectedStyle: string;
 }
 
 const basePrompts = {
@@ -15,7 +16,7 @@ const basePrompts = {
   mood: ["dramatic", "peaceful", "mysterious", "energetic"],
 };
 
-export function PromptSuggestions({ inputText, onSuggestionClick }: PromptSuggestionsProps) {
+export function PromptSuggestions({ inputText, onSuggestionClick, selectedStyle }: PromptSuggestionsProps) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export function PromptSuggestions({ inputText, onSuggestionClick }: PromptSugges
       const input = inputText.toLowerCase();
       let newSuggestions: string[] = [];
 
+      // Generate suggestions based on input
       Object.entries(basePrompts).forEach(([category, prompts]) => {
         prompts.forEach(prompt => {
           if (
@@ -40,7 +42,16 @@ export function PromptSuggestions({ inputText, onSuggestionClick }: PromptSugges
         });
       });
 
-      return newSuggestions.slice(0, 4);
+      // Add style suggestions if none exist
+      if (newSuggestions.length < 2) {
+        basePrompts.style.forEach(style => {
+          if (!input.includes(style.toLowerCase())) {
+            newSuggestions.push(`${inputText}, ${style}`);
+          }
+        });
+      }
+
+      return newSuggestions.slice(0, 4); // Limit to 4 suggestions
     };
 
     const newSuggestions = generateSuggestions();
