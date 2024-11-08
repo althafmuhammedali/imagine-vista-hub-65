@@ -20,6 +20,11 @@ const STATIC_ADS = [
     display_url: "https://i.ibb.co/TmpvKQ7/image-removebg-preview-2.png",
     title: "Grow",
     redirect_url: "https://digitalgrowthcommunity.in/home-9400?am_id=muhammad5507"
+  },
+  {
+    display_url: "https://i.ibb.co/9bLj1zz/image-removebg-preview-3.png",
+    title: "Support",
+    redirect_url: "https://rzp.io/rzp/jcLyIhz"
   }
 ];
 
