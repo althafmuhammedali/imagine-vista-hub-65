@@ -1,4 +1,4 @@
-import { Instagram, Linkedin, Phone, Facebook, X, MessageSquare, Globe } from "lucide-react";
+import { Instagram, Linkedin, Phone, Facebook, X, MessageSquare, Globe, Heart, IndianRupee } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { ReferralShare } from "./ReferralShare";
@@ -89,19 +89,19 @@ export function SocialLinks() {
       icon: Facebook,
       href: "https://www.facebook.com/profile.php?id=100084139741037",
       label: "Facebook",
-      color: "hover:text-blue-400",
+      color: "hover:text-blue-500",
     },
     {
       icon: X,
       href: "https://x.com/MuhammadAd93421",
       label: "X (Twitter)",
-      color: "hover:text-sky-400",
+      color: "hover:text-sky-500",
     },
     {
       icon: Instagram,
       href: "https://www.instagram.com/ai.adnanvv/",
       label: "Instagram",
-      color: "hover:text-pink-500",
+      color: "hover:text-pink-600",
     },
     {
       icon: Linkedin,
@@ -124,7 +124,7 @@ export function SocialLinks() {
   ];
 
   return (
-    <footer className="w-full py-6 sm:py-8 mt-8 sm:mt-12 border-t border-gray-800 bg-black/40 backdrop-blur-sm">
+    <footer className="w-full py-6 sm:py-8 mt-8 sm:mt-12 border-t border-gray-800 bg-black/40 backdrop-blur-sm z-10">
       <div className="container flex flex-col items-center gap-4 sm:gap-6 px-4 sm:px-6">
         <div className="flex items-center gap-2 text-amber-400">
           <Globe className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse" />
