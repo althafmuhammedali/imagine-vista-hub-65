@@ -11,7 +11,7 @@ export function Documentation() {
   return (
     <Card className="backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl">
       <CardContent className="p-6">
-        <div className="space-y-6 w-4">
+        <div className="space-y-6">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-amber-400 mb-2 flex items-center justify-center gap-2">
               <PenLine className="w-6 h-6" />

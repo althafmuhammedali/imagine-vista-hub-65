@@ -6,7 +6,6 @@ import { Sparkles } from "lucide-react";
 interface PromptSuggestionsProps {
   inputText: string;
   onSuggestionClick: (suggestion: string) => void;
-  selectedStyle: string;
 }
 
 const basePrompts = {
@@ -16,7 +15,7 @@ const basePrompts = {
   mood: ["dramatic", "peaceful", "mysterious", "energetic"],
 };
 
-export function PromptSuggestions({ inputText, onSuggestionClick, selectedStyle }: PromptSuggestionsProps) {
+export function PromptSuggestions({ inputText, onSuggestionClick }: PromptSuggestionsProps) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
   useEffect(() => {
@@ -62,7 +61,7 @@ export function PromptSuggestions({ inputText, onSuggestionClick, selectedStyle 
 
   return (
     <div className="mt-2 p-2 bg-black/20 backdrop-blur-sm rounded-lg border border-gray-800">
-      <div className="flex items-center gap-2 mb-2 text-blue-400 text-sm">
+      <div className="flex items-center gap-2 mb-2 text-amber-400 text-sm">
         <Sparkles className="w-4 h-4" />
         <span>Suggestions</span>
       </div>
@@ -72,7 +71,7 @@ export function PromptSuggestions({ inputText, onSuggestionClick, selectedStyle 
             <Button
               key={index}
               variant="ghost"
-              className="w-full justify-start text-left text-gray-300 hover:text-blue-400 hover:bg-black/30"
+              className="w-full justify-start text-left text-gray-300 hover:text-amber-400 hover:bg-black/30"
               onClick={() => onSuggestionClick(suggestion)}
             >
               {suggestion}

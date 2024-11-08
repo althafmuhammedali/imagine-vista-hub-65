@@ -1,14 +1,23 @@
-import { API_CONFIG } from './config';
+import { RateLimiter } from './rateLimit/RateLimiter';
+import { RateLimitError } from './rateLimit/errors';
 import { toast } from "@/components/ui/use-toast";
+import { API_CONFIG } from './config';
 import type { GenerateImageParams } from './types';
 
 export async function generateImage({
   prompt,
+  width = 1024,
+  height = 1024,
   negativePrompt = "",
-  userId,
 }: GenerateImageParams): Promise<string> {
-  if (!prompt?.trim()) {
-    throw new Error("Prompt is required");
+  const userId = localStorage.getItem('userId') || 'anonymous';
+  
+  if (!RateLimiter.checkLimit(userId)) {
+    const timeUntilReset = RateLimiter.getTimeUntilReset(userId);
+    if (timeUntilReset) {
+      throw new RateLimitError(timeUntilReset);
+    }
+    throw new Error('Rate limit exceeded');
   }
 
   const controller = new AbortController();
@@ -24,6 +33,8 @@ export async function generateImage({
         parameters: {
           ...API_CONFIG.DEFAULT_PARAMS,
           negative_prompt: negativePrompt,
+          width,
+          height,
         },
       }),
     });
@@ -31,41 +42,29 @@ export async function generateImage({
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      
       if (response.status === 429) {
-        const message = errorData.error?.includes("loading") 
-          ? "The AI model is warming up. Please try again in a few moments."
-          : "The service is currently busy. Please try again shortly.";
-        throw new Error(message);
+        const errorData = await response.json();
+        const isBusy = errorData.error?.includes("loading") || errorData.estimated_time > 30;
+        
+        if (isBusy) {
+          toast({
+            title: "Model Busy",
+            description: "Model too busy, retrying with fallback model...",
+            variant: "destructive",
+          });
+          // Could implement fallback model logic here
+          throw new Error("Model too busy");
+        }
+        
+        throw new RateLimitError(30000); // 30 seconds default
       }
-      
-      if (response.status === 401) {
-        throw new Error("Authentication failed. Please check your API key.");
-      }
-      
-      if (response.status === 413) {
-        throw new Error("The prompt is too long. Please try a shorter prompt.");
-      }
-      
-      throw new Error(errorData.error || `Failed to generate image (Status: ${response.status})`);
+      throw new Error('Failed to generate image');
     }
 
     const blob = await response.blob();
-    if (blob.size === 0) {
-      throw new Error("Generated image is empty. Please try again.");
-    }
-
     return URL.createObjectURL(blob);
   } catch (error) {
     clearTimeout(timeoutId);
-    
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        throw new Error('The request took too long. Please try again with a simpler prompt.');
-      }
-      throw error;
-    }
-    throw new Error('Failed to generate image. Please try again.');
+    throw error;
   }
 }

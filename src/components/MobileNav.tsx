@@ -30,7 +30,7 @@ export function MobileNav() {
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-[280px] bg-background/95 backdrop-blur-sm">
-        <div className="flex flex-col space-y-4 mt-4 w-4">
+        <div className="flex flex-col space-y-4 mt-4">
           {isSignedIn ? (
             <div className="flex justify-center">
               <UserButton
@@ -50,7 +50,7 @@ export function MobileNav() {
               <SignInButton mode="modal">
                 <Button 
                   variant="ghost" 
-                  className="w-full justify-start hover:bg-blue-500/10"
+                  className="w-full justify-start hover:bg-amber-500/10"
                   onClick={() => {
                     setIsOpen(false);
                     toast({
@@ -64,7 +64,7 @@ export function MobileNav() {
               </SignInButton>
               <SignUpButton mode="modal">
                 <Button 
-                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                  className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
                   onClick={() => {
                     setIsOpen(false);
                     toast({
