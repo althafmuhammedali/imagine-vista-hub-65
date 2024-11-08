@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { ImageGenerator } from "@/components/ImageGenerator";
 import { SocialLinks } from "@/components/SocialLinks";
 import { AuthButtons } from "@/components/AuthButtons";
@@ -15,6 +16,12 @@ import {
 } from "@/components/ui/card";
 
 const Index = () => {
+  const imageGeneratorRef = useRef<HTMLDivElement>(null);
+
+  const scrollToImageGenerator = () => {
+    imageGeneratorRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const steps = [
     {
       title: "Input Your Idea",
@@ -68,6 +75,7 @@ const Index = () => {
           <Button
             size="lg"
             className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            onClick={scrollToImageGenerator}
           >
             Generate Art Now
           </Button>
@@ -95,7 +103,7 @@ const Index = () => {
       </section>
 
       {/* Image Generator */}
-      <section className="py-20">
+      <section ref={imageGeneratorRef} className="py-20">
         <div className="container">
           <ImageGenerator />
         </div>
