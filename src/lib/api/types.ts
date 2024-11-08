@@ -4,4 +4,7 @@ export interface GenerateImageParams {
   height?: number;
   negativePrompt?: string;
   userId?: string;
+  model?: string;
 }
+
+export type ImageGenerationMode = 'create' | 'enhance';
