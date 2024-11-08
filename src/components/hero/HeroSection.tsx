@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Wand2 } from 'lucide-react';
-import { HeroGallery } from './HeroGallery';
 import { ParticlesBackground } from './ParticlesBackground';
 
 export const HeroSection = () => {
@@ -18,8 +17,6 @@ export const HeroSection = () => {
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-amber-400 to-amber-300 leading-tight">
           Unleash the Power of Imagination with AI-Driven Art
         </h1>
-        
-        <HeroGallery />
         
         <Button 
           onClick={scrollToGenerator}
