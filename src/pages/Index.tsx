@@ -34,8 +34,8 @@ const Index = () => {
       icon: ArrowRight,
     },
     {
-      title: "Download & Share",
-      description: "Save and share your creation",
+      title: "Download & Upload",
+      description: "Save and upload to our server",
       icon: Share2,
     },
   ];
