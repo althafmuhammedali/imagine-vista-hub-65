@@ -88,80 +88,64 @@ const Index = () => {
                 </div>
               </div>
 
+              {/* New Social Links Section */}
+              <div className="flex items-center justify-center gap-4 mb-4 sm:mb-6">
+                <SocialLinks />
+              </div>
+
               <div className="flex items-center justify-center gap-2 transition-all hover:scale-105 mb-4 sm:mb-6 bg-black/20 backdrop-blur-sm px-3 sm:px-4 py-2 sm:py-3 rounded-full">
                 <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-red-500 animate-pulse" />
                 <span className="text-xs sm:text-sm text-gray-400">Standing with Palestine</span>
               </div>
 
-              <div className="flex items-center gap-2 mb-4 sm:mb-6">
-                <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-                <span className="text-xs sm:text-sm text-amber-200">Featured on Product Hunt</span>
-              </div>
-              
-              <a 
-                href="https://www.producthunt.com/posts/comicforgeai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-comicforgeai" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:opacity-90 transition-opacity transform hover:scale-105 w-[200px] sm:w-[250px]"
-              >
-                <img 
-                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=564210&theme=light" 
-                  alt="ComicForgeAi - Let your imagination run wild and create stunning artwork | Product Hunt" 
-                  className="w-full h-auto shadow-lg rounded"
-                />
-              </a>
-            </div>
-            <p className="text-xs sm:text-sm md:text-base max-w-2xl mx-auto font-light leading-relaxed text-gray-400 px-4 sm:px-6">
-              Transform your creative vision into stunning masterpieces with our enterprise-grade AI technology
-            </p>
-          </div>
-
-          <div className="space-y-8 sm:space-y-12 md:space-y-16 lg:space-y-20">
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <ImageGenerator />
-            </div>
-
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <FAQ />
-            </div>
-
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <Documentation />
-            </div>
-
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <PlatformBudget />
-            </div>
-
-            {/* Feedback Form Section */}
-            <Card className="p-4 sm:p-6 md:p-8 backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl transition-all duration-500 hover:scale-[1.01] mx-auto max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%]">
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-amber-400 mb-4 flex items-center gap-2 justify-center sm:justify-start">
-                <Heart className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
-                Share Your Feedback
-              </h2>
-              <p className="text-gray-400 text-sm sm:text-base md:text-lg mb-6 text-center sm:text-left">
-                Help us improve ComicForge AI by sharing your thoughts and suggestions
-              </p>
-              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                <Textarea
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  placeholder="Type your feedback here..."
-                  className="min-h-[150px] sm:min-h-[200px] bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white resize-none w-full rounded-lg text-sm sm:text-base p-3 sm:p-4"
-                  required
-                  aria-label="Feedback message"
-                />
-                <div className="flex justify-center sm:justify-start">
-                  <Button 
-                    type="submit"
-                    className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
-                  >
-                    <Send className="w-4 h-4" />
-                    Submit Feedback
-                  </Button>
+              <div className="space-y-8 sm:space-y-12 md:space-y-16 lg:space-y-20">
+                <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+                  <ImageGenerator />
                 </div>
-              </form>
-            </Card>
+
+                <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+                  <FAQ />
+                </div>
+
+                <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+                  <Documentation />
+                </div>
+
+                <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+                  <PlatformBudget />
+                </div>
+
+                {/* Feedback Form Section */}
+                <Card className="p-4 sm:p-6 md:p-8 backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl transition-all duration-500 hover:scale-[1.01] mx-auto max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%]">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-amber-400 mb-4 flex items-center gap-2 justify-center sm:justify-start">
+                    <Heart className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+                    Share Your Feedback
+                  </h2>
+                  <p className="text-gray-400 text-sm sm:text-base md:text-lg mb-6 text-center sm:text-left">
+                    Help us improve ComicForge AI by sharing your thoughts and suggestions
+                  </p>
+                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                    <Textarea
+                      value={feedback}
+                      onChange={(e) => setFeedback(e.target.value)}
+                      placeholder="Type your feedback here..."
+                      className="min-h-[150px] sm:min-h-[200px] bg-black/20 border-gray-800 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white resize-none w-full rounded-lg text-sm sm:text-base p-3 sm:p-4"
+                      required
+                      aria-label="Feedback message"
+                    />
+                    <div className="flex justify-center sm:justify-start">
+                      <Button 
+                        type="submit"
+                        className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
+                      >
+                        <Send className="w-4 h-4" />
+                        Submit Feedback
+                      </Button>
+                    </div>
+                  </form>
+                </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
