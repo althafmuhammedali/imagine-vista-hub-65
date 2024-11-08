@@ -89,49 +89,49 @@ export function SocialLinks() {
       icon: Facebook,
       href: "https://www.facebook.com/profile.php?id=100084139741037",
       label: "Facebook",
-      color: "hover:text-blue-500",
+      color: "hover:text-amber-400",
     },
     {
       icon: X,
       href: "https://x.com/MuhammadAd93421",
       label: "X (Twitter)",
-      color: "hover:text-blue-400",
+      color: "hover:text-amber-400",
     },
     {
       icon: Instagram,
       href: "https://www.instagram.com/ai.adnanvv/",
       label: "Instagram",
-      color: "hover:text-blue-600",
+      color: "hover:text-amber-400",
     },
     {
       icon: Linkedin,
       href: "https://www.linkedin.com/in/muhammedadnanvv/",
       label: "LinkedIn",
-      color: "hover:text-blue-700",
+      color: "hover:text-amber-400",
     },
     {
       icon: Phone,
       href: "https://wa.me/919656778508",
       label: "WhatsApp",
-      color: "hover:text-blue-500",
+      color: "hover:text-amber-400",
     },
     {
       icon: MessageSquare,
       href: "https://discord.com/invite/vCPH2pFH",
       label: "Discord",
-      color: "hover:text-blue-600",
+      color: "hover:text-amber-400",
     },
   ];
 
   return (
-    <footer className="w-full py-6 sm:py-8 mt-8 sm:mt-12 border-t border-blue-900/20 bg-blue-950/40 backdrop-blur-sm z-10">
+    <footer className="w-full py-6 sm:py-8 mt-8 sm:mt-12 border-t border-amber-900/20 bg-black/90 backdrop-blur-sm z-10">
       <div className="container flex flex-col items-center gap-4 sm:gap-6 px-4 sm:px-6">
-        <div className="flex items-center gap-2 text-blue-400">
+        <div className="flex items-center gap-2 text-amber-400">
           <Globe className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse" />
           <p className="text-sm sm:text-base font-medium">Kerala's First AI Image Generation Platform</p>
         </div>
 
-        <p className="text-xs sm:text-sm text-blue-300">
+        <p className="text-xs sm:text-sm text-amber-300">
           Built and maintained by Muhammed Adnan
         </p>
 
@@ -143,7 +143,7 @@ export function SocialLinks() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className={`rounded-full border-blue-800 bg-blue-950/20 hover:bg-blue-900/40 hover:border-blue-500 transform hover:scale-110 transition-all duration-300 ${link.color}`}
+                    className={`rounded-full border-amber-800 bg-black/20 hover:bg-amber-900/40 hover:border-amber-500 transform hover:scale-110 transition-all duration-300 ${link.color}`}
                     asChild
                   >
                     <a
@@ -175,6 +175,25 @@ export function SocialLinks() {
           </TooltipProvider>
         </div>
         
+        {/* Feedback Section */}
+        <div className="w-full max-w-md mt-6 p-4 bg-black/40 rounded-lg border border-amber-900/20">
+          <h3 className="text-amber-400 font-semibold mb-4">Share Your Feedback</h3>
+          <textarea 
+            className="w-full p-2 rounded bg-black/20 border border-amber-900/20 text-white placeholder-amber-700/50 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            placeholder="We'd love to hear your thoughts..."
+            rows={3}
+          />
+          <Button 
+            className="mt-2 bg-amber-500 hover:bg-amber-600 text-black font-medium"
+            onClick={() => toast({
+              title: "Thank you!",
+              description: "Your feedback has been submitted successfully.",
+            })}
+          >
+            Submit Feedback
+          </Button>
+        </div>
+
         <a 
           href="https://www.producthunt.com/posts/comicforgeai?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-comicforgeai"
           target="_blank"
