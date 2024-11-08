@@ -1,4 +1,4 @@
-import { Instagram, Linkedin, Phone, Facebook, X, MessageSquare, Globe, Heart, IndianRupee } from "lucide-react";
+import { Instagram, Linkedin, Phone, Facebook, X, MessageSquare, Globe } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { ReferralShare } from "./ReferralShare";
@@ -89,53 +89,47 @@ export function SocialLinks() {
       icon: Facebook,
       href: "https://www.facebook.com/profile.php?id=100084139741037",
       label: "Facebook",
-      color: "hover:text-blue-500",
     },
     {
       icon: X,
       href: "https://x.com/MuhammadAd93421",
       label: "X (Twitter)",
-      color: "hover:text-sky-500",
     },
     {
       icon: Instagram,
       href: "https://www.instagram.com/ai.adnanvv/",
       label: "Instagram",
-      color: "hover:text-pink-600",
     },
     {
       icon: Linkedin,
       href: "https://www.linkedin.com/in/muhammedadnanvv/",
       label: "LinkedIn",
-      color: "hover:text-blue-600",
     },
     {
       icon: Phone,
       href: "https://wa.me/919656778508",
       label: "WhatsApp",
-      color: "hover:text-green-500",
     },
     {
       icon: MessageSquare,
       href: "https://discord.com/invite/vCPH2pFH",
       label: "Discord",
-      color: "hover:text-indigo-500",
     },
   ];
 
   return (
-    <footer className="w-full py-6 sm:py-8 mt-8 sm:mt-12 border-t border-gray-800 bg-black/40 backdrop-blur-sm z-10">
-      <div className="container flex flex-col items-center gap-4 sm:gap-6 px-4 sm:px-6">
+    <footer className="w-full py-8 mt-12 border-t border-gray-800">
+      <div className="container flex flex-col items-center gap-6">
         <div className="flex items-center gap-2 text-amber-400">
-          <Globe className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse" />
-          <p className="text-sm sm:text-base font-medium">Kerala's First AI Image Generation Platform</p>
+          <Globe className="h-5 w-5" />
+          <p className="text-sm">Kerala's First AI Image Generation Platform</p>
         </div>
 
-        <p className="text-xs sm:text-sm text-gray-400">
+        <p className="text-sm text-gray-400">
           Built and maintained by Muhammed Adnan
         </p>
 
-        <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
+        <div className="flex justify-center items-center gap-4">
           <TooltipProvider>
             {socialLinks.map((link) => (
               <Tooltip key={link.label}>
@@ -143,7 +137,7 @@ export function SocialLinks() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className={`rounded-full border-gray-800 bg-black/20 hover:bg-black/40 hover:border-amber-500 transform hover:scale-110 transition-all duration-300 ${link.color}`}
+                    className="rounded-full border-gray-800 bg-black/20 hover:bg-amber-500/20 hover:border-amber-500"
                     asChild
                   >
                     <a
@@ -152,7 +146,7 @@ export function SocialLinks() {
                       rel="noopener noreferrer"
                       aria-label={link.label}
                     >
-                      <link.icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                      <link.icon className="h-4 w-4 text-gray-400 hover:text-amber-400" />
                     </a>
                   </Button>
                 </TooltipTrigger>
@@ -179,12 +173,12 @@ export function SocialLinks() {
           href="https://www.producthunt.com/posts/comicforgeai?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-comicforgeai"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:opacity-90 transition-opacity mt-2 sm:mt-4"
+          className="hover:opacity-90 transition-opacity mt-4"
         >
           <img 
             src="https://s3.producthunt.com/static/badges/daily1.svg"
             alt="ComicForge AI - Daily #1 Product on Product Hunt"
-            className="h-8 sm:h-10 w-auto"
+            className="h-10 w-auto"
           />
         </a>
       </div>

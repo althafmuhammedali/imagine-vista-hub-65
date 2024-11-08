@@ -10,19 +10,19 @@
     --card-foreground: 225 100% 98%;
     --popover: 240 45% 5%;
     --popover-foreground: 225 100% 98%;
-    --primary: 47 95% 55%;
+    --primary: 255 90% 65%;
     --primary-foreground: 240 50% 3%;
     --secondary: 240 30% 10%;
     --secondary-foreground: 225 100% 98%;
     --muted: 240 30% 10%;
     --muted-foreground: 225 100% 98%;
-    --accent: 291 100% 50%;
+    --accent: 190 100% 50%;
     --accent-foreground: 240 50% 3%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 225 100% 98%;
-    --border: 47 95% 55%;
-    --input: 47 95% 55%;
-    --ring: 47 95% 55%;
+    --border: 255 90% 65%;
+    --input: 255 90% 65%;
+    --ring: 255 90% 65%;
     --radius: clamp(0.5rem, 3vw, 0.75rem);
   }
 
@@ -34,7 +34,7 @@
   }
 
   html {
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Roboto', sans-serif;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     touch-action: manipulation;
@@ -64,6 +64,25 @@
       min-height: 100dvh;
     }
   }
+
+  /* Improved touch targets for mobile */
+  button, a {
+    @apply min-h-[44px] min-w-[44px];
+    touch-action: manipulation;
+  }
+
+  /* Better form controls on mobile */
+  input, select, textarea {
+    @apply text-base;
+    font-size: max(16px, 1em);
+  }
+
+  /* Prevent zoom on focus in iOS */
+  @supports (-webkit-touch-callout: none) {
+    input, select, textarea {
+      font-size: 16px;
+    }
+  }
 }
 
 @layer utilities {
@@ -86,12 +105,7 @@
     line-height: clamp(1.25, 1.5vw + 1, 1.75);
   }
 
-  .majestic-gradient {
-    @apply bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600;
-  }
-
-  .royal-shadow {
-    box-shadow: 0 0 20px hsl(var(--primary)/0.2),
-                0 0 40px hsl(var(--accent)/0.1);
+  .safe-area-inset {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 }

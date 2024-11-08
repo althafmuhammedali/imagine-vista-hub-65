@@ -132,22 +132,22 @@ export function ImagePreview({ generatedImage, isLoading, error, prompt = "" }: 
             loading="lazy"
             decoding="async"
           />
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-row gap-3 bg-black/80 backdrop-blur-md p-2 rounded-full shadow-xl">
+          <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Button
               onClick={handleUpload}
-              className="bg-amber-500 hover:bg-amber-600 text-black font-medium rounded-full transition-all duration-300 flex items-center gap-2 px-4 py-2"
+              className="bg-black/70 hover:bg-black/90 backdrop-blur-sm transition-all duration-300 text-xs sm:text-sm"
               size="sm"
             >
-              <Upload className="w-4 h-4" />
-              <span className="hidden sm:inline">Upload</span>
+              <Upload className="w-4 h-4 mr-1 sm:mr-2" />
+              Upload
             </Button>
             <Button
               onClick={handleDownload}
-              className="bg-amber-500 hover:bg-amber-600 text-black font-medium rounded-full transition-all duration-300 flex items-center gap-2 px-4 py-2"
+              className="bg-black/70 hover:bg-black/90 backdrop-blur-sm transition-all duration-300 text-xs sm:text-sm"
               size="sm"
             >
-              <Download className="w-4 h-4" />
-              <span className="hidden sm:inline">Download</span>
+              <Download className="w-4 h-4 mr-1 sm:mr-2" />
+              Download
             </Button>
           </div>
           <SocialShareButton imageUrl={generatedImage} />

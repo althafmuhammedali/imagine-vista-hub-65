@@ -17,7 +17,6 @@
     hsl(var(--secondary)) 100%
   );
   position: relative;
-  padding-bottom: calc(60px + env(safe-area-inset-bottom));
 }
 
 #root::before {
@@ -27,7 +26,7 @@
   background-image: 
     linear-gradient(to right, hsl(var(--primary)/0.05) 1px, transparent 1px),
     linear-gradient(to bottom, hsl(var(--primary)/0.05) 1px, transparent 1px);
-  background-size: clamp(10px, 2vw, 20px) clamp(10px, 2vw, 20px);
+  background-size: 20px 20px;
   mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
   pointer-events: none;
 }
@@ -38,7 +37,6 @@
   will-change: filter;
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
   contain: strict;
-  filter: drop-shadow(0 0 0.5em hsl(var(--primary)/0.5));
 }
 
 .logo:hover {
@@ -67,20 +65,58 @@
     0 0 0 1px hsl(var(--primary)/0.2),
     0 10px 15px -3px rgb(0 0 0 / 0.1),
     0 4px 6px -4px rgb(0 0 0 / 0.1);
+  transform: translateY(-2px);
 }
 
-.main-content {
-  flex: 1;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  padding-bottom: env(safe-area-inset-bottom);
-  position: relative;
-  z-index: 1;
+/* Mobile-first responsive design */
+@media (max-width: 640px) {
+  .card {
+    padding: 1rem;
+    border-radius: calc(var(--radius) * 0.75);
+  }
 }
 
-.footer-space {
-  height: calc(60px + 1rem);
-  width: 100%;
+/* Better touch targets on mobile */
+@media (hover: none) and (pointer: coarse) {
+  button, 
+  [role="button"],
+  a {
+    @apply min-h-[44px] min-w-[44px] p-2;
+  }
+}
+
+/* Prevent pull-to-refresh on mobile */
+@media (pointer: coarse) {
+  body {
+    overscroll-behavior-y: none;
+  }
+}
+
+/* Improved scrolling performance */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Better form inputs on mobile */
+input,
+select,
+textarea {
+  @apply appearance-none;
+  -webkit-appearance: none;
+  border-radius: var(--radius);
+}
+
+/* Prevent iOS zoom on input focus */
+@supports (-webkit-touch-callout: none) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
