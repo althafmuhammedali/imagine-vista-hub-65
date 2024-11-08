@@ -6,16 +6,17 @@ export const API_CONFIG = {
     "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
   },
   DEFAULT_PARAMS: {
-    num_inference_steps: 50,
-    guidance_scale: 7.5,
+    num_inference_steps: 150, // Increased from 50 for better quality
+    guidance_scale: 9.5, // Increased from 7.5 for better adherence to prompt
     scheduler: "DPMSolverMultistepScheduler",
     use_karras_sigmas: true,
-    clip_skip: 2,
+    clip_skip: 1, // Changed to 1 for better quality
     tiling: false,
     use_safetensors: true,
     options: {
       wait_for_model: true,
-      use_gpu: true
+      use_gpu: true,
+      quality: "maximum" // Added quality parameter
     }
   }
 };
