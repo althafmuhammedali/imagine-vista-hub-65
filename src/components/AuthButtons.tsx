@@ -40,7 +40,7 @@ export function AuthButtons() {
             }}
           />
         ) : (
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-4">
             <SignInButton mode="modal">
               <Button 
                 variant="outline" 

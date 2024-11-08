@@ -30,7 +30,7 @@ export function MobileNav() {
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-[280px] bg-background/95 backdrop-blur-sm">
-        <div className="flex flex-col space-y-4 mt-4">
+        <div className="flex flex-col space-y-4 mt-4 w-4">
           {isSignedIn ? (
             <div className="flex justify-center">
               <UserButton
