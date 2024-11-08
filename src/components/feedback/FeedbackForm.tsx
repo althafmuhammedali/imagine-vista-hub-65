@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 export function FeedbackForm() {
   const [feedback, setFeedback] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async () => {
@@ -17,12 +18,35 @@ export function FeedbackForm() {
       return;
     }
 
-    // Here you would typically send the feedback to your backend
-    toast({
-      title: "Thank you!",
-      description: "Your feedback has been submitted successfully.",
-    });
-    setFeedback("");
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('https://formbold.com/s/YOUR_FORM_ID', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ feedback }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Thank you!",
+          description: "Your feedback has been submitted successfully.",
+        });
+        setFeedback("");
+      } else {
+        throw new Error('Failed to submit feedback');
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit feedback. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -33,12 +57,14 @@ export function FeedbackForm() {
         onChange={(e) => setFeedback(e.target.value)}
         className="w-full p-2 rounded bg-black/20 border border-amber-900/20 text-white placeholder-amber-700/50 focus:ring-2 focus:ring-amber-500 focus:border-transparent min-h-[100px]"
         placeholder="We'd love to hear your thoughts..."
+        disabled={isSubmitting}
       />
       <Button 
         className="mt-2 bg-amber-500 hover:bg-amber-600 text-black font-medium w-full"
         onClick={handleSubmit}
+        disabled={isSubmitting}
       >
-        Submit Feedback
+        {isSubmitting ? "Submitting..." : "Submit Feedback"}
       </Button>
     </div>
   );
