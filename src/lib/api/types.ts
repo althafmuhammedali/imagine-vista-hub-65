@@ -3,4 +3,5 @@ export interface GenerateImageParams {
   width?: number;
   height?: number;
   negativePrompt?: string;
+  userId?: string;
 }

@@ -31,12 +31,12 @@ export function ImageGenerator({ mode = 'create' }: ImageGeneratorProps) {
 
     setIsGenerating(true);
     try {
-      const images = await generateImage({
+      const image = await generateImage({
         prompt,
         negativePrompt,
         userId: user?.id,
       });
-      setGeneratedImages(images);
+      setGeneratedImages(prev => [...prev, image]);
       toast({
         title: "Success",
         description: "Images generated successfully!",
