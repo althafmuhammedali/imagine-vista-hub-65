@@ -5,7 +5,6 @@ import { ChatBot } from "@/components/chat/ChatBot";
 import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
-import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
 import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info, Send } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
@@ -166,7 +165,6 @@ const Index = () => {
           </div>
         </div>
       </div>
-      <DynamicAdDisplay />
     </div>
   );
 };
