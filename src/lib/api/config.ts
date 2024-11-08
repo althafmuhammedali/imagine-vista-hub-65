@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+  BASE_URL: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
   TIMEOUT: 90000, // 90 seconds
   HEADERS: {
     "Content-Type": "application/json",

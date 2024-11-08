@@ -2,7 +2,7 @@ import { API_CONFIG } from './config';
 import { GenerateImageParams } from './types';
 
 const MODELS = {
-  create: "stabilityai/stable-diffusion-xl-base-1.0",
+  create: "black-forest-labs/FLUX.1-dev",
   enhance: "stabilityai/stable-diffusion-xl-refiner-1.0"
 };
 
@@ -12,7 +12,7 @@ export async function generateImage({
   userId,
   model = MODELS.create
 }: GenerateImageParams): Promise<string> {
-  const response = await fetch(model, {
+  const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
     method: "POST",
     headers: {
       ...API_CONFIG.HEADERS,
