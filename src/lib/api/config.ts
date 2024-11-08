@@ -1,6 +1,6 @@
 export const API_CONFIG = {
   BASE_URL: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
-  TIMEOUT: 90000, // 90 seconds
+  TIMEOUT: 180000, // 3 minutes
   HEADERS: {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,

@@ -31,13 +31,24 @@ export async function generateImage({
     clearTimeout(timeoutId);
 
     if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      
       if (response.status === 429) {
-        throw new Error("The AI model is currently busy. Please try again in a few moments.");
+        const message = errorData.error?.includes("loading") 
+          ? "The AI model is warming up. Please try again in a few moments."
+          : "The service is currently busy. Please try again shortly.";
+        throw new Error(message);
       }
+      
       if (response.status === 401) {
         throw new Error("Authentication failed. Please check your API key.");
       }
-      throw new Error(`Failed to generate image (Status: ${response.status})`);
+      
+      if (response.status === 413) {
+        throw new Error("The prompt is too long. Please try a shorter prompt.");
+      }
+      
+      throw new Error(errorData.error || `Failed to generate image (Status: ${response.status})`);
     }
 
     const blob = await response.blob();
