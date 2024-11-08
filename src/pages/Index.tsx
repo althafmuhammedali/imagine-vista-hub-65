@@ -42,18 +42,18 @@ const Index = () => {
 
   const testimonials = [
     {
-      quote: "This AI completely transformed how I create art!",
-      author: "Sarah K.",
+      quote: "നല്ല ആപ്പ്! This AI tool helped me create amazing comic art for my YouTube thumbnails!",
+      author: "Arun Krishnan",
       rating: 5,
     },
     {
-      quote: "Incredible results with minimal effort. A game-changer.",
-      author: "Michael R.",
+      quote: "Kollam! The image quality is outstanding. Perfect for my social media content.",
+      author: "Priya Menon",
       rating: 5,
     },
     {
-      quote: "The quality of generated images is outstanding.",
-      author: "David L.",
+      quote: "Adipoli! Never thought AI could make such realistic Malayalam comic characters.",
+      author: "Vishnu Prasad",
       rating: 5,
     },
   ];
