@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 240 50% 3%;
-    --foreground: 225 100% 98%;
-    --card: 240 45% 5%;
-    --card-foreground: 225 100% 98%;
-    --popover: 240 45% 5%;
-    --popover-foreground: 225 100% 98%;
-    --primary: 47 95% 55%;
-    --primary-foreground: 240 50% 3%;
-    --secondary: 240 30% 10%;
-    --secondary-foreground: 225 100% 98%;
-    --muted: 240 30% 10%;
-    --muted-foreground: 225 100% 98%;
-    --accent: 291 100% 50%;
-    --accent-foreground: 240 50% 3%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 225 100% 98%;
-    --border: 47 95% 55%;
-    --input: 47 95% 55%;
-    --ring: 47 95% 55%;
+    --background: 240 30% 10%;
+    --foreground: 210 40% 98%;
+    --card: 240 25% 15%;
+    --card-foreground: 210 40% 98%;
+    --popover: 240 25% 15%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 252 100% 70%;
+    --primary-foreground: 240 30% 10%;
+    --secondary: 260 30% 20%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 260 30% 20%;
+    --muted-foreground: 210 40% 98%;
+    --accent: 291 70% 70%;
+    --accent-foreground: 240 30% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 252 100% 70%;
+    --input: 252 100% 70%;
+    --ring: 252 100% 70%;
     --radius: clamp(0.5rem, 3vw, 0.75rem);
   }
 
@@ -53,9 +53,10 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     background-image: 
-      radial-gradient(circle at 50% 50%, hsl(var(--primary)/0.15), transparent 25%),
-      linear-gradient(to bottom right, hsl(var(--primary)/0.1) 0%, transparent 40%),
-      linear-gradient(to bottom left, hsl(var(--accent)/0.1) 0%, transparent 40%);
+      radial-gradient(circle at 50% 0%, hsl(var(--primary)/0.15), transparent 50%),
+      radial-gradient(circle at 0% 50%, hsl(var(--accent)/0.1), transparent 50%),
+      linear-gradient(to bottom right, hsl(260 30% 20% / 0.2), transparent),
+      linear-gradient(to top left, hsl(291 70% 70% / 0.1), transparent);
     background-attachment: fixed;
   }
 
@@ -86,12 +87,11 @@
     line-height: clamp(1.25, 1.5vw + 1, 1.75);
   }
 
-  .majestic-gradient {
-    @apply bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600;
+  .futuristic-gradient {
+    @apply bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent;
   }
 
-  .royal-shadow {
-    box-shadow: 0 0 20px hsl(var(--primary)/0.2),
-                0 0 40px hsl(var(--accent)/0.1);
+  .glass-panel {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-xl;
   }
 }

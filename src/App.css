@@ -25,8 +25,8 @@
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(to right, hsl(var(--primary)/0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, hsl(var(--primary)/0.05) 1px, transparent 1px);
+    linear-gradient(to right, hsl(var(--primary)/0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--primary)/0.03) 1px, transparent 1px);
   background-size: clamp(10px, 2vw, 20px) clamp(10px, 2vw, 20px);
   mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
   pointer-events: none;
@@ -53,7 +53,7 @@
   margin: 0 auto;
   contain: content;
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--border)/0.2);
+  border: 1px solid hsl(var(--border)/0.1);
   border-radius: var(--radius);
   box-shadow: 
     0 0 0 1px hsl(var(--primary)/0.1),
