@@ -3,15 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Loader2, ImagePlus } from "lucide-react";
-import { ImageGenerationMode } from "@/lib/api/types";
 
 interface GenerationFormProps {
   onGenerate: (prompt: string, negativePrompt: string) => Promise<void>;
   isGenerating: boolean;
-  mode: ImageGenerationMode;
 }
 
-export function GenerationForm({ onGenerate, isGenerating, mode }: GenerationFormProps) {
+export function GenerationForm({ onGenerate, isGenerating }: GenerationFormProps) {
   const [prompt, setPrompt] = useState("");
   const [negativePrompt, setNegativePrompt] = useState("");
 
@@ -24,13 +22,11 @@ export function GenerationForm({ onGenerate, isGenerating, mode }: GenerationFor
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <label htmlFor="prompt" className="block text-sm font-medium text-foreground">
-          {mode === 'enhance' ? 'Enhancement Prompt' : 'Creation Prompt'}
+          Creation Prompt
         </label>
         <Textarea
           id="prompt"
-          placeholder={mode === 'enhance' 
-            ? "Describe how you want to enhance the image..."
-            : "Enter your prompt here..."}
+          placeholder="Enter your prompt here..."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           className="min-h-[100px]"
@@ -57,12 +53,12 @@ export function GenerationForm({ onGenerate, isGenerating, mode }: GenerationFor
         {isGenerating ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {mode === 'enhance' ? 'Enhancing...' : 'Generating...'}
+            Generating...
           </>
         ) : (
           <>
             <ImagePlus className="mr-2 h-4 w-4" />
-            {mode === 'enhance' ? 'Enhance' : 'Generate'}
+            Generate
           </>
         )}
       </Button>
