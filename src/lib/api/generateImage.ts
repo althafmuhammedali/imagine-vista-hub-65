@@ -1,36 +1,60 @@
 import { API_CONFIG } from './config';
-import { GenerateImageParams } from './types';
-
-const MODELS = {
-  create: "black-forest-labs/FLUX.1-dev",
-  enhance: "stabilityai/stable-diffusion-xl-refiner-1.0"
-};
+import { toast } from "@/components/ui/use-toast";
+import type { GenerateImageParams } from './types';
 
 export async function generateImage({
   prompt,
   negativePrompt = "",
   userId,
-  model = MODELS.create
 }: GenerateImageParams): Promise<string> {
-  const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
-    method: "POST",
-    headers: {
-      ...API_CONFIG.HEADERS,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      inputs: prompt,
-      parameters: {
-        ...API_CONFIG.DEFAULT_PARAMS,
-        negative_prompt: negativePrompt,
-      },
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to generate image');
+  if (!prompt?.trim()) {
+    throw new Error("Prompt is required");
   }
 
-  const blob = await response.blob();
-  return URL.createObjectURL(blob);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
+
+  try {
+    const response = await fetch(API_CONFIG.BASE_URL, {
+      method: "POST",
+      headers: API_CONFIG.HEADERS,
+      signal: controller.signal,
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: {
+          ...API_CONFIG.DEFAULT_PARAMS,
+          negative_prompt: negativePrompt,
+        },
+      }),
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        throw new Error("The AI model is currently busy. Please try again in a few moments.");
+      }
+      if (response.status === 401) {
+        throw new Error("Authentication failed. Please check your API key.");
+      }
+      throw new Error(`Failed to generate image (Status: ${response.status})`);
+    }
+
+    const blob = await response.blob();
+    if (blob.size === 0) {
+      throw new Error("Generated image is empty. Please try again.");
+    }
+
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    clearTimeout(timeoutId);
+    
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        throw new Error('The request took too long. Please try again with a simpler prompt.');
+      }
+      throw error;
+    }
+    throw new Error('Failed to generate image. Please try again.');
+  }
 }

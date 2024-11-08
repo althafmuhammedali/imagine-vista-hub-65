@@ -18,9 +18,5 @@ export const API_CONFIG = {
       use_gpu: true,
       timeout: 60000, // 60 seconds model timeout
     }
-  },
-  RATE_LIMIT: {
-    MAX_REQUESTS_PER_MINUTE: 10,
-    COOLDOWN_PERIOD: 60000, // 1 minute in milliseconds
   }
 };

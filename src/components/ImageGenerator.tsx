@@ -33,11 +33,10 @@ export function ImageGenerator() {
         prompt: userPrompt,
         negativePrompt,
         userId: user?.id,
-        model: 'stabilityai/stable-diffusion-xl-base-1.0'
       });
       
       setGeneratedImages([image]);
-      setPrompt(userPrompt); // Save the original prompt for reference
+      setPrompt(userPrompt);
       
       toast({
         title: "Success",
