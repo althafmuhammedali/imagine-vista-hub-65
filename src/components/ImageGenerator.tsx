@@ -48,7 +48,11 @@ const translateToEnglish = async (text: string, sourceLang: string): Promise<str
   }
 };
 
-export function ImageGenerator() {
+interface ImageGeneratorProps {
+  mode?: 'create' | 'enhance';
+}
+
+export function ImageGenerator({ mode = 'create' }: ImageGeneratorProps) {
   const [prompt, setPrompt] = useState("");
   const [negativePrompt, setNegativePrompt] = useState("");
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
