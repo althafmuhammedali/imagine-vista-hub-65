@@ -5,6 +5,8 @@ import { ImageGenerator } from '@/components/ImageGenerator';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sparkles, Wand2 } from 'lucide-react';
+import { PlatformBudget } from '@/components/PlatformBudget';
+import { SocialLinks } from '@/components/SocialLinks';
 
 const IndexPage: React.FC = () => {
   return (
@@ -18,7 +20,7 @@ const IndexPage: React.FC = () => {
         </p>
       </header>
 
-      <main>
+      <main className="space-y-12">
         <Card className="glass-panel p-4 sm:p-6">
           <Tabs defaultValue="create" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -32,19 +34,18 @@ const IndexPage: React.FC = () => {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="create">
-              <ImageGenerator mode="create" />
+              <ImageGenerator />
             </TabsContent>
             <TabsContent value="enhance">
-              <ImageGenerator mode="enhance" />
+              <ImageGenerator />
             </TabsContent>
           </Tabs>
         </Card>
+
+        <PlatformBudget />
       </main>
 
-      <footer className="mt-8 text-center text-sm text-muted-foreground">
-        <p>© 2024 ComicForge AI. All rights reserved.</p>
-      </footer>
-
+      <SocialLinks />
       <PWAInstallPrompt />
     </div>
   );
