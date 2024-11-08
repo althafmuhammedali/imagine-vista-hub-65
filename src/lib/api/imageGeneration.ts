@@ -12,17 +12,22 @@ export async function generateImage({
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
 
   try {
-    const response = await fetch(API_CONFIG.BASE_URL, {
+    const response = await fetch("https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0", {
       method: "POST",
-      headers: API_CONFIG.HEADERS,
+      headers: {
+        "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
       signal: controller.signal,
       body: JSON.stringify({
         inputs: prompt,
         parameters: {
-          ...API_CONFIG.DEFAULT_PARAMS,
           negative_prompt: negativePrompt,
           width,
           height,
+          num_inference_steps: 50,
+          guidance_scale: 7.5,
+          scheduler: "DPMSolverMultistepScheduler",
         },
       }),
     });
@@ -30,40 +35,22 @@ export async function generateImage({
     clearTimeout(timeoutId);
 
     if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      
       if (response.status === 429) {
-        const errorData = await response.json();
-        const isBusy = errorData.error?.includes("loading") || errorData.estimated_time > 30;
-        
-        if (isBusy) {
-          toast({
-            title: "Model Busy",
-            description: "The model is currently busy. Please try again in a few moments.",
-            variant: "destructive",
-          });
-          throw new Error("Model too busy");
-        }
-        
-        toast({
-          title: "Rate Limited",
-          description: "Please wait before making more requests.",
-          variant: "destructive",
-        });
-        throw new Error("Rate limit exceeded");
+        throw new Error("Model is currently busy. Please try again in a few moments.");
       }
-      throw new Error('Failed to generate image');
+      
+      throw new Error(errorData.error || 'Failed to generate image');
     }
 
     const blob = await response.blob();
     return URL.createObjectURL(blob);
   } catch (error) {
     clearTimeout(timeoutId);
+    
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        toast({
-          title: "Request Timeout",
-          description: "The request took too long. Please try again with a simpler prompt.",
-          variant: "destructive",
-        });
         throw new Error('Request timed out - please try again with a simpler prompt');
       }
       throw error;

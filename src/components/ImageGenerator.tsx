@@ -82,40 +82,31 @@ export function ImageGenerator() {
     try {
       // Clear previous URLs
       generatedImages.forEach(url => URL.revokeObjectURL(url));
+      setGeneratedImages([]);
 
       // Translate prompt if not in English
       let translatedPrompt = trimmedPrompt;
       let translatedNegativePrompt = negativePrompt;
 
       if (selectedLanguage !== "en") {
-        try {
-          translatedPrompt = await translateToEnglish(trimmedPrompt, selectedLanguage);
-          if (negativePrompt) {
-            translatedNegativePrompt = await translateToEnglish(negativePrompt, selectedLanguage);
-          }
-          
-          toast({
-            title: "Translation Complete",
-            description: "Your prompt has been translated for better results.",
-          });
-        } catch (error) {
-          toast({
-            title: "Translation Warning",
-            description: "Using original prompt as translation failed.",
-            variant: "destructive",
-          });
+        translatedPrompt = await translateToEnglish(trimmedPrompt, selectedLanguage);
+        if (negativePrompt) {
+          translatedNegativePrompt = await translateToEnglish(negativePrompt, selectedLanguage);
         }
       }
 
-      const params = {
-        prompt: enhancePrompt(translatedPrompt),
+      const enhancedPrompt = enhancePrompt(translatedPrompt);
+      const enhancedNegativePrompt = enhanceNegativePrompt(translatedNegativePrompt.trim());
+
+      const imageUrl = await generateImage({
+        prompt: enhancedPrompt,
         width: window.innerWidth >= 1024 ? 1024 : 512,
         height: window.innerWidth >= 1024 ? 1024 : 512,
-        negativePrompt: enhanceNegativePrompt(translatedNegativePrompt.trim()),
-      };
+        negativePrompt: enhancedNegativePrompt,
+      });
 
-      const imageUrl = await generateImage(params);
       setGeneratedImages([imageUrl]);
+      setError(undefined);
 
       toast({
         title: "Success",
@@ -124,6 +115,8 @@ export function ImageGenerator() {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to generate image";
       setError(errorMessage);
+      setGeneratedImages([]);
+      
       toast({
         title: "Error",
         description: errorMessage,
