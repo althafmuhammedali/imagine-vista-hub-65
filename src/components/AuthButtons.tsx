@@ -40,7 +40,7 @@ export function AuthButtons() {
             }}
           />
         ) : (
-          <div className="flex gap-2 w-4">
+          <div className="flex gap-2 w-full">
             <SignInButton mode="modal">
               <Button 
                 variant="outline" 
@@ -52,7 +52,7 @@ export function AuthButtons() {
             </SignInButton>
             <SignUpButton mode="modal">
               <Button 
-                className="majestic-gradient text-black font-semibold shadow-lg transition-colors flex items-center gap-2"
+                className="w-full majestic-gradient text-black font-semibold shadow-lg transition-colors flex items-center gap-2"
                 onClick={handleSignUp}
               >
                 <Crown className="w-4 h-4" />
