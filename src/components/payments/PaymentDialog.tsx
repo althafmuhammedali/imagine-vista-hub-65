@@ -54,7 +54,7 @@ export function PaymentDialog({ handleRazorpayClick }: PaymentDialogProps) {
             className="flex items-center gap-2 hover:bg-blue-500/10 transition-colors"
           >
             <IndianRupee className="h-4 w-4" />
-            {isProcessing ? "Processing..." : "Razorpay (₹100)"}
+            {isProcessing ? "Processing..." : "Razorpay (₹599)"}
           </Button>
           <Button
             variant="outline"

@@ -32,7 +32,7 @@ export function SocialLinks() {
 
     const options = {
       key: "rzp_live_5JYQnqKRnKhB5y",
-      amount: 100 * 100,
+      amount: 599 * 100, // Changed from 100 to 599
       currency: "INR",
       name: "ComicForge AI",
       description: "Support our AI service",
