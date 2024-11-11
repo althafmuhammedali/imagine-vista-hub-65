@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { cn } from "@/lib/utils";
 
@@ -13,9 +13,8 @@ export const ResponsiveContainer = memo(function ResponsiveContainer({
 }: ResponsiveContainerProps) {
   const { isMobile, isTablet, orientation } = useResponsiveLayout();
 
-  // Memoize class calculations
-  const containerClasses = useMemo(() => cn(
-    "w-full transition-all duration-300 will-change-transform",
+  const containerClasses = cn(
+    "w-full transition-all duration-300",
     {
       "px-2 py-1 space-y-2": isMobile,
       "px-4 py-2 space-y-4": isTablet,
@@ -23,19 +22,10 @@ export const ResponsiveContainer = memo(function ResponsiveContainer({
       "max-w-[100dvw]": orientation === "portrait",
     },
     className
-  ), [isMobile, isTablet, orientation, className]);
+  );
 
-  // Use CSS containment for better performance
   return (
-    <div 
-      className={containerClasses}
-      style={{
-        contain: "content",
-        transform: "translateZ(0)",
-        backfaceVisibility: "hidden",
-        WebkitFontSmoothing: "antialiased"
-      }}
-    >
+    <div className={containerClasses}>
       {children}
     </div>
   );

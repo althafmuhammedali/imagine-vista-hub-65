@@ -13,47 +13,27 @@ interface ResponsiveConfig {
 const MOBILE_BREAKPOINT = 640;
 const TABLET_BREAKPOINT = 1024;
 
-// Performance cache for layout calculations
-const layoutCache = new Map<string, ResponsiveConfig>();
-
 export function useResponsiveLayout(): ResponsiveConfig {
-  const [layout, setLayout] = useState<ResponsiveConfig>(() => {
-    // Check cache first
-    const cacheKey = `${window.innerWidth}-${window.innerHeight}`;
-    const cached = layoutCache.get(cacheKey);
-    
-    if (cached) return cached;
-    
-    const initial = calculateLayout(
-      typeof window !== "undefined" ? window.innerWidth : 1200,
-      typeof window !== "undefined" ? window.innerHeight : 800
-    );
-    
-    layoutCache.set(cacheKey, initial);
-    return initial;
-  });
+  const [layout, setLayout] = useState<ResponsiveConfig>(() => ({
+    isMobile: false,
+    isTablet: false,
+    isDesktop: true,
+    orientation: "landscape",
+    width: typeof window !== "undefined" ? window.innerWidth : 1200,
+    height: typeof window !== "undefined" ? window.innerHeight : 800,
+  }));
 
-  // Memoize breakpoint calculations for performance
-  const calculateLayout = useCallback((width: number, height: number): ResponsiveConfig => {
-    const cacheKey = `${width}-${height}`;
-    const cached = layoutCache.get(cacheKey);
-    
-    if (cached) return cached;
-    
-    const config = {
-      isMobile: width < MOBILE_BREAKPOINT,
-      isTablet: width >= MOBILE_BREAKPOINT && width < TABLET_BREAKPOINT,
-      isDesktop: width >= TABLET_BREAKPOINT,
-      orientation: height > width ? "portrait" : "landscape",
-      width,
-      height,
-    } as const;
-    
-    layoutCache.set(cacheKey, config);
-    return config;
-  }, []);
+  // Memoize breakpoint calculations
+  const calculateLayout = useCallback((width: number, height: number): ResponsiveConfig => ({
+    isMobile: width < MOBILE_BREAKPOINT,
+    isTablet: width >= MOBILE_BREAKPOINT && width < TABLET_BREAKPOINT,
+    isDesktop: width >= TABLET_BREAKPOINT,
+    orientation: height > width ? "portrait" : "landscape",
+    width,
+    height,
+  }), []);
 
-  // Optimized update function using RAF and Intersection Observer
+  // Debounced update function using requestAnimationFrame
   const debouncedUpdate = useMemo(
     () =>
       debounce((width: number, height: number) => {
@@ -65,34 +45,27 @@ export function useResponsiveLayout(): ResponsiveConfig {
   );
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    // Use ResizeObserver for more efficient size monitoring
-    const resizeObserver = new ResizeObserver((entries) => {
-      const { width, height } = entries[0].contentRect;
+    const updateLayout = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
       debouncedUpdate(width, height);
-    });
-
-    resizeObserver.observe(document.documentElement);
-
-    // Optimized orientation change handler
-    const orientationHandler = () => {
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          const { innerWidth, innerHeight } = window;
-          debouncedUpdate(innerWidth, innerHeight);
-        }, 100);
-      });
     };
 
-    window.addEventListener("orientationchange", orientationHandler, { passive: true });
+    // Initial update without debouncing
+    setLayout(calculateLayout(window.innerWidth, window.innerHeight));
 
+    // Add event listeners with passive option for better performance
+    window.addEventListener("resize", updateLayout, { passive: true });
+    window.addEventListener("orientationchange", updateLayout, { passive: true });
+    
+    // Cleanup
     return () => {
       debouncedUpdate.cancel();
-      resizeObserver.disconnect();
-      window.removeEventListener("orientationchange", orientationHandler);
+      window.removeEventListener("resize", updateLayout);
+      window.removeEventListener("orientationchange", updateLayout);
     };
-  }, [debouncedUpdate]);
+  }, [calculateLayout, debouncedUpdate]);
 
-  return layout;
+  // Memoize the final layout to prevent unnecessary re-renders
+  return useMemo(() => layout, [layout]);
 }
