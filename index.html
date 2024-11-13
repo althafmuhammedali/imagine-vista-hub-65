@@ -1,20 +1,42 @@
 <!DOCTYPE html>
-<html lang="en" oncontextmenu="return false">
+<html lang="en" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
 <head>
   <script>
+    // Disable various keyboard shortcuts and right-click
     document.addEventListener('contextmenu', event => event.preventDefault());
     document.addEventListener('keydown', function(event) {
+      // Disable F12 key
       if(event.keyCode == 123) {
         event.preventDefault();
         return false;
       }
+      // Disable Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
       if (event.ctrlKey && 
           (event.shiftKey && (event.keyCode == 73 || event.keyCode == 74) || 
-           event.keyCode == 85)) {
+           event.keyCode == 85 || event.keyCode == 83)) {
+        event.preventDefault();
+        return false;
+      }
+      // Disable Ctrl+Shift+C
+      if (event.ctrlKey && event.shiftKey && event.keyCode == 67) {
         event.preventDefault();
         return false;
       }
     });
+
+    // Disable DevTools
+    function disableDevTools() {
+      if (window.devtools.isOpen) {
+        window.location.href = "about:blank";
+      }
+    }
+    
+    // Clear console
+    setInterval(() => {
+      console.clear();
+      console.log('%cStop!', 'color: red; font-size: 30px; font-weight: bold;');
+      console.log('%cThis is a browser feature intended for developers.', 'font-size: 16px;');
+    }, 100);
   </script>
 
   <meta charset="UTF-8" />
