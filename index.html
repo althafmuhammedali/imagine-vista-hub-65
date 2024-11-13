@@ -4,19 +4,23 @@
   <script>
     // Disable various keyboard shortcuts and right-click
     document.addEventListener('contextmenu', event => event.preventDefault());
+    
+    // Disable keyboard shortcuts
     document.addEventListener('keydown', function(event) {
       // Disable F12 key
       if(event.keyCode == 123) {
         event.preventDefault();
         return false;
       }
-      // Disable Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+      
+      // Disable Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
       if (event.ctrlKey && 
           (event.shiftKey && (event.keyCode == 73 || event.keyCode == 74) || 
            event.keyCode == 85 || event.keyCode == 83)) {
         event.preventDefault();
         return false;
       }
+      
       // Disable Ctrl+Shift+C
       if (event.ctrlKey && event.shiftKey && event.keyCode == 67) {
         event.preventDefault();
@@ -25,13 +29,32 @@
     });
 
     // Disable DevTools
-    function disableDevTools() {
-      if (window.devtools.isOpen) {
-        window.location.href = "about:blank";
+    function detectDevTools() {
+      const widthThreshold = window.outerWidth - window.innerWidth > 160;
+      const heightThreshold = window.outerHeight - window.innerHeight > 160;
+      
+      if(widthThreshold || heightThreshold) {
+        document.body.innerHTML = 'DevTools detected';
+        return true;
       }
+      return false;
     }
-    
-    // Clear console
+
+    setInterval(detectDevTools, 1000);
+
+    // Disable right-click
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Disable text selection
+    document.addEventListener('selectstart', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Clear console and show warning
     setInterval(() => {
       console.clear();
       console.log('%cStop!', 'color: red; font-size: 30px; font-weight: bold;');
