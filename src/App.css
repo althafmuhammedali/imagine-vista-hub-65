@@ -29,6 +29,7 @@
   background-size: 20px 20px;
   mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
   pointer-events: none;
+  z-index: 1;
 }
 
 .logo {
@@ -71,52 +72,33 @@
 /* Mobile-first responsive design */
 @media (max-width: 640px) {
   .card {
-    padding: 1rem;
+    padding: 0.75rem;
     border-radius: calc(var(--radius) * 0.75);
   }
 }
 
-/* Better touch targets on mobile */
+/* Improved mobile touch interactions */
 @media (hover: none) and (pointer: coarse) {
   button, 
   [role="button"],
   a {
-    @apply min-h-[44px] min-w-[44px] p-2;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem;
   }
 }
 
-/* Prevent pull-to-refresh on mobile */
+/* Prevent pull-to-refresh and improve scrolling */
 @media (pointer: coarse) {
   body {
     overscroll-behavior-y: none;
+    touch-action: manipulation;
   }
 }
 
-/* Improved scrolling performance */
-* {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Better form inputs on mobile */
-input,
-select,
-textarea {
-  @apply appearance-none;
-  -webkit-appearance: none;
-  border-radius: var(--radius);
-}
-
-/* Prevent iOS zoom on input focus */
-@supports (-webkit-touch-callout: none) {
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="url"],
-  select,
-  textarea {
-    font-size: 16px !important;
+/* Responsive typography */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
   }
 }

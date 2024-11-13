@@ -14,12 +14,14 @@ export const ResponsiveContainer = memo(function ResponsiveContainer({
   const { isMobile, isTablet, orientation } = useResponsiveLayout();
 
   const containerClasses = cn(
-    "w-full transition-all duration-300",
+    "w-full transition-all duration-300 px-2 sm:px-4 md:px-6",
     {
-      "px-2 py-1 space-y-2": isMobile,
-      "px-4 py-2 space-y-4": isTablet,
-      "px-6 py-3 space-y-6": !isMobile && !isTablet,
+      "space-y-2": isMobile,
+      "space-y-4": isTablet,
+      "space-y-6": !isMobile && !isTablet,
       "max-w-[100dvw]": orientation === "portrait",
+      "max-w-screen-2xl": !isMobile,
+      "mx-auto": true
     },
     className
   );

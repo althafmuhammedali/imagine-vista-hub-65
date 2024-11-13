@@ -66,7 +66,7 @@
   }
 
   /* Improved touch targets for mobile */
-  button, a {
+  button, a, input, select, textarea {
     @apply min-h-[44px] min-w-[44px];
     touch-action: manipulation;
   }
@@ -107,5 +107,18 @@
 
   .safe-area-inset {
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  /* Mobile-specific responsive utilities */
+  @screen xs {
+    .mobile-hidden {
+      display: none;
+    }
+  }
+
+  @screen md {
+    .mobile-only {
+      display: none;
+    }
   }
 }
