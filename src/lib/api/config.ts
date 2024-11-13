@@ -6,17 +6,18 @@ export const API_CONFIG = {
     "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
   },
   DEFAULT_PARAMS: {
-    num_inference_steps: 150, // Increased from 50 for better quality
-    guidance_scale: 9.5, // Increased from 7.5 for better adherence to prompt
-    scheduler: "DPMSolverMultistepScheduler",
+    num_inference_steps: 30, // Reduced from 150 for faster generation while maintaining quality
+    guidance_scale: 12, // Increased from 9.5 for better quality
+    scheduler: "EulerAncestralDiscreteScheduler", // Changed to faster scheduler
     use_karras_sigmas: true,
-    clip_skip: 1, // Changed to 1 for better quality
+    clip_skip: 2, // Optimized for better prompt understanding
     tiling: false,
     use_safetensors: true,
     options: {
       wait_for_model: true,
       use_gpu: true,
-      quality: "maximum" // Added quality parameter
+      quality: "balanced", // Changed from maximum to balanced for better speed/quality ratio
+      stream_output: true // Enable streaming for faster initial display
     }
   }
 };
