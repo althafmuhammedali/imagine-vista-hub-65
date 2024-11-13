@@ -43,7 +43,7 @@ export function AuthButtons() {
             <SignInButton mode="modal">
               <Button 
                 variant="outline" 
-                className="bg-black/95 backdrop-blur-sm border-amber-500/50 hover:bg-amber-500/10 text-amber-400 transition-colors"
+                className="bg-black/95 backdrop-blur-sm border-amber-500/50 hover:bg-amber-500/10 text-amber-300 transition-colors"
                 onClick={handleSignIn}
               >
                 Sign in
@@ -51,7 +51,7 @@ export function AuthButtons() {
             </SignInButton>
             <SignUpButton mode="modal">
               <Button 
-                className="bg-amber-500 hover:bg-amber-600 text-black font-semibold shadow-lg transition-colors"
+                className="bg-amber-500 hover:bg-amber-600 text-amber-100 font-semibold shadow-lg transition-colors"
                 onClick={handleSignUp}
               >
                 Sign up
