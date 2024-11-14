@@ -24,9 +24,9 @@ export function PaymentDialog({ handleRazorpayClick }: PaymentDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Choose Payment Method</DialogTitle>
+          <DialogTitle>Choose Support Method</DialogTitle>
           <DialogDescription>
-            Support ComicForge AI by making a donation
+            Support our service by making a contribution
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-center gap-4 pt-4">
@@ -36,7 +36,7 @@ export function PaymentDialog({ handleRazorpayClick }: PaymentDialogProps) {
             className="flex items-center gap-2"
           >
             <IndianRupee className="h-4 w-4" />
-            Razorpay (₹100)
+            Support (₹399)
           </Button>
           <Button
             variant="outline"

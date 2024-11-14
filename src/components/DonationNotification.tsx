@@ -72,10 +72,10 @@ export function DonationNotification() {
 
   useEffect(() => {
     const showDonationToast = () => {
-      toast("Support ComicForge AI", {
-        description: "Please consider donating to help us improve our AI models!",
+      toast("Support", {
+        description: "Please consider supporting our AI models!",
         action: {
-          label: "Donate",
+          label: "Support",
           onClick: handleDonateClick,
         },
         icon: <Heart className="h-4 w-4 text-red-500" />,
