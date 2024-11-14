@@ -32,9 +32,9 @@ export function SocialLinks() {
 
     const options = {
       key: "rzp_live_5JYQnqKRnKhB5y",
-      amount: 100 * 100,
+      amount: 399 * 100,
       currency: "INR",
-      name: "ComicForge AI",
+      name: "Support Us",
       description: "Support our AI service",
       handler: function(response: RazorpayResponse) {
         if (response.razorpay_payment_id) {
