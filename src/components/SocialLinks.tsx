@@ -169,18 +169,26 @@ export function SocialLinks() {
           </TooltipProvider>
         </div>
         
-        <a 
-          href="https://www.producthunt.com/posts/comicforgeai?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-comicforgeai"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:opacity-90 transition-opacity mt-4"
-        >
-          <img 
-            src="https://s3.producthunt.com/static/badges/daily1.svg"
-            alt="ComicForge AI - Daily #1 Product on Product Hunt"
-            className="h-10 w-auto"
-          />
-        </a>
+        <div className="w-full max-w-xl bg-black/20 backdrop-blur-sm rounded-lg p-4 mt-6">
+          <h3 className="text-lg font-bold text-amber-400 mb-4 text-center">
+            Build Your Professional Profile
+          </h3>
+          <div className="flex flex-col items-center justify-center">
+            <iframe 
+              style={{ border: 'none' }} 
+              src="https://cards.producthunt.com/cards/products/705762" 
+              width="500" 
+              height="405" 
+              frameBorder="0" 
+              scrolling="no" 
+              allowFullScreen 
+              className="max-w-full"
+            />
+            <p className="text-sm text-gray-400 mt-2 text-center">
+              Discover tools to enhance your professional resume and career opportunities
+            </p>
+          </div>
+        </div>
       </div>
     </footer>
   );
