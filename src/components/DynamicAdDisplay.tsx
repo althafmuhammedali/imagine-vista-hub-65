@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useQuery } from '@tanstack/react-query';
 import { LoadingSpinner } from './LoadingSpinner';
 
 const AD_REFRESH_INTERVAL = 5 * 60 * 1000;
+const AD_POPUP_INTERVAL = 3 * 60 * 1000; // Show popup every 3 minutes
 
 interface ImgBBResponse {
   data: {
@@ -22,6 +24,7 @@ const fetchAds = async (): Promise<ImgBBResponse> => {
 
 export function DynamicAdDisplay() {
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
 
   const { data: ads, isLoading, error } = useQuery({
     queryKey: ['ads'],
@@ -31,14 +34,22 @@ export function DynamicAdDisplay() {
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const rotateAd = setInterval(() => {
       if (ads?.data?.length) {
         setCurrentAdIndex((prev) => (prev + 1) % ads.data.length);
       }
     }, AD_REFRESH_INTERVAL);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(rotateAd);
   }, [ads?.data?.length]);
+
+  useEffect(() => {
+    const showAdPopup = setInterval(() => {
+      setShowPopup(true);
+    }, AD_POPUP_INTERVAL);
+
+    return () => clearInterval(showAdPopup);
+  }, []);
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return null;
@@ -47,32 +58,50 @@ export function DynamicAdDisplay() {
   const currentAd = ads.data[currentAdIndex];
 
   return (
-    <div className="w-full py-2 sm:py-4 bg-black/10 backdrop-blur-sm">
-      <div className="container max-w-6xl mx-auto px-4">
-        <HoverCard>
-          <HoverCardTrigger asChild>
-            <div className="cursor-pointer transition-all hover:scale-105">
-              <img
-                src={currentAd.display_url}
-                alt="Advertisement"
-                className="w-full max-w-md h-16 sm:h-24 object-cover rounded-lg shadow-lg mx-auto"
-                loading="lazy"
-              />
-            </div>
-          </HoverCardTrigger>
-          <HoverCardContent className="w-64 sm:w-80 bg-black/90 border-gray-800">
-            <div className="space-y-2">
-              <h4 className="text-sm font-semibold text-amber-400">{currentAd.title}</h4>
-              <img
-                src={currentAd.display_url}
-                alt="Advertisement"
-                className="w-full h-auto rounded-lg"
-                loading="lazy"
-              />
-            </div>
-          </HoverCardContent>
-        </HoverCard>
+    <>
+      <div className="w-full py-2 sm:py-4 bg-black/10 backdrop-blur-sm">
+        <div className="container max-w-6xl mx-auto px-4">
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <div className="cursor-pointer transition-all hover:scale-105">
+                <img
+                  src={currentAd.display_url}
+                  alt="Advertisement"
+                  className="w-full max-w-md h-16 sm:h-24 object-cover rounded-lg shadow-lg mx-auto"
+                  loading="lazy"
+                />
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-64 sm:w-80 bg-black/90 border-gray-800">
+              <div className="space-y-2">
+                <h4 className="text-sm font-semibold text-amber-400">{currentAd.title}</h4>
+                <img
+                  src={currentAd.display_url}
+                  alt="Advertisement"
+                  className="w-full h-auto rounded-lg"
+                  loading="lazy"
+                />
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        </div>
       </div>
-    </div>
+
+      <Dialog open={showPopup} onOpenChange={setShowPopup}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-center text-amber-400">{currentAd.title}</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <img
+              src={currentAd.display_url}
+              alt="Advertisement"
+              className="w-full h-auto rounded-lg shadow-xl"
+              loading="lazy"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
