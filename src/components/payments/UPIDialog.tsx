@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { QrCodeIcon } from "lucide-react";
+import { QrCodeIcon, Copy } from "lucide-react";
 
 interface UPIDialogProps {
   open: boolean;
@@ -34,6 +34,22 @@ export function UPIDialog({ open, onOpenChange }: UPIDialogProps) {
     }
   };
 
+  const handleCopyClick = async () => {
+    try {
+      await navigator.clipboard.writeText(UPI_ID);
+      toast({
+        title: "UPI ID Copied!",
+        description: "You can now paste it in your UPI app.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to copy UPI ID. Please try manually.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -44,9 +60,19 @@ export function UPIDialog({ open, onOpenChange }: UPIDialogProps) {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-center">
+          <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">UPI ID:</p>
-            <p className="text-lg font-mono font-semibold">{UPI_ID}</p>
+            <div className="flex items-center justify-between gap-2 bg-white dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-700">
+              <p className="text-lg font-mono font-semibold select-all">{UPI_ID}</p>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleCopyClick}
+                className="hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
           <div className="text-sm text-gray-500 dark:text-gray-400 space-y-2">
             <p>• You can donate any amount you wish</p>
