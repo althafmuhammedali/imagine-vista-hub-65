@@ -8,12 +8,49 @@ interface VoiceInputProps {
   selectedLanguage: string;
 }
 
-const languageCodes = {
-  en: 'en-US',
-  mal: 'ml-IN',
-  hi: 'hi-IN',
-  mr: 'mr-IN',
-  ur: 'ur-PK'
+// Extended language support with 40 languages
+export const languageCodes = {
+  en: 'en-US',    // English (US)
+  es: 'es-ES',    // Spanish
+  fr: 'fr-FR',    // French
+  de: 'de-DE',    // German
+  it: 'it-IT',    // Italian
+  pt: 'pt-PT',    // Portuguese
+  nl: 'nl-NL',    // Dutch
+  pl: 'pl-PL',    // Polish
+  ru: 'ru-RU',    // Russian
+  ja: 'ja-JP',    // Japanese
+  ko: 'ko-KR',    // Korean
+  zh: 'zh-CN',    // Chinese (Simplified)
+  ar: 'ar-SA',    // Arabic
+  hi: 'hi-IN',    // Hindi
+  bn: 'bn-IN',    // Bengali
+  mal: 'ml-IN',   // Malayalam
+  ta: 'ta-IN',    // Tamil
+  te: 'te-IN',    // Telugu
+  kn: 'kn-IN',    // Kannada
+  mr: 'mr-IN',    // Marathi
+  gu: 'gu-IN',    // Gujarati
+  ur: 'ur-PK',    // Urdu
+  fa: 'fa-IR',    // Persian
+  th: 'th-TH',    // Thai
+  vi: 'vi-VN',    // Vietnamese
+  id: 'id-ID',    // Indonesian
+  ms: 'ms-MY',    // Malay
+  fil: 'fil-PH',  // Filipino
+  tr: 'tr-TR',    // Turkish
+  el: 'el-GR',    // Greek
+  he: 'he-IL',    // Hebrew
+  sv: 'sv-SE',    // Swedish
+  da: 'da-DK',    // Danish
+  no: 'nb-NO',    // Norwegian
+  fi: 'fi-FI',    // Finnish
+  hu: 'hu-HU',    // Hungarian
+  cs: 'cs-CZ',    // Czech
+  sk: 'sk-SK',    // Slovak
+  ro: 'ro-RO',    // Romanian
+  bg: 'bg-BG',    // Bulgarian
+  uk: 'uk-UA',    // Ukrainian
 };
 
 export function VoiceInput({ onTranscript, selectedLanguage }: VoiceInputProps) {
