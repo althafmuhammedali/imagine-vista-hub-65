@@ -8,27 +8,34 @@ interface UPIDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const UPI_ID = "adnanvv@fbl";
+
 export function UPIDialog({ open, onOpenChange }: UPIDialogProps) {
   const { toast } = useToast();
-  const UPI_ID = "adnanmuhammad4393@okicici";
 
-  const handleUPIClick = async () => {
+  const handleQRClick = async () => {
     try {
-      const upiUrl = `upi://pay?pa=${UPI_ID}&pn=ComicForge%20AI&tn=Donation`;
-      
-      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        window.location.href = upiUrl;
-      } else {
-        await navigator.clipboard.writeText(UPI_ID);
+      const response = await fetch("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + UPI_ID);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'upi-qr.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
         toast({
-          title: "UPI ID Copied!",
-          description: "Open your UPI app and paste the ID to donate.",
+          title: "QR Code Downloaded",
+          description: "You can now scan it with your UPI app.",
         });
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to process UPI payment. Please try again.",
+        description: "Failed to generate QR code. Please try again.",
         variant: "destructive",
       });
     }
@@ -52,41 +59,39 @@ export function UPIDialog({ open, onOpenChange }: UPIDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-black border border-gray-800">
         <DialogHeader>
-          <DialogTitle>UPI Payment Details</DialogTitle>
-          <DialogDescription>
-            Support ComicForge AI with any amount you wish to donate
+          <DialogTitle className="text-white">UPI Payment</DialogTitle>
+          <DialogDescription className="text-gray-400">
+            Make a direct UPI payment to support us
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">UPI ID:</p>
-            <div className="flex items-center justify-between gap-2 bg-white dark:bg-gray-900 p-2 rounded border border-gray-200 dark:border-gray-700">
-              <p className="text-lg font-mono font-semibold select-all">{UPI_ID}</p>
+          <div className="p-4 bg-gray-900 rounded-lg">
+            <p className="text-gray-400 mb-2">UPI ID:</p>
+            <div className="flex items-center justify-between gap-2 bg-black p-2 rounded border border-gray-800">
+              <p className="text-lg font-mono font-semibold text-white select-all">{UPI_ID}</p>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleCopyClick}
-                className="hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="hover:bg-gray-800 text-white"
               >
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
           </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400 space-y-2">
+          <div className="text-sm text-gray-400 space-y-2">
             <p>• You can donate any amount you wish</p>
-            <p>• Your support helps maintain and improve ComicForge AI</p>
-            <p>• All donations are greatly appreciated</p>
+            <p>• Your support helps us maintain and improve our services</p>
           </div>
-          <Button 
-            onClick={handleUPIClick} 
-            className="w-full flex items-center justify-center gap-2"
+          <Button
+            variant="outline"
+            onClick={handleQRClick}
+            className="w-full border-gray-800 text-white hover:bg-gray-800 hover:text-white"
           >
-            <QrCodeIcon className="h-4 w-4" />
-            {/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) 
-              ? "Open UPI App" 
-              : "Copy UPI ID"}
+            <QrCodeIcon className="mr-2 h-4 w-4" />
+            Download QR Code
           </Button>
         </div>
       </DialogContent>
