@@ -32,7 +32,7 @@ const Index = () => {
                 variant="outline" 
                 className="hover:bg-amber-500/20"
                 onClick={() => {
-                  window.open("https://www.producthunt.com/products/sxo-resume/reviews/new", "_blank");
+                  window.open("https://www.producthunt.com/products/comicforgeai/reviews/new", "_blank");
                   localStorage.setItem("hasShownReviewToast", "true");
                 }}
               >
