@@ -12,11 +12,39 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Index = () => {
   const { toast } = useToast();
   const [feedback, setFeedback] = useState("");
+
+  useEffect(() => {
+    const hasShownReviewToast = localStorage.getItem("hasShownReviewToast");
+    
+    if (!hasShownReviewToast) {
+      setTimeout(() => {
+        toast({
+          title: "Love ComicForge AI?",
+          description: (
+            <div className="flex flex-col gap-2">
+              <p>Please consider reviewing us on ProductHunt!</p>
+              <Button 
+                variant="outline" 
+                className="hover:bg-amber-500/20"
+                onClick={() => {
+                  window.open("https://www.producthunt.com/products/sxo-resume/reviews/new", "_blank");
+                  localStorage.setItem("hasShownReviewToast", "true");
+                }}
+              >
+                Write a Review
+              </Button>
+            </div>
+          ),
+          duration: 10000,
+        });
+      }, 30000); // Show after 30 seconds
+    }
+  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
