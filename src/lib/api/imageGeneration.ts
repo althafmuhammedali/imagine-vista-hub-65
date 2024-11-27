@@ -23,19 +23,24 @@ export async function generateImage({
         inputs: prompt,
         parameters: {
           negative_prompt: negativePrompt,
-          width: Math.max(width, 1024), // Ensure minimum width of 1024
-          height: Math.max(height, 1024), // Ensure minimum height of 1024
-          num_inference_steps: 150, // Increased from 50 for higher quality
-          guidance_scale: 12.5, // Increased from 7.5 for better prompt adherence
+          width: Math.max(width, 1024),
+          height: Math.max(height, 1024),
+          num_inference_steps: 150,
+          guidance_scale: 12.5,
           scheduler: "DPMSolverMultistepScheduler",
-          upscaler: "RealESRGAN_x4plus", // Add upscaling
+          upscaler: "RealESRGAN_x4plus",
           tiling: false,
-          quality: "maximum", // Set to maximum quality
-          image_format: "png", // Use PNG for better quality
+          quality: "maximum",
+          image_format: "png",
           output_format: "png",
-          high_noise_frac: 0.8, // Increase noise fraction for better detail
+          high_noise_frac: 0.8,
           use_karras_sigmas: true,
-          clip_skip: 1, // Reduced for better detail preservation
+          clip_skip: 1,
+          seed: Math.floor(Math.random() * 2147483647),
+          num_images_per_prompt: 1,
+          safety_checker: true,
+          enhance_prompt: true,
+          high_quality_mode: true,
         },
       }),
     });
