@@ -30,7 +30,7 @@ const Index = () => {
               <p>Please consider reviewing us on ProductHunt!</p>
               <Button 
                 variant="outline" 
-                className="hover:bg-amber-500/20"
+                className="bg-black text-white hover:bg-black/80"
                 onClick={() => {
                   window.open("https://www.producthunt.com/products/comicforgeai/reviews/new", "_blank");
                   localStorage.setItem("hasShownReviewToast", "true");
