@@ -5,86 +5,12 @@ import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImagePreview } from "./image-generator/ImagePreview";
 import { VoiceInput } from "./VoiceInput";
 import { enhancePrompt, enhanceNegativePrompt } from "@/lib/api/promptEnhancer";
-import { useUser } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
-
-const supportedLanguages = {
-  en: "English",
-  es: "Spanish",
-  fr: "French",
-  de: "German",
-  it: "Italian",
-  pt: "Portuguese",
-  nl: "Dutch",
-  pl: "Polish",
-  ru: "Russian",
-  ja: "Japanese",
-  ko: "Korean",
-  zh: "Chinese",
-  ar: "Arabic",
-  hi: "Hindi",
-  bn: "Bengali",
-  mal: "Malayalam",
-  ta: "Tamil",
-  te: "Telugu",
-  kn: "Kannada",
-  mr: "Marathi",
-  gu: "Gujarati",
-  ur: "Urdu",
-  fa: "Persian",
-  th: "Thai",
-  vi: "Vietnamese",
-  id: "Indonesian",
-  ms: "Malay",
-  fil: "Filipino",
-  tr: "Turkish",
-  el: "Greek",
-  he: "Hebrew",
-  sv: "Swedish",
-  da: "Danish",
-  no: "Norwegian",
-  fi: "Finnish",
-  hu: "Hungarian",
-  cs: "Czech",
-  sk: "Slovak",
-  ro: "Romanian",
-  bg: "Bulgarian",
-  uk: "Ukrainian"
-};
-
-const translateToEnglish = async (text: string, sourceLang: string): Promise<string> => {
-  if (sourceLang === 'en' || !text.trim()) return text;
-
-  try {
-    const response = await fetch(`https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-${sourceLang}-en`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ inputs: text }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Translation failed');
-    }
-
-    const result = await response.json();
-    return result[0].translation_text;
-  } catch (error) {
-    console.error('Translation error:', error);
-    toast({
-      title: "Translation Error",
-      description: "Failed to translate prompt. Proceeding with original text.",
-      variant: "destructive",
-    });
-    return text;
-  }
-};
+import { supportedLanguages } from "./image-generator/LanguageSupport";
+import { translateToEnglish } from "@/services/translationService";
+import { useSubscriptionCheck } from "@/hooks/useSubscriptionCheck";
 
 export function ImageGenerator() {
-  const { user, isSignedIn } = useUser();
-  const navigate = useNavigate();
+  const { checkSubscription } = useSubscriptionCheck();
   const [prompt, setPrompt] = useState("");
   const [negativePrompt, setNegativePrompt] = useState("");
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
@@ -93,27 +19,7 @@ export function ImageGenerator() {
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
 
   const handleGenerate = useCallback(async () => {
-    if (!isSignedIn || !user) {
-      toast({
-        title: "Subscription Required",
-        description: "Please sign in and subscribe to a plan to generate images.",
-        variant: "destructive",
-      });
-      navigate("/sign-in");
-      return;
-    }
-
-    // Check if user has an active subscription
-    const hasSubscription = user.publicMetadata.hasActiveSubscription;
-    if (!hasSubscription) {
-      toast({
-        title: "Subscription Required",
-        description: "Please subscribe to a plan to generate images.",
-        variant: "destructive",
-      });
-      navigate("/pricing");
-      return;
-    }
+    if (!checkSubscription()) return;
 
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt) {
@@ -183,7 +89,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, negativePrompt, generatedImages, selectedLanguage, isSignedIn, user, navigate]);
+  }, [prompt, negativePrompt, generatedImages, selectedLanguage, checkSubscription]);
 
   const handleVoiceInput = useCallback((transcript: string) => {
     setPrompt(transcript);
