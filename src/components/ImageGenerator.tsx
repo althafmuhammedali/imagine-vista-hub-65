@@ -5,6 +5,8 @@ import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImagePreview } from "./image-generator/ImagePreview";
 import { VoiceInput } from "./VoiceInput";
 import { enhancePrompt, enhanceNegativePrompt } from "@/lib/api/promptEnhancer";
+import { useUser } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 
 const supportedLanguages = {
   en: "English",
@@ -52,7 +54,7 @@ const supportedLanguages = {
 
 const translateToEnglish = async (text: string, sourceLang: string): Promise<string> => {
   if (sourceLang === 'en' || !text.trim()) return text;
-  
+
   try {
     const response = await fetch(`https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-${sourceLang}-en`, {
       method: 'POST',
@@ -81,6 +83,8 @@ const translateToEnglish = async (text: string, sourceLang: string): Promise<str
 };
 
 export function ImageGenerator() {
+  const { user, isSignedIn } = useUser();
+  const navigate = useNavigate();
   const [prompt, setPrompt] = useState("");
   const [negativePrompt, setNegativePrompt] = useState("");
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
@@ -89,6 +93,28 @@ export function ImageGenerator() {
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
 
   const handleGenerate = useCallback(async () => {
+    if (!isSignedIn || !user) {
+      toast({
+        title: "Subscription Required",
+        description: "Please sign in and subscribe to a plan to generate images.",
+        variant: "destructive",
+      });
+      navigate("/sign-in");
+      return;
+    }
+
+    // Check if user has an active subscription
+    const hasSubscription = user.publicMetadata.hasActiveSubscription;
+    if (!hasSubscription) {
+      toast({
+        title: "Subscription Required",
+        description: "Please subscribe to a plan to generate images.",
+        variant: "destructive",
+      });
+      navigate("/pricing");
+      return;
+    }
+
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt) {
       toast({
@@ -148,7 +174,7 @@ export function ImageGenerator() {
       const errorMessage = error instanceof Error ? error.message : "Failed to generate image";
       setError(errorMessage);
       setGeneratedImages([]);
-      
+
       toast({
         title: "Error",
         description: errorMessage,
@@ -157,7 +183,7 @@ export function ImageGenerator() {
     } finally {
       setIsLoading(false);
     }
-  }, [prompt, negativePrompt, generatedImages, selectedLanguage]);
+  }, [prompt, negativePrompt, generatedImages, selectedLanguage, isSignedIn, user, navigate]);
 
   const handleVoiceInput = useCallback((transcript: string) => {
     setPrompt(transcript);
