@@ -10,7 +10,7 @@ export const useSubscriptionCheck = () => {
     if (!isSignedIn || !user) {
       toast({
         title: "Sign In Required",
-        description: "Please sign in to generate images.",
+        description: "Please sign in to access this feature.",
         variant: "destructive",
       });
       navigate("/sign-in");
@@ -18,10 +18,12 @@ export const useSubscriptionCheck = () => {
     }
 
     const hasSubscription = user.publicMetadata.hasActiveSubscription;
-    if (!hasSubscription) {
+    const subscriptionEndDate = user.publicMetadata.subscriptionEndDate;
+    
+    if (!hasSubscription || (subscriptionEndDate && new Date(subscriptionEndDate) < new Date())) {
       toast({
         title: "Subscription Required",
-        description: "Please subscribe to a plan to generate images.",
+        description: "Please subscribe to a plan to access this feature.",
         variant: "destructive",
       });
       navigate("/pricing");

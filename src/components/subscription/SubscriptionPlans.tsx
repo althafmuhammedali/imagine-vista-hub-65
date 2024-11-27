@@ -22,6 +22,7 @@ export function SubscriptionPlans() {
 
     setLoading(plan.id);
     try {
+      // Create order
       const response = await fetch('/api/create-subscription', {
         method: 'POST',
         headers: {
@@ -30,23 +31,32 @@ export function SubscriptionPlans() {
         body: JSON.stringify({
           planId: plan.id,
           userId: user?.id,
-          amount: plan.price * 100, // Convert to paise
+          amount: plan.price * 100, // Convert to smallest currency unit
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to create order');
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create subscription');
       }
 
+      const data = await response.json();
+
+      // Initialize Razorpay
       const options = {
-        key: 'rzp_live_5JYQnqKRnKhB5y',
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         subscription_id: data.subscriptionId,
         name: 'ComicForge AI',
         description: `${plan.name} Subscription`,
         image: 'https://i.ibb.co/3SptMK9/Gemini-Generated-Image-gym6grgym6grgym6.jpg',
-        handler: async function (response: any) {
+        prefill: {
+          name: user?.fullName,
+          email: user?.primaryEmailAddress?.emailAddress,
+        },
+        theme: {
+          color: '#F59E0B',
+        },
+        handler: async function(response: any) {
           try {
             const verifyResponse = await fetch('/api/verify-payment', {
               method: 'POST',
@@ -62,30 +72,34 @@ export function SubscriptionPlans() {
               }),
             });
 
-            const verifyData = await verifyResponse.json();
-
             if (!verifyResponse.ok) {
-              throw new Error(verifyData.message || 'Payment verification failed');
+              const error = await verifyResponse.json();
+              throw new Error(error.message || 'Payment verification failed');
             }
+
+            const verifyData = await verifyResponse.json();
+            
+            // Update user metadata to reflect active subscription
+            await user?.update({
+              publicMetadata: {
+                ...user.publicMetadata,
+                hasActiveSubscription: true,
+                subscriptionPlan: plan.id,
+                subscriptionEndDate: verifyData.subscriptionEndDate,
+              },
+            });
 
             toast({
               title: "Success",
-              description: "Subscription activated successfully!",
+              description: "Your subscription has been activated successfully!",
             });
           } catch (error) {
             toast({
               title: "Error",
-              description: "Failed to verify payment. Please contact support.",
+              description: error instanceof Error ? error.message : "Failed to verify payment",
               variant: "destructive",
             });
           }
-        },
-        prefill: {
-          name: user?.fullName,
-          email: user?.primaryEmailAddress?.emailAddress,
-        },
-        theme: {
-          color: '#F59E0B',
         },
       };
 
