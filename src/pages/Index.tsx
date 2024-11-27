@@ -6,13 +6,12 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
-import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info, Send } from "lucide-react";
+import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
+import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const { toast } = useToast();
@@ -42,7 +41,7 @@ const Index = () => {
           ),
           duration: 10000,
         });
-      }, 30000); // Show after 30 seconds
+      }, 30000);
     }
   }, [toast]);
 
@@ -117,16 +116,11 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-2 transition-all hover:scale-105 mb-3 sm:mb-4 bg-black/20 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full">
-                <Heart className="w-3 h-3 sm:w-4 sm:h-4 text-red-500 animate-pulse" />
-                <span className="text-xs sm:text-sm text-gray-400">Standing with Palestine</span>
-              </div>
-
               <div className="flex items-center gap-2 mb-4 sm:mb-6">
                 <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
                 <span className="text-xs sm:text-sm text-amber-200">Featured on Product Hunt</span>
               </div>
-              
+
               <a 
                 href="https://www.producthunt.com/posts/comicforgeai?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-comicforgeai" 
                 target="_blank" 
@@ -151,6 +145,10 @@ const Index = () => {
             </div>
 
             <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+              <SubscriptionPlans />
+            </div>
+
+            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
               <FAQ />
             </div>
 
@@ -162,7 +160,6 @@ const Index = () => {
               <PlatformBudget />
             </div>
 
-            {/* Feedback Form Section */}
             <Card className="p-4 sm:p-6 md:p-8 backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl transition-all duration-500 hover:scale-[1.01] mx-auto max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[80%]">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-amber-400 mb-4 flex items-center gap-2 justify-center sm:justify-start">
                 <Heart className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />

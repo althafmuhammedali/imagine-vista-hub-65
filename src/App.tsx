@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ResponsiveContainer } from "@/components/ResponsiveContainer";
-import { DonationNotification } from "@/components/DonationNotification";
 
 // Lazy load components
 const Index = lazy(() => import("./pages/Index"));
@@ -36,7 +35,6 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <DonationNotification />
         <BrowserRouter>
           <ResponsiveContainer>
             <Routes>

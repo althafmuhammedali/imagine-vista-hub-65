@@ -2,88 +2,8 @@ import { Instagram, Linkedin, Phone, Facebook, X, MessageSquare, Globe } from "l
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { ReferralShare } from "./ReferralShare";
-import { PaymentDialog } from "./payments/PaymentDialog";
-import { useToast } from "@/components/ui/use-toast";
-
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
-
-interface RazorpayResponse {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
-}
 
 export function SocialLinks() {
-  const { toast } = useToast();
-  
-  const handleDonateClick = () => {
-    if (!window.Razorpay) {
-      toast({
-        title: "Error",
-        description: "Razorpay SDK not loaded. Please refresh the page.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const options = {
-      key: "rzp_live_5JYQnqKRnKhB5y",
-      amount: 399 * 100,
-      currency: "INR",
-      name: "Support Us",
-      description: "Support our AI service",
-      handler: function(response: RazorpayResponse) {
-        if (response.razorpay_payment_id) {
-          toast({
-            title: "Thank you for your support!",
-            description: `Payment successful! ID: ${response.razorpay_payment_id}`,
-          });
-        }
-      },
-      prefill: {
-        name: "",
-        email: "",
-        contact: "",
-      },
-      theme: {
-        color: "#F59E0B",
-      },
-      modal: {
-        ondismiss: function() {
-          toast({
-            title: "Payment Cancelled",
-            description: "You cancelled the payment. Feel free to try again!",
-          });
-        }
-      }
-    };
-
-    try {
-      const rzp = new window.Razorpay(options);
-      
-      rzp.on('payment.failed', function (response: any) {
-        toast({
-          title: "Payment Failed",
-          description: response.error.description || "Something went wrong with your payment. Please try again.",
-          variant: "destructive",
-        });
-      });
-
-      rzp.open();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to initialize payment. Please try again.",
-        variant: "destructive",
-      });
-      console.error("Razorpay error:", error);
-    }
-  };
-
   const socialLinks = [
     {
       icon: Facebook,
@@ -156,8 +76,6 @@ export function SocialLinks() {
               </Tooltip>
             ))}
             
-            <PaymentDialog handleRazorpayClick={handleDonateClick} />
-
             <Tooltip>
               <TooltipTrigger asChild>
                 <ReferralShare />
