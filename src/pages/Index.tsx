@@ -8,11 +8,13 @@ import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { FeedbackForm } from "@/components/feedback/FeedbackForm";
-import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info } from "lucide-react";
+import { Sparkles, Briefcase, Shield, Star, Heart, Zap, Award, Info, Send } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/use-toast";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 
 const Index = () => {
   const { toast } = useToast();
