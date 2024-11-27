@@ -81,8 +81,7 @@ export function SubscriptionPlans() {
             
             // Update user metadata to reflect active subscription
             await user?.update({
-              publicMetadata: {
-                ...user.publicMetadata,
+              unsafeMetadata: {
                 hasActiveSubscription: true,
                 subscriptionPlan: plan.id,
                 subscriptionEndDate: verifyData.subscriptionEndDate,

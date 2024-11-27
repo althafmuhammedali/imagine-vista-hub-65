@@ -17,8 +17,8 @@ export const useSubscriptionCheck = () => {
       return false;
     }
 
-    const hasSubscription = user.publicMetadata.hasActiveSubscription;
-    const subscriptionEndDate = user.publicMetadata.subscriptionEndDate;
+    const hasSubscription = user.unsafeMetadata.hasActiveSubscription as boolean;
+    const subscriptionEndDate = user.unsafeMetadata.subscriptionEndDate as string | undefined;
     
     if (!hasSubscription || (subscriptionEndDate && new Date(subscriptionEndDate) < new Date())) {
       toast({
