@@ -71,14 +71,81 @@ export function SubscriptionPlans() {
 
     setLoading(plan.id);
     try {
-      toast({
-        title: "Coming Soon",
-        description: "Subscription functionality will be available soon!",
+      // Create order on your backend
+      const response = await fetch('/api/create-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          planId: plan.id,
+          userId: user?.id,
+          amount: plan.price * 100, // Convert to paise
+        }),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create order');
+      }
+
+      const options = {
+        key: 'YOUR_RAZORPAY_KEY_ID', // Replace with your actual key
+        subscription_id: data.subscriptionId,
+        name: 'ComicForge AI',
+        description: `${plan.name} Subscription`,
+        image: 'https://i.ibb.co/3SptMK9/Gemini-Generated-Image-gym6grgym6grgym6.jpg',
+        handler: async function (response: any) {
+          try {
+            // Verify payment on your backend
+            const verifyResponse = await fetch('/api/verify-payment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_subscription_id: response.razorpay_subscription_id,
+                razorpay_signature: response.razorpay_signature,
+                userId: user?.id,
+                planId: plan.id,
+              }),
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (!verifyResponse.ok) {
+              throw new Error(verifyData.message || 'Payment verification failed');
+            }
+
+            toast({
+              title: "Success",
+              description: "Subscription activated successfully!",
+            });
+          } catch (error) {
+            toast({
+              title: "Error",
+              description: "Failed to verify payment. Please contact support.",
+              variant: "destructive",
+            });
+          }
+        },
+        prefill: {
+          name: user?.fullName,
+          email: user?.primaryEmailAddress?.emailAddress,
+        },
+        theme: {
+          color: '#F59E0B',
+        },
+      };
+
+      const razorpay = new (window as any).Razorpay(options);
+      razorpay.open();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to process subscription. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to process subscription",
         variant: "destructive",
       });
     } finally {
