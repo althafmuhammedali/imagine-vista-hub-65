@@ -1,17 +1,8 @@
-import { Star, Gem, Crown, Zap } from 'lucide-react';
+import { Gem, Crown, Zap } from 'lucide-react';
 import { Plan } from './types';
 import React from 'react';
 
 export const plans: Plan[] = [
-  {
-    id: "free",
-    name: "Free",
-    price: 0,
-    features: ["1 image generation per day", "Basic support", "Standard quality"],
-    imagesPerDay: 1,
-    icon: React.createElement(Star, { className: "w-6 h-6 text-amber-400" }),
-    color: "bg-gradient-to-br from-gray-900 to-gray-800"
-  },
   {
     id: "basic",
     name: "Basic Plan",
