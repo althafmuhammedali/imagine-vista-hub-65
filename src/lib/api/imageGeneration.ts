@@ -12,12 +12,9 @@ export async function generateImage({
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
 
   try {
-    const response = await fetch("https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0", {
+    const response = await fetch(API_CONFIG.BASE_URL, {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
+      headers: API_CONFIG.HEADERS,
       signal: controller.signal,
       body: JSON.stringify({
         inputs: prompt,

@@ -1,12 +1,12 @@
 export const API_CONFIG = {
-  BASE_URL: "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+  BASE_URL: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-Depth-dev",
   TIMEOUT: 180000, // 3 minutes
   HEADERS: {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
   },
   DEFAULT_PARAMS: {
-    num_inference_steps: 20, // Reduced from 30 for faster generation
+    num_inference_steps: 20, // Reduced for faster generation
     guidance_scale: 7.5, // Optimized for better speed/quality balance
     scheduler: "DPMSolverMultistepScheduler", // Faster scheduler
     use_karras_sigmas: true,
