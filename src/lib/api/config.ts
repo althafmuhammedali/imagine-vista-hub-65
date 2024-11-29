@@ -13,6 +13,9 @@ export const API_CONFIG = {
     clip_skip: 1,
     tiling: false,
     use_safetensors: true,
+    image_format: "png",
+    output_format: "png",
+    high_noise_frac: 0.8,
     options: {
       wait_for_model: true,
       use_gpu: true,
