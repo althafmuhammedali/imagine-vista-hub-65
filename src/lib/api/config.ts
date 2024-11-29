@@ -6,17 +6,17 @@ export const API_CONFIG = {
     "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
   },
   DEFAULT_PARAMS: {
-    num_inference_steps: 30, // Reduced from 150 for faster generation while maintaining quality
-    guidance_scale: 12, // Increased from 9.5 for better quality
-    scheduler: "EulerAncestralDiscreteScheduler", // Changed to faster scheduler
+    num_inference_steps: 20, // Reduced from 30 for faster generation
+    guidance_scale: 7.5, // Optimized for better speed/quality balance
+    scheduler: "DPMSolverMultistepScheduler", // Faster scheduler
     use_karras_sigmas: true,
-    clip_skip: 2, // Optimized for better prompt understanding
+    clip_skip: 1,
     tiling: false,
     use_safetensors: true,
     options: {
       wait_for_model: true,
       use_gpu: true,
-      quality: "balanced", // Changed from maximum to balanced for better speed/quality ratio
+      quality: "maximum", // Set to maximum quality
       stream_output: true // Enable streaming for faster initial display
     }
   }
