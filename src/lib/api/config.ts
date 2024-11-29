@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+  BASE_URL: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-Depth-dev",
   TIMEOUT: 180000, // 3 minutes
   HEADERS: {
     "Content-Type": "application/json",
