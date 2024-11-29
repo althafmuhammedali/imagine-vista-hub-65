@@ -19,18 +19,10 @@ export async function generateImage({
       body: JSON.stringify({
         inputs: prompt,
         parameters: {
+          ...API_CONFIG.DEFAULT_PARAMS,
           negative_prompt: negativePrompt,
-          width: Math.max(width, 1024), // Ensure minimum width of 1024
-          height: Math.max(height, 1024), // Ensure minimum height of 1024
-          num_inference_steps: 20, // Reduced for faster generation
-          guidance_scale: 7.5, // Optimized value
-          scheduler: "DPMSolverMultistepScheduler", // Faster scheduler
-          quality: "maximum", // Set to maximum quality
-          image_format: "png", // Use PNG for better quality
-          output_format: "png",
-          high_noise_frac: 0.8, // Increase noise fraction for better detail
-          use_karras_sigmas: true,
-          clip_skip: 1,
+          width: Math.max(width, 512),
+          height: Math.max(height, 512),
         },
       }),
     });
@@ -41,6 +33,11 @@ export async function generateImage({
       const errorData = await response.json().catch(() => ({}));
       
       if (response.status === 429) {
+        toast({
+          title: "Model Busy",
+          description: "The model is currently busy. Please try again in a few moments.",
+          variant: "destructive",
+        });
         throw new Error("Model is currently busy. Please try again in a few moments.");
       }
       
@@ -51,6 +48,15 @@ export async function generateImage({
     return URL.createObjectURL(blob);
   } catch (error) {
     clearTimeout(timeoutId);
+    
+    if (error instanceof Error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+    
     throw error;
   }
 }

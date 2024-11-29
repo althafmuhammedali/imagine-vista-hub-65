@@ -11,13 +11,13 @@ export function handleApiError(error: unknown): Error {
       return new Error('Request timed out - please try again with a simpler prompt');
     }
 
-    if (error.message === "model_busy") {
+    if (error.message.includes("model_busy") || error.message.includes("currently busy")) {
       toast({
         title: "Model Busy",
-        description: "Model too busy, unable to get response in less than 60 second(s)",
+        description: "Model is busy, please try again in a few moments",
         variant: "destructive",
       });
-      return new Error("Model too busy, unable to get response in less than 60 second(s)");
+      return new Error("Model is busy, please try again in a few moments");
     }
 
     toast({
