@@ -1,6 +1,7 @@
 import { API_CONFIG } from './config';
 import { toast } from "@/components/ui/use-toast";
 import type { GenerateImageParams } from './types';
+import { handleApiError } from './errorHandling';
 
 export async function generateImage({
   prompt,
@@ -35,7 +36,7 @@ export async function generateImage({
       if (response.status === 429) {
         toast({
           title: "Model Busy",
-          description: "The model is currently busy. Please try again in a few moments.",
+          description: "The AI model is currently busy. Please try again in a few moments.",
           variant: "destructive",
         });
         throw new Error("Model is currently busy. Please try again in a few moments.");
@@ -45,18 +46,13 @@ export async function generateImage({
     }
 
     const blob = await response.blob();
+    if (!blob || blob.size === 0) {
+      throw new Error('Generated image is empty');
+    }
+
     return URL.createObjectURL(blob);
   } catch (error) {
     clearTimeout(timeoutId);
-    
-    if (error instanceof Error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-    
-    throw error;
+    throw handleApiError(error);
   }
 }

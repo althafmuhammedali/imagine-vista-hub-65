@@ -14,10 +14,19 @@ export function handleApiError(error: unknown): Error {
     if (error.message.includes("model_busy") || error.message.includes("currently busy")) {
       toast({
         title: "Model Busy",
-        description: "Model is busy, please try again in a few moments",
+        description: "The AI model is currently busy. Please try again in a few moments.",
         variant: "destructive",
       });
       return new Error("Model is busy, please try again in a few moments");
+    }
+
+    if (error.message.includes("loading")) {
+      toast({
+        title: "Model Loading",
+        description: "The AI model is warming up. Please try again in a few moments.",
+        variant: "destructive",
+      });
+      return new Error("Model is loading, please try again in a few moments");
     }
 
     toast({
@@ -30,7 +39,7 @@ export function handleApiError(error: unknown): Error {
 
   toast({
     title: "Error",
-    description: "An unexpected error occurred",
+    description: "An unexpected error occurred. Please try again.",
     variant: "destructive",
   });
   return new Error('Failed to generate image');
