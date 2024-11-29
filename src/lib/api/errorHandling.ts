@@ -29,6 +29,16 @@ export function handleApiError(error: unknown): Error {
       return new Error("Model is loading, please try again in a few moments");
     }
 
+    if (error.message.includes("rate limit") || error.message.includes("429")) {
+      const waitTime = error.message.match(/\d+/)?.[0] || "30";
+      toast({
+        title: "Rate Limited",
+        description: `Please wait ${waitTime} seconds before trying again.`,
+        variant: "destructive",
+      });
+      return error;
+    }
+
     toast({
       title: "Error",
       description: error.message,

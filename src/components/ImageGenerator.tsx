@@ -51,7 +51,7 @@ const supportedLanguages = {
 };
 
 const translateToEnglish = async (text: string, sourceLang: string): Promise<string> => {
-  if (sourceLang === 'en' || !text.trim()) return text;
+  if (sourceLang === 'en' || !text?.trim()) return text;
   
   try {
     const response = await fetch(`https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-${sourceLang}-en`, {
@@ -60,7 +60,7 @@ const translateToEnglish = async (text: string, sourceLang: string): Promise<str
         'Authorization': `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ inputs: text }),
+      body: JSON.stringify({ inputs: text.trim() }),
     });
 
     if (!response.ok) {
@@ -68,7 +68,7 @@ const translateToEnglish = async (text: string, sourceLang: string): Promise<str
     }
 
     const result = await response.json();
-    return result[0].translation_text;
+    return result[0]?.translation_text || text;
   } catch (error) {
     console.error('Translation error:', error);
     toast({
@@ -112,11 +112,17 @@ export function ImageGenerator() {
     setError(undefined);
 
     try {
-      // Clear previous URLs
-      generatedImages.forEach(url => URL.revokeObjectURL(url));
+      // Cleanup previous URLs
+      generatedImages.forEach(url => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          console.error('Failed to revoke URL:', e);
+        }
+      });
       setGeneratedImages([]);
 
-      // Translate prompt if not in English
+      // Translation handling
       let translatedPrompt = trimmedPrompt;
       let translatedNegativePrompt = negativePrompt;
 
@@ -160,7 +166,9 @@ export function ImageGenerator() {
   }, [prompt, negativePrompt, generatedImages, selectedLanguage]);
 
   const handleVoiceInput = useCallback((transcript: string) => {
-    setPrompt(transcript);
+    if (transcript?.trim()) {
+      setPrompt(transcript);
+    }
   }, []);
 
   return (
