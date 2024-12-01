@@ -57,12 +57,16 @@ export function ImageSettings({
               Select Language
             </Label>
             <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-              <SelectTrigger className="w-full bg-black/30 border-gray-800/50 text-sm sm:text-base">
+              <SelectTrigger className="w-full bg-black/30 border-gray-800/50 text-sm sm:text-base min-h-[44px] touch-manipulation">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
               <SelectContent>
                 {languages.map((lang) => (
-                  <SelectItem key={lang.code} value={lang.code} className="text-sm sm:text-base">
+                  <SelectItem 
+                    key={lang.code} 
+                    value={lang.code} 
+                    className="text-sm sm:text-base min-h-[44px] touch-manipulation"
+                  >
                     {lang.name}
                   </SelectItem>
                 ))}
@@ -82,7 +86,7 @@ export function ImageSettings({
               placeholder="Describe your dream image in vivid detail..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[100px] sm:min-h-[120px] md:min-h-[150px] resize-none bg-black/30 border-gray-800/50 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base transition-all duration-300 hover:bg-black/40"
+              className="min-h-[100px] sm:min-h-[120px] md:min-h-[150px] resize-none bg-black/30 border-gray-800/50 focus:border-amber-500 focus:ring-amber-500/20 placeholder:text-gray-500 text-white text-sm sm:text-base transition-all duration-300 hover:bg-black/40 touch-manipulation"
               dir={selectedLanguage === "ur" ? "rtl" : "ltr"}
             />
           </div>
