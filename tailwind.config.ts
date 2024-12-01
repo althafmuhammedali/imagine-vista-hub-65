@@ -64,6 +64,7 @@ export default {
         'safe-bottom': 'env(safe-area-inset-bottom)',
         'safe-left': 'env(safe-area-inset-left)',
         'safe-right': 'env(safe-area-inset-right)',
+        'touch-target': '44px', // Minimum touch target size
       },
       fontSize: {
         'fluid-xs': 'clamp(0.75rem, 1.5vw, 0.875rem)',
@@ -84,6 +85,7 @@ export default {
       },
       minHeight: {
         screen: ['100vh', '100dvh'],
+        'touch-target': '44px',
       },
       maxHeight: {
         screen: ['100vh', '100dvh'],
