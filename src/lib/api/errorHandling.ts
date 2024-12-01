@@ -39,6 +39,15 @@ export function handleApiError(error: unknown): Error {
       return error;
     }
 
+    if (error.message.includes("dimensions")) {
+      toast({
+        title: "Invalid Dimensions",
+        description: error.message,
+        variant: "destructive",
+      });
+      return error;
+    }
+
     toast({
       title: "Error",
       description: error.message,

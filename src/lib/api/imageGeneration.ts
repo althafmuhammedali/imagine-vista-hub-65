@@ -9,8 +9,17 @@ export async function generateImage({
   height = 1024,
   negativePrompt = "",
 }: GenerateImageParams): Promise<string> {
+  // Validate input
   if (!prompt?.trim()) {
     throw new Error('Prompt is required');
+  }
+
+  if (width < 512 || height < 512) {
+    throw new Error('Minimum dimensions are 512x512');
+  }
+
+  if (width > 1024 || height > 1024) {
+    throw new Error('Maximum dimensions are 1024x1024');
   }
 
   const controller = new AbortController();
@@ -22,6 +31,7 @@ export async function generateImage({
       headers: {
         ...API_CONFIG.HEADERS,
         'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
       },
       signal: controller.signal,
       body: JSON.stringify({
@@ -51,11 +61,21 @@ export async function generateImage({
         });
         throw new Error(`Rate limited. Please wait ${Math.ceil(waitTime / 1000)} seconds.`);
       }
+
+      if (response.status === 503) {
+        toast({
+          title: "Service Unavailable",
+          description: "The model is currently loading. Please try again in a few moments.",
+          variant: "destructive",
+        });
+        throw new Error('Model is loading. Please try again in a few moments.');
+      }
       
       throw new Error(errorData.error || 'Failed to generate image');
     }
 
     const blob = await response.blob();
+    
     if (!blob || blob.size === 0) {
       throw new Error('Generated image is empty');
     }
@@ -63,6 +83,11 @@ export async function generateImage({
     // Validate image mime type
     if (!blob.type.startsWith('image/')) {
       throw new Error('Invalid image format received');
+    }
+
+    // Validate image size
+    if (blob.size < 1024) { // Less than 1KB
+      throw new Error('Generated image is too small - likely corrupted');
     }
 
     return URL.createObjectURL(blob);
