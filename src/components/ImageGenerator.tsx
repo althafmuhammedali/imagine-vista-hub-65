@@ -5,6 +5,7 @@ import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImagePreview } from "./image-generator/ImagePreview";
 import { VoiceInput } from "./VoiceInput";
 import { enhancePrompt, enhanceNegativePrompt } from "@/lib/api/promptEnhancer";
+import { translateToEnglish } from "@/lib/api/translation";
 
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
