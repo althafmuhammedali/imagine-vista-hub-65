@@ -1,6 +1,8 @@
 import { toast } from "@/components/ui/use-toast";
 
 export function handleApiError(error: unknown): Error {
+  console.error("API Error:", error); // Add logging for debugging
+
   if (error instanceof Error) {
     if (error.name === 'AbortError') {
       toast({
@@ -46,6 +48,15 @@ export function handleApiError(error: unknown): Error {
         variant: "destructive",
       });
       return error;
+    }
+
+    if (error.message.includes("authorization") || error.message.includes("401")) {
+      toast({
+        title: "Authentication Error",
+        description: "Please check your API key configuration.",
+        variant: "destructive",
+      });
+      return new Error("Authentication failed - please check your API key");
     }
 
     toast({

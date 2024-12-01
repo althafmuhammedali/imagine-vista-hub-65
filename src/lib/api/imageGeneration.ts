@@ -9,7 +9,7 @@ export async function generateImage({
   height = 1024,
   negativePrompt = "",
 }: GenerateImageParams): Promise<string> {
-  // Validate input
+  // Input validation
   if (!prompt?.trim()) {
     throw new Error('Prompt is required');
   }
@@ -22,6 +22,11 @@ export async function generateImage({
     throw new Error('Maximum dimensions are 1024x1024');
   }
 
+  // Validate API key
+  if (!import.meta.env.VITE_HUGGINGFACE_API_KEY) {
+    throw new Error('Hugging Face API key is not configured');
+  }
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
 
@@ -30,8 +35,9 @@ export async function generateImage({
       method: "POST",
       headers: {
         ...API_CONFIG.HEADERS,
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache'
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       },
       signal: controller.signal,
       body: JSON.stringify({
@@ -70,12 +76,17 @@ export async function generateImage({
         });
         throw new Error('Model is loading. Please try again in a few moments.');
       }
+
+      if (response.status === 401) {
+        throw new Error('Authentication failed - please check your API key');
+      }
       
       throw new Error(errorData.error || 'Failed to generate image');
     }
 
     const blob = await response.blob();
     
+    // Validate blob
     if (!blob || blob.size === 0) {
       throw new Error('Generated image is empty');
     }
