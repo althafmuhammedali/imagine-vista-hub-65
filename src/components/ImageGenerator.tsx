@@ -54,22 +54,24 @@ export function ImageGenerator() {
       let translatedNegativePrompt = negativePrompt;
 
       if (selectedLanguage !== "en") {
+        console.log('Translating prompt from', selectedLanguage, 'to English');
         translatedPrompt = await translateToEnglish(trimmedPrompt, selectedLanguage);
         if (negativePrompt) {
           translatedNegativePrompt = await translateToEnglish(negativePrompt, selectedLanguage);
         }
       }
 
-      const enhancedPrompt = enhancePrompt(translatedPrompt);
-      const enhancedNegativePrompt = enhanceNegativePrompt(translatedNegativePrompt.trim());
+      console.log('Enhanced prompt:', enhancePrompt(translatedPrompt));
+      console.log('Enhanced negative prompt:', enhanceNegativePrompt(translatedNegativePrompt.trim()));
 
       const imageUrl = await generateImage({
-        prompt: enhancedPrompt,
+        prompt: enhancePrompt(translatedPrompt),
         width: window.innerWidth >= 1024 ? 1024 : 512,
         height: window.innerWidth >= 1024 ? 1024 : 512,
-        negativePrompt: enhancedNegativePrompt,
+        negativePrompt: enhanceNegativePrompt(translatedNegativePrompt.trim()),
       });
 
+      console.log('Generated image URL:', imageUrl);
       setGeneratedImages([imageUrl]);
       setError(undefined);
 
@@ -79,6 +81,7 @@ export function ImageGenerator() {
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to generate image";
+      console.error('Image generation error:', error);
       setError(errorMessage);
       setGeneratedImages([]);
       

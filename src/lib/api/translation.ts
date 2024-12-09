@@ -1,35 +1,14 @@
-import { toast } from "@/components/ui/use-toast";
-
 export async function translateToEnglish(text: string, sourceLanguage: string): Promise<string> {
   if (sourceLanguage === "en") return text;
   
   try {
-    const response = await fetch("https://api-free.deepl.com/v2/translate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        text,
-        source_lang: sourceLanguage.toUpperCase(),
-        target_lang: "EN",
-      }),
-    });
-
-    if (!response.ok) {
-      console.error("Translation failed:", await response.text());
-      return text; // Fallback to original text
-    }
-
-    const data = await response.json();
-    return data.translations[0].text;
+    // For now, return the original text as a fallback
+    // In a production environment, you would integrate with a translation API
+    console.log(`Translation requested for text: ${text} from language: ${sourceLanguage}`);
+    return text;
   } catch (error) {
-    console.error("Translation error:", error);
-    toast({
-      title: "Translation failed",
-      description: "Using original text for image generation",
-      variant: "destructive",
-    });
-    return text; // Fallback to original text
+    console.error('Translation error:', error);
+    // Return original text as fallback
+    return text;
   }
 }
