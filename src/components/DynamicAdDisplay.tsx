@@ -9,17 +9,30 @@ const AD_POPUP_INTERVAL = 3 * 60 * 1000; // Show popup every 3 minutes
 
 interface ImgBBResponse {
   data: {
-    display_url: string;
+    url: string;
     title: string;
-  }[];
+    display_url: string;
+  };
+  success: boolean;
 }
 
 const IMGBB_API_KEY = '73ffc7abc53c74281c83c278d6a9a82b';
 
-const fetchAds = async (): Promise<ImgBBResponse> => {
-  const response = await fetch(`https://api.imgbb.com/1/account/images?key=${IMGBB_API_KEY}`);
-  if (!response.ok) throw new Error('Failed to fetch ads');
-  return response.json();
+// Sample images for demonstration
+const SAMPLE_IMAGES = [
+  {
+    display_url: 'https://i.ibb.co/wJD5gqx/sample-ad-1.jpg',
+    title: 'Sample Advertisement 1'
+  },
+  {
+    display_url: 'https://i.ibb.co/X2vB3rf/sample-ad-2.jpg',
+    title: 'Sample Advertisement 2'
+  }
+];
+
+const fetchAds = async (): Promise<{ data: Array<{ display_url: string; title: string }> }> => {
+  // For now, return sample images instead of making the API call
+  return { data: SAMPLE_IMAGES };
 };
 
 export function DynamicAdDisplay() {
