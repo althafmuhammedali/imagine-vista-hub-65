@@ -52,7 +52,7 @@ export function ImageGenerator() {
     setError(undefined);
 
     try {
-      // Cleanup previous URLs before generating new ones
+      // Cleanup previous URLs
       generatedImages.forEach(url => {
         try {
           URL.revokeObjectURL(url);
@@ -92,6 +92,16 @@ export function ImageGenerator() {
       setGeneratedImages([imageUrl]);
       setError(undefined);
 
+      // Add to history
+      const historyEvent = new CustomEvent('imageGenerated', {
+        detail: { prompt: trimmedPrompt, imageUrl }
+      });
+      window.dispatchEvent(historyEvent);
+
+      // Update stats
+      const statsEvent = new CustomEvent('generationRecorded');
+      window.dispatchEvent(statsEvent);
+
       toast({
         title: "Success",
         description: "Image generated successfully!",
@@ -111,6 +121,19 @@ export function ImageGenerator() {
       setIsLoading(false);
     }
   }, [prompt, negativePrompt, generatedImages, selectedLanguage]);
+
+  // Add keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        handleGenerate();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [handleGenerate]);
 
   const handleVoiceInput = useCallback((transcript: string) => {
     if (transcript?.trim()) {
