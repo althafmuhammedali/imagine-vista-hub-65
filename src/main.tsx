@@ -54,14 +54,23 @@ if ('serviceWorker' in navigator && !isExtension) {
   });
 }
 
-const root = createRoot(document.getElementById('root')!);
+// Wait for DOM to be ready
+document.addEventListener('DOMContentLoaded', () => {
+  const rootElement = document.getElementById('root');
+  if (!rootElement) {
+    console.error('Root element not found');
+    return;
+  }
 
-root.render(
-  <Suspense fallback={
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-amber-500"></div>
-    </div>
-  }>
-    <App />
-  </Suspense>
-);
+  const root = createRoot(rootElement);
+
+  root.render(
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-amber-500"></div>
+      </div>
+    }>
+      <App />
+    </Suspense>
+  );
+});
