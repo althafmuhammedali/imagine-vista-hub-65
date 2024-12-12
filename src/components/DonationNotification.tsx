@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Heart } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export function DonationNotification() {
   const { toast: uiToast } = useToast();
@@ -86,8 +86,8 @@ export function DonationNotification() {
     // Show initially after 30 seconds
     const initialTimeout = setTimeout(showDonationToast, 30000);
 
-    // Show every 30 minutes
-    const interval = setInterval(showDonationToast, 30 * 60 * 1000);
+    // Show every 5 minutes instead of 30
+    const interval = setInterval(showDonationToast, 5 * 60 * 1000);
 
     return () => {
       clearTimeout(initialTimeout);
