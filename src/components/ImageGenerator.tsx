@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { generateImage } from "@/lib/api/imageGeneration";
 import { ImageSettings } from "./image-generator/ImageSettings";
@@ -14,6 +14,19 @@ export function ImageGenerator() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
+
+  // Cleanup URLs when component unmounts or when new images are generated
+  useEffect(() => {
+    return () => {
+      generatedImages.forEach(url => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          console.error('Failed to revoke URL:', e);
+        }
+      });
+    };
+  }, [generatedImages]);
 
   const handleGenerate = useCallback(async () => {
     const trimmedPrompt = prompt.trim();
@@ -39,7 +52,7 @@ export function ImageGenerator() {
     setError(undefined);
 
     try {
-      // Cleanup previous URLs
+      // Cleanup previous URLs before generating new ones
       generatedImages.forEach(url => {
         try {
           URL.revokeObjectURL(url);
@@ -70,6 +83,10 @@ export function ImageGenerator() {
         height: window.innerWidth >= 1024 ? 1024 : 512,
         negativePrompt: enhanceNegativePrompt(translatedNegativePrompt.trim()),
       });
+
+      if (!imageUrl) {
+        throw new Error('Failed to generate image: No URL returned');
+      }
 
       console.log('Generated image URL:', imageUrl);
       setGeneratedImages([imageUrl]);

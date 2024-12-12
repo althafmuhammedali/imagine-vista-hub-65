@@ -1,103 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+<html lang="en">
 <head>
-  <script>
-    // Disable various keyboard shortcuts and right-click
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    
-    // Disable keyboard shortcuts
-    document.addEventListener('keydown', function(event) {
-      // Disable F12 key
-      if(event.keyCode == 123) {
-        event.preventDefault();
-        return false;
-      }
-      
-      // Disable Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
-      if (event.ctrlKey && 
-          (event.shiftKey && (event.keyCode == 73 || event.keyCode == 74) || 
-           event.keyCode == 85 || event.keyCode == 83)) {
-        event.preventDefault();
-        return false;
-      }
-      
-      // Disable Ctrl+Shift+C
-      if (event.ctrlKey && event.shiftKey && event.keyCode == 67) {
-        event.preventDefault();
-        return false;
-      }
-    });
-
-    // Disable DevTools
-    function detectDevTools() {
-      const widthThreshold = window.outerWidth - window.innerWidth > 160;
-      const heightThreshold = window.outerHeight - window.innerHeight > 160;
-      
-      if(widthThreshold || heightThreshold) {
-        document.body.innerHTML = 'DevTools detected';
-        return true;
-      }
-      return false;
-    }
-
-    setInterval(detectDevTools, 1000);
-
-    // Disable right-click
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-      return false;
-    });
-
-    // Disable text selection
-    document.addEventListener('selectstart', function(e) {
-      e.preventDefault();
-      return false;
-    });
-
-    // Clear console and show warning
-    setInterval(() => {
-      console.clear();
-      console.log('%cStop!', 'color: red; font-size: 30px; font-weight: bold;');
-      console.log('%cThis is a browser feature intended for developers.', 'font-size: 16px;');
-    }, 100);
-  </script>
-
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#F59E0B" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-touch-fullscreen" content="yes" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <meta name="format-detection" content="telephone=no" />
-  <meta name="format-detection" content="date=no" />
-  <meta name="format-detection" content="address=no" />
-  <meta name="format-detection" content="email=no" />
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet" />
-  
-  <link rel="preconnect" href="https://api-inference.huggingface.co" crossorigin />
-  <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin />
-  
-  <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
-  <link rel="apple-touch-icon" href="/pwa-192x192.png" />
-  <link rel="apple-touch-startup-image" href="/pwa-512x512.png" />
-  
-  <title>ComicForge AI - Kerala's First AI Comic & Art Creation Platform</title>
-  <meta name="description" content="Experience Kerala's pioneering AI image generation platform for seamless comic and art creation." />
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ComicForge AI - Create Stunning Artwork with AI</title>
+  <meta name="description" content="Transform your creative vision into stunning masterpieces with our enterprise-grade AI technology. Create unique artwork with ComicForge AI." />
+  <meta name="keywords" content="AI art, image generation, artificial intelligence, digital art, creative tools" />
+  <meta property="og:title" content="ComicForge AI - Create Stunning Artwork with AI" />
+  <meta property="og:description" content="Transform your creative vision into stunning masterpieces with our enterprise-grade AI technology." />
+  <meta property="og:image" content="https://i.ibb.co/3SptMK9/Gemini-Generated-Image-gym6grgym6grgym6.jpg" />
+  <meta property="og:url" content="https://comicforge.ai/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ComicForge AI - Create Stunning Artwork with AI" />
+  <meta name="twitter:description" content="Transform your creative vision into stunning masterpieces with our enterprise-grade AI technology." />
+  <meta name="twitter:image" content="https://i.ibb.co/3SptMK9/Gemini-Generated-Image-gym6grgym6grgym6.jpg" />
   <link rel="icon" type="image/jpeg" href="https://i.ibb.co/3SptMK9/Gemini-Generated-Image-gym6grgym6grgym6.jpg" />
   <link rel="canonical" href="https://comicforge.ai/" />
-  
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 </head>
 <body>
   <div id="root"></div>
-  <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
