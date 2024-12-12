@@ -4,7 +4,6 @@ import { AuthButtons } from "@/components/AuthButtons";
 import { ChatBot } from "@/components/chat/ChatBot";
 import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
-import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
 import { Info } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -46,10 +45,6 @@ const Index = () => {
 
             <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
               <Documentation />
-            </div>
-
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <PlatformBudget />
             </div>
 
             <FeedbackForm />
