@@ -3,9 +3,10 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useQuery } from '@tanstack/react-query';
 import { LoadingSpinner } from './LoadingSpinner';
+import { toast } from "@/components/ui/use-toast";
 
 const AD_REFRESH_INTERVAL = 5 * 60 * 1000;
-const AD_POPUP_INTERVAL = 3 * 60 * 1000; // Show popup every 3 minutes
+const AD_POPUP_INTERVAL = 3 * 60 * 1000;
 
 interface ImgBBResponse {
   data: {
@@ -18,7 +19,7 @@ interface ImgBBResponse {
 
 const IMGBB_API_KEY = '73ffc7abc53c74281c83c278d6a9a82b';
 
-// Sample images for demonstration
+// Sample images for demonstration and fallback
 const SAMPLE_IMAGES = [
   {
     display_url: 'https://i.ibb.co/wJD5gqx/sample-ad-1.jpg',
@@ -30,9 +31,37 @@ const SAMPLE_IMAGES = [
   }
 ];
 
+const uploadImage = async (imageFile: File): Promise<ImgBBResponse> => {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  formData.append('key', IMGBB_API_KEY);
+
+  const response = await fetch('https://api.imgbb.com/1/upload', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to upload image');
+  }
+
+  return response.json();
+};
+
 const fetchAds = async (): Promise<{ data: Array<{ display_url: string; title: string }> }> => {
-  // For now, return sample images instead of making the API call
-  return { data: SAMPLE_IMAGES };
+  try {
+    // For now, we'll use sample images since we can't fetch account images directly
+    // In a real implementation, you might want to store uploaded image URLs in your backend
+    return { data: SAMPLE_IMAGES };
+  } catch (error) {
+    console.error('Error fetching ads:', error);
+    toast({
+      title: "Error",
+      description: "Failed to fetch advertisements. Using sample images instead.",
+      variant: "destructive",
+    });
+    return { data: SAMPLE_IMAGES };
+  }
 };
 
 export function DynamicAdDisplay() {
