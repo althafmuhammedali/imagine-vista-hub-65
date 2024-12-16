@@ -28,23 +28,31 @@ export function ImageGenerator() {
     };
   }, [generatedImages]);
 
-  const handleGenerate = useCallback(async () => {
-    const trimmedPrompt = prompt.trim();
-    if (!trimmedPrompt) {
+  const validatePrompt = (input: string): boolean => {
+    const trimmedInput = input.trim();
+    if (!trimmedInput) {
       toast({
         title: "Error",
         description: "Please enter a prompt",
         variant: "destructive",
       });
-      return;
+      return false;
     }
 
-    if (trimmedPrompt.length < 3) {
+    if (trimmedInput.length < 3) {
       toast({
         title: "Error",
         description: "Prompt must be at least 3 characters long",
         variant: "destructive",
       });
+      return false;
+    }
+    return true;
+  };
+
+  const handleGenerate = useCallback(async () => {
+    const trimmedPrompt = prompt.trim();
+    if (!validatePrompt(trimmedPrompt)) {
       return;
     }
 
