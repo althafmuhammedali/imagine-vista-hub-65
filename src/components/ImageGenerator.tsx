@@ -68,9 +68,18 @@ export function ImageGenerator() {
 
       if (selectedLanguage !== "en") {
         console.log('Translating prompt from', selectedLanguage, 'to English');
-        translatedPrompt = await translateToEnglish(trimmedPrompt, selectedLanguage);
-        if (negativePrompt) {
-          translatedNegativePrompt = await translateToEnglish(negativePrompt, selectedLanguage);
+        try {
+          translatedPrompt = await translateToEnglish(trimmedPrompt, selectedLanguage);
+          if (negativePrompt) {
+            translatedNegativePrompt = await translateToEnglish(negativePrompt, selectedLanguage);
+          }
+        } catch (e) {
+          console.error('Translation error:', e);
+          toast({
+            title: "Translation Error",
+            description: "Failed to translate prompt. Using original text.",
+            variant: "destructive",
+          });
         }
       }
 
@@ -86,6 +95,17 @@ export function ImageGenerator() {
 
       if (!imageUrl) {
         throw new Error('Failed to generate image: No URL returned');
+      }
+
+      // Validate the generated URL
+      try {
+        const response = await fetch(imageUrl);
+        if (!response.ok || !response.headers.get('content-type')?.includes('image')) {
+          throw new Error('Invalid image generated');
+        }
+      } catch (e) {
+        console.error('Image validation error:', e);
+        throw new Error('Failed to validate generated image');
       }
 
       console.log('Generated image URL:', imageUrl);
