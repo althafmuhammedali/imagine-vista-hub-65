@@ -24,16 +24,16 @@ export function PaymentDialog({ handleRazorpayClick }: PaymentDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Choose Support Method</DialogTitle>
+          <DialogTitle>Support ComicForge AI</DialogTitle>
           <DialogDescription>
-            Support our service by making a contribution
+            Choose your preferred payment method to support our service
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-center gap-4 pt-4">
           <Button
             variant="outline"
             onClick={handleRazorpayClick}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:bg-amber-500/20"
           >
             <IndianRupee className="h-4 w-4" />
             Support (₹399)
@@ -41,7 +41,7 @@ export function PaymentDialog({ handleRazorpayClick }: PaymentDialogProps) {
           <Button
             variant="outline"
             onClick={() => setShowUPIDialog(true)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:bg-amber-500/20"
           >
             <IndianRupee className="h-4 w-4" />
             UPI Direct

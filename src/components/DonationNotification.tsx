@@ -7,10 +7,11 @@ export function DonationNotification() {
   const { toast: uiToast } = useToast();
 
   const handleDonateClick = () => {
-    if (!window.Razorpay) {
+    if (typeof window.Razorpay === 'undefined') {
+      console.error('Razorpay SDK not loaded');
       uiToast({
         title: "Error",
-        description: "Razorpay SDK not loaded. Please refresh the page.",
+        description: "Payment system is not ready. Please refresh the page.",
         variant: "destructive",
       });
       return;
@@ -20,10 +21,11 @@ export function DonationNotification() {
       key: "rzp_live_5JYQnqKRnKhB5y",
       amount: 399 * 100,
       currency: "INR",
-      name: "Support Us",
+      name: "Support ComicForge AI",
       description: "Support our AI service",
       handler: function(response: any) {
         if (response.razorpay_payment_id) {
+          console.log('Payment successful:', response.razorpay_payment_id);
           uiToast({
             title: "Thank you for your support!",
             description: `Payment successful! ID: ${response.razorpay_payment_id}`,
@@ -40,6 +42,7 @@ export function DonationNotification() {
       },
       modal: {
         ondismiss: function() {
+          console.log('Payment modal closed');
           uiToast({
             title: "Payment Cancelled",
             description: "You cancelled the payment. Feel free to try again!",
@@ -52,6 +55,7 @@ export function DonationNotification() {
       const rzp = new window.Razorpay(options);
       
       rzp.on('payment.failed', function (response: any) {
+        console.error('Payment failed:', response.error);
         uiToast({
           title: "Payment Failed",
           description: response.error.description || "Something went wrong with your payment. Please try again.",
@@ -61,18 +65,18 @@ export function DonationNotification() {
 
       rzp.open();
     } catch (error) {
+      console.error("Razorpay initialization error:", error);
       uiToast({
         title: "Error",
         description: "Failed to initialize payment. Please try again.",
         variant: "destructive",
       });
-      console.error("Razorpay error:", error);
     }
   };
 
   useEffect(() => {
     const showDonationToast = () => {
-      toast("Support", {
+      toast("Support ComicForge AI", {
         description: "Please consider supporting our AI models!",
         action: {
           label: "Support",
@@ -86,7 +90,7 @@ export function DonationNotification() {
     // Show initially after 30 seconds
     const initialTimeout = setTimeout(showDonationToast, 30000);
 
-    // Show every 5 minutes instead of 30
+    // Show every 5 minutes
     const interval = setInterval(showDonationToast, 5 * 60 * 1000);
 
     return () => {
