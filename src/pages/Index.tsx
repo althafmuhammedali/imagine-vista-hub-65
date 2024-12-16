@@ -12,6 +12,8 @@ import { FeedbackForm } from "@/components/home/FeedbackForm";
 import { ImageHistory } from "@/components/image-generator/ImageHistory";
 import { ImageStats } from "@/components/image-generator/ImageStats";
 import { ImageShortcuts } from "@/components/image-generator/ImageShortcuts";
+import { Suspense } from "react";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 const Index = () => {
   return (
@@ -29,37 +31,47 @@ const Index = () => {
         </div>
 
         <div className="container max-w-7xl mx-auto py-4 sm:py-6 md:py-8 lg:py-12 px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12 md:space-y-16">
-          <Hero />
+          <Suspense fallback={<LoadingSpinner />}>
+            <Hero />
+          </Suspense>
 
           <section className="space-y-8 sm:space-y-12">
             <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <ImageGenerator />
+              <Suspense fallback={<LoadingSpinner />}>
+                <ImageGenerator />
+              </Suspense>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all">
-                <ImageHistory />
-              </div>
-              <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all">
-                <ImageStats />
-              </div>
-              <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all">
-                <ImageShortcuts />
-              </div>
+              <Suspense fallback={<LoadingSpinner />}>
+                <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all">
+                  <ImageHistory />
+                </div>
+                <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all">
+                  <ImageStats />
+                </div>
+                <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all">
+                  <ImageShortcuts />
+                </div>
+              </Suspense>
             </div>
 
             <div className="grid gap-8 sm:gap-12">
-              <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-                <FAQ />
-              </div>
+              <Suspense fallback={<LoadingSpinner />}>
+                <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+                  <FAQ />
+                </div>
 
-              <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-                <Documentation />
-              </div>
+                <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
+                  <Documentation />
+                </div>
+              </Suspense>
             </div>
 
             <div className="bg-black/10 backdrop-blur-sm rounded-lg p-6 shadow-lg">
-              <FeedbackForm />
+              <Suspense fallback={<LoadingSpinner />}>
+                <FeedbackForm />
+              </Suspense>
             </div>
           </section>
 

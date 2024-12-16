@@ -1,7 +1,7 @@
 import { toast } from "@/components/ui/use-toast";
 
 export function handleApiError(error: unknown): Error {
-  console.error("API Error:", error); // Add logging for debugging
+  console.error("API Error:", error);
 
   if (error instanceof Error) {
     if (error.name === 'AbortError') {
@@ -57,6 +57,15 @@ export function handleApiError(error: unknown): Error {
         variant: "destructive",
       });
       return new Error("Authentication failed - please check your API key");
+    }
+
+    if (error.message.includes("Invalid API action")) {
+      toast({
+        title: "API Error",
+        description: "Invalid API action. Please try again.",
+        variant: "destructive",
+      });
+      return error;
     }
 
     toast({

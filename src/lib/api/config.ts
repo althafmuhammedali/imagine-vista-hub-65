@@ -4,9 +4,11 @@ export const API_CONFIG = {
   HEADERS: {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache"
   },
   DEFAULT_PARAMS: {
-    num_inference_steps: 25, // Increased for better quality
+    num_inference_steps: 30,
     guidance_scale: 7.5,
     scheduler: "DPMSolverMultistepScheduler",
     use_karras_sigmas: true,
@@ -20,8 +22,8 @@ export const API_CONFIG = {
       wait_for_model: true,
       use_gpu: true,
       quality: "maximum",
-      stream_output: true,
-      use_cache: false // Disable caching for more reliable results
+      stream_output: false,
+      use_cache: false
     }
   }
 };
