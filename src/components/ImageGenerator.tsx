@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImageDisplay } from "./image-generator/ImageDisplay";
 import { PromptSuggestions } from "./image-generator/PromptSuggestions";
-import { VoiceInput } from "./image-generator/VoiceInput";
+import { VoiceInput } from "./VoiceInput";
 import { translateToEnglish } from "@/lib/api/translation";
 
 export function ImageGenerator() {
@@ -17,7 +17,11 @@ export function ImageGenerator() {
 
   const handleGenerate = async () => {
     if (!prompt) {
-      toast.error("Please enter a prompt");
+      toast({
+        title: "Error",
+        description: "Please enter a prompt",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -48,7 +52,11 @@ export function ImageGenerator() {
       setGeneratedImages(data.images);
     } catch (error) {
       console.error('Generation error:', error);
-      toast.error("Failed to generate image");
+      toast({
+        title: "Error",
+        description: "Failed to generate image",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +83,7 @@ export function ImageGenerator() {
             isLoading={isLoading}
             numImages={numImages}
             setNumImages={setNumImages}
-            VoiceInput={<VoiceInput onVoiceInput={handleVoiceInput} />}
+            VoiceInput={<VoiceInput onVoiceInput={handleVoiceInput} selectedLanguage={selectedLanguage} />}
             selectedLanguage={selectedLanguage}
             setSelectedLanguage={setSelectedLanguage}
           />
