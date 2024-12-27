@@ -32,7 +32,8 @@ export function ImageGenerator() {
         ? await translateToEnglish(negativePrompt, selectedLanguage)
         : '';
 
-      const response = await fetch("/api/generate", {
+      // Using the full URL with the API base URL
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,4 +97,4 @@ export function ImageGenerator() {
       </div>
     </div>
   );
-}
+};
