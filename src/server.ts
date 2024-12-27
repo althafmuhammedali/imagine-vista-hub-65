@@ -10,10 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // Route handler
-const generateHandler = async (
-  req: express.Request,
-  res: express.Response
-) => {
+app.post("/generate", async (req: express.Request, res: express.Response) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
@@ -27,10 +24,7 @@ const generateHandler = async (
     console.error("Image generation error:", error);
     return res.status(500).json({ error: "Failed to generate image" });
   }
-};
-
-// Routes
-app.post("/generate", generateHandler);
+});
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
