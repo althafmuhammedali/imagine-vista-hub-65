@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ImageSettings } from "./image-generator/ImageSettings";
-import { ImageDisplay } from "./ImageDisplay";
+import { ImageDisplay } from "@/components/ImageDisplay";
 import { PromptSuggestions } from "./image-generator/PromptSuggestions";
 import { VoiceInput } from "./VoiceInput";
 import { translateToEnglish } from "@/lib/api/translation";
