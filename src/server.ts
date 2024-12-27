@@ -13,7 +13,7 @@ app.use(express.json());
 const generateHandler = async (
   req: express.Request,
   res: express.Response
-): Promise<void> => {
+) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
