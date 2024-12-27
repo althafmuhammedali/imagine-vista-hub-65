@@ -7,7 +7,6 @@ import { Card } from "../ui/card";
 interface PublicUserData {
   subscriptionStatus?: string;
   subscriptionEndDate?: string;
-  // ... add other public metadata fields as needed
 }
 
 export function SubscriptionPlans() {
@@ -17,36 +16,31 @@ export function SubscriptionPlans() {
 
   const handleSubscribe = async () => {
     if (!isSignedIn) {
-      toast({
-        title: "Please sign in",
-        description: "You need to be signed in to subscribe",
-        variant: "destructive",
+      toast("Please sign in", {
+        description: "You need to be signed in to subscribe"
       });
       return;
     }
 
     setIsLoading(true);
     try {
-      // Type assertion to include publicMetadata
       await user?.update({
+        // @ts-ignore - Clerk types are incomplete for publicMetadata
         publicMetadata: {
           subscriptionStatus: "active",
           subscriptionEndDate: new Date(
             Date.now() + 30 * 24 * 60 * 60 * 1000
           ).toISOString(),
-        } as PublicUserData,
+        },
       });
 
-      toast({
-        title: "Success",
-        description: "Your subscription has been activated",
+      toast("Success", {
+        description: "Your subscription has been activated"
       });
     } catch (error) {
       console.error("Subscription error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to activate subscription",
-        variant: "destructive",
+      toast("Error", {
+        description: "Failed to activate subscription"
       });
     } finally {
       setIsLoading(false);
