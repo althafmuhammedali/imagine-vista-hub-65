@@ -1,14 +1,18 @@
-export async function translateToEnglish(text: string, sourceLanguage: string): Promise<string> {
-  if (sourceLanguage === "en") return text;
+import axios from 'axios';
+
+export const translateToEnglish = async (text: string, sourceLanguage: string): Promise<string> => {
+  if (sourceLanguage === 'en') return text;
   
   try {
-    // For now, return the original text as a fallback
-    // In a production environment, you would integrate with a translation API
-    console.log(`Translation requested for text: ${text} from language: ${sourceLanguage}`);
-    return text;
+    const response = await axios.post('https://translation-api.example.com/translate', {
+      text,
+      source: sourceLanguage,
+      target: 'en'
+    });
+    
+    return response.data.translatedText;
   } catch (error) {
     console.error('Translation error:', error);
-    // Return original text as fallback
-    return text;
+    return text; // Fallback to original text if translation fails
   }
-}
+};
