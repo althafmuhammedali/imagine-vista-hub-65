@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ImageSettings } from "./image-generator/ImageSettings";
-import { ImageDisplay } from "./image-generator/ImageDisplay";
+import { ImageDisplay } from "./ImageDisplay";
 import { PromptSuggestions } from "./image-generator/PromptSuggestions";
 import { VoiceInput } from "./VoiceInput";
 import { translateToEnglish } from "@/lib/api/translation";
@@ -83,7 +83,7 @@ export function ImageGenerator() {
             isLoading={isLoading}
             numImages={numImages}
             setNumImages={setNumImages}
-            VoiceInput={<VoiceInput onVoiceInput={handleVoiceInput} selectedLanguage={selectedLanguage} />}
+            VoiceInput={<VoiceInput onTranscript={handleVoiceInput} selectedLanguage={selectedLanguage} />}
             selectedLanguage={selectedLanguage}
             setSelectedLanguage={setSelectedLanguage}
           />
