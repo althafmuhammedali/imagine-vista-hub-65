@@ -22,12 +22,12 @@ const IMGBB_API_KEY = '73ffc7abc53c74281c83c278d6a9a82b';
 // Sample images for demonstration and fallback
 const SAMPLE_IMAGES = [
   {
-    display_url: 'https://i.ibb.co/wJD5gqx/sample-ad-1.jpg',
-    title: 'Sample Advertisement 1'
+    display_url: 'https://i.ibb.co/9nbRvkw/Screenshot-2024-12-27-191630.png',
+    title: 'Join Dev Mentor Hub Now'
   },
   {
-    display_url: 'https://i.ibb.co/X2vB3rf/sample-ad-2.jpg',
-    title: 'Sample Advertisement 2'
+    display_url: '"https://i.ibb.co/0swDxCc/image.png',
+    title: 'Create Your Professional Resume in Minutes'
   }
 ];
 
