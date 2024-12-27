@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import { generateImage } from "./lib/api/imageGeneration";
 
@@ -8,7 +8,7 @@ const port = 3001;
 app.use(cors());
 app.use(express.json());
 
-app.post("/generate", async (req: Request, res: Response) => {
+app.post("/generate", async (req, res) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
