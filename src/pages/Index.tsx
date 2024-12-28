@@ -21,7 +21,7 @@ const Index = () => {
       <Alert className="sticky top-0 z-50 rounded-none border-none bg-amber-500/10 backdrop-blur-sm">
         <Info className="h-4 w-4 text-amber-400" />
         <AlertDescription className="text-amber-200 text-xs sm:text-sm">
-          This platform's prompt generation is heavily influenced by our unique prompting style
+         The platform is currently facing some issues with generating AI images. Your support can help make it a more powerful tool, accessible to everyone. Any donation, no matter the amount, will make a difference
         </AlertDescription>
       </Alert>
       
