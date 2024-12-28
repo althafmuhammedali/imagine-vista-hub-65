@@ -1,8 +1,9 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, Router } from "express";
 import cors from "cors";
 import { generateImage } from "./lib/api/imageGeneration";
 
 const app = express();
+const router = Router();
 const port = 3001;
 
 // Middleware
@@ -26,7 +27,8 @@ const generateHandler = async (req: Request, res: Response) => {
   }
 };
 
-app.post("/generate", generateHandler);
+router.post("/generate", generateHandler);
+app.use(router);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
