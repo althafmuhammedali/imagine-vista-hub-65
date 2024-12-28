@@ -8,7 +8,7 @@ interface UPIDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const UPI_ID = "adnanvv@fbl";
+const UPI_ID = "adnanmuhammad4393@okicici";
 
 export function UPIDialog({ open, onOpenChange }: UPIDialogProps) {
   const { toast } = useToast();
