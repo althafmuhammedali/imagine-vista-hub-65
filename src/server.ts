@@ -10,7 +10,7 @@ const port = 3001;
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Define route handler
 const generateHandler = async (req: Request, res: Response) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
