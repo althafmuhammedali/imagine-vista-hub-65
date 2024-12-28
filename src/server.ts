@@ -1,9 +1,9 @@
-import express, { Request, Response, Router } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import { generateImage } from "./lib/api/imageGeneration";
 
 const app = express();
-const router = Router();
+const router = express.Router();
 const port = 3001;
 
 // Middleware
