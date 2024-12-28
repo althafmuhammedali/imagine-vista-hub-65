@@ -27,9 +27,7 @@ const generateHandler = async (req: Request, res: Response) => {
 };
 
 // Routes
-const router = express.Router();
-router.post("/", generateHandler);
-app.use("/generate", router);
+app.post("/generate", generateHandler);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
