@@ -29,7 +29,7 @@ const generateHandler = async (req: Request, res: Response) => {
 
 // Mount routes
 router.post("/generate", generateHandler);
-app.use("/", router);
+app.use("/api", router);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
