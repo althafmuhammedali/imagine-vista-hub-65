@@ -27,12 +27,9 @@ const generateHandler = async (req: Request, res: Response) => {
 };
 
 // Routes
-app.use("/generate", (req: Request, res: Response) => {
-  if (req.method === 'POST') {
-    return generateHandler(req, res);
-  }
-  return res.status(405).json({ error: "Method not allowed" });
-});
+const router = express.Router();
+router.post("/", generateHandler);
+app.use("/generate", router);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
