@@ -10,7 +10,7 @@ const port = 3001;
 app.use(cors());
 app.use(express.json());
 
-// Define route handler
+// Define route handler on the router
 router.post("/generate", async (req: Request, res: Response) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
