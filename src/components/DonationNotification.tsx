@@ -67,7 +67,7 @@ export function DonationNotification() {
       uiToast({
         title: "Important Payment Information",
         description: "Make sure you pay the amount quickly; otherwise, the payment will fail, and you'll have to wait 7 days to get the amount credited back to your account.",
-        variant: "warning",
+        variant: "destructive", // Changed from "warning" to "destructive" since it's not a supported variant
       });
 
       rzp.open();
