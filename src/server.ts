@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import { generateImage } from "./lib/api/imageGeneration";
 
@@ -13,7 +13,7 @@ app.use(express.json());
 const router = express.Router();
 
 // Define route handler
-router.post("/generate", async (req: Request, res: Response) => {
+router.post("/generate", async (req, res) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
