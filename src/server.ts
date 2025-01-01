@@ -1,4 +1,4 @@
-import express, { Request, Response, Router } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import { generateImage } from "./lib/api/imageGeneration";
 
@@ -9,8 +9,8 @@ const port = 3001;
 app.use(cors());
 app.use(express.json());
 
-// Create router with proper typing
-const router: Router = express.Router();
+// Create router
+const router = express.Router();
 
 // Define route handler
 router.post("/generate", async (req: Request, res: Response) => {
