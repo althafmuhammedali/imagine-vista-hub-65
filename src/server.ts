@@ -3,14 +3,16 @@ import cors from "cors";
 import { generateImage } from "./lib/api/imageGeneration";
 
 const app = express();
-const router = express.Router();
 const port = 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Define route handler on the router
+// Create router
+const router = express.Router();
+
+// Define route handler
 router.post("/generate", async (req: Request, res: Response) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
