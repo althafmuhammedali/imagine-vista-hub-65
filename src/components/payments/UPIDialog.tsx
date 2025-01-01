@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { QrCodeIcon, Copy } from "lucide-react";
+import { QrCodeIcon, Copy, AlertTriangle } from "lucide-react";
 
 interface UPIDialogProps {
   open: boolean;
@@ -81,6 +81,16 @@ export function UPIDialog({ open, onOpenChange }: UPIDialogProps) {
               </Button>
             </div>
           </div>
+
+          <div className="flex items-start gap-2 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
+            <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <div className="space-y-1 text-sm">
+              <p className="text-amber-500 font-medium">Important Payment Information</p>
+              <p className="text-gray-400">Make sure you pay the amount quickly; otherwise, the payment will fail, and you'll have to wait 7 days to get the amount credited back to your account.</p>
+              <p className="text-gray-400">Please ensure that you have made the payment through your UPI ID or number. Do not scan the QR code.</p>
+            </div>
+          </div>
+
           <div className="text-sm text-gray-400 space-y-2">
             <p>• You can donate any amount you wish</p>
             <p>• Your support helps us maintain and improve our services</p>

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { Heart } from "lucide-react";
+import { Heart, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export function DonationNotification() {
@@ -63,9 +63,16 @@ export function DonationNotification() {
         });
       });
 
+      // Show payment warning toast
+      uiToast({
+        title: "Important Payment Information",
+        description: "Make sure you pay the amount quickly; otherwise, the payment will fail, and you'll have to wait 7 days to get the amount credited back to your account.",
+        variant: "warning",
+      });
+
       rzp.open();
     } catch (error) {
-      console.error("Razorpay initialization error:", error);
+      console.error("Razorpay error:", error);
       uiToast({
         title: "Error",
         description: "Failed to initialize payment. Please try again.",
