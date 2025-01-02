@@ -15,7 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 // Define route handler
-app.post("/api/generate", async (req: Request, res: Response) => {
+app.post("/api/generate", (req: Request, res: Response) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
@@ -23,8 +23,12 @@ app.post("/api/generate", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Prompt is required" });
     }
 
-    const images = await generateImage(prompt, negativePrompt, numImages);
-    return res.json({ images });
+    generateImage(prompt, negativePrompt, numImages)
+      .then(images => res.json({ images }))
+      .catch(error => {
+        console.error("Image generation error:", error);
+        return res.status(500).json({ error: "Failed to generate image" });
+      });
   } catch (error) {
     console.error("Image generation error:", error);
     return res.status(500).json({ error: "Failed to generate image" });
