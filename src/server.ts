@@ -1,5 +1,4 @@
 import express from "express";
-import type { Request, Response } from "express";
 import cors from "cors";
 import { generateImage } from "./lib/api/imageGeneration";
 
@@ -15,7 +14,7 @@ app.use(cors({
 app.use(express.json());
 
 // Define route handler
-app.post("/api/generate", (req: Request, res: Response) => {
+const generateHandler = (req: express.Request, res: express.Response) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
@@ -33,7 +32,10 @@ app.post("/api/generate", (req: Request, res: Response) => {
     console.error("Image generation error:", error);
     return res.status(500).json({ error: "Failed to generate image" });
   }
-});
+};
+
+// Register routes
+app.post("/api/generate", generateHandler);
 
 // Start server
 app.listen(port, () => {
