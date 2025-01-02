@@ -14,7 +14,10 @@ app.use(cors({
 app.use(express.json());
 
 // Define route handler
-const generateHandler = async (req: express.Request, res: express.Response) => {
+const generateHandler = async (
+  req: express.Request,
+  res: express.Response
+): Promise<express.Response> => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
@@ -30,8 +33,8 @@ const generateHandler = async (req: express.Request, res: express.Response) => {
   }
 };
 
-// Register routes - Fix: Use app.post() instead of direct handler assignment
-app.post("/api/generate", generateHandler);
+// Register routes
+app.post("/api/generate", (req, res) => generateHandler(req, res));
 
 // Start server
 app.listen(port, () => {
