@@ -1,4 +1,4 @@
-import express, { Request, Response, Router } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import { generateImage } from "./lib/api/imageGeneration";
 
@@ -13,11 +13,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Create router
-const router = Router();
-
 // Define route handler
-router.post("/generate", async (req: Request, res: Response) => {
+app.post("/api/generate", async (req: Request, res: Response) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
@@ -32,9 +29,6 @@ router.post("/generate", async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Failed to generate image" });
   }
 });
-
-// Mount router at /api path
-app.use("/api", router);
 
 // Start server
 app.listen(port, () => {
