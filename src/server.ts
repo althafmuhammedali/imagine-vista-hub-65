@@ -14,7 +14,7 @@ app.use(cors({
 app.use(express.json());
 
 // Define route handler
-const generateHandler = (req: express.Request, res: express.Response) => {
+const generateHandler = async (req: express.Request, res: express.Response) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
@@ -22,12 +22,8 @@ const generateHandler = (req: express.Request, res: express.Response) => {
       return res.status(400).json({ error: "Prompt is required" });
     }
 
-    generateImage(prompt, negativePrompt, numImages)
-      .then(images => res.json({ images }))
-      .catch(error => {
-        console.error("Image generation error:", error);
-        return res.status(500).json({ error: "Failed to generate image" });
-      });
+    const images = await generateImage(prompt, negativePrompt, numImages);
+    return res.json({ images });
   } catch (error) {
     console.error("Image generation error:", error);
     return res.status(500).json({ error: "Failed to generate image" });
