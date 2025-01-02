@@ -30,7 +30,7 @@ const generateHandler = async (req: express.Request, res: express.Response) => {
   }
 };
 
-// Register routes
+// Register routes - Fix: Use app.post() instead of direct handler assignment
 app.post("/api/generate", generateHandler);
 
 // Start server
