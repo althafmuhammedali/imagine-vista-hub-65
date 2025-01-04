@@ -23,10 +23,10 @@ app.post("/api/generate", async (req: express.Request, res: express.Response) =>
     }
 
     const images = await generateImage(prompt, negativePrompt, numImages);
-    return res.json({ images });
+    res.json({ images });
   } catch (error) {
     console.error("Image generation error:", error);
-    return res.status(500).json({ error: "Failed to generate image" });
+    res.status(500).json({ error: "Failed to generate image" });
   }
 });
 
