@@ -14,7 +14,7 @@ app.use(cors({
 app.use(express.json());
 
 // Define route handler
-app.post("/api/generate", async (req: express.Request, res: express.Response) => {
+app.post("/api/generate", async (req, res) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
