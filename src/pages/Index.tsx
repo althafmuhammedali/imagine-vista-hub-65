@@ -14,6 +14,7 @@ import { ImageStats } from "@/components/image-generator/ImageStats";
 import { ImageShortcuts } from "@/components/image-generator/ImageShortcuts";
 import { Suspense } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { ProgramInfoPopup } from "@/components/ProgramInfoPopup";
 
 const Index = () => {
   return (
@@ -26,7 +27,8 @@ const Index = () => {
       </Alert>
       
       <div className="min-h-screen bg-black/5 backdrop-blur-sm">
-        <div className="fixed top-4 right-4 z-40">
+        <div className="fixed top-4 right-4 z-40 flex items-center gap-2">
+          <ProgramInfoPopup />
           <AuthButtons />
         </div>
 
