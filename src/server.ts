@@ -19,7 +19,8 @@ app.post("/api/generate", async (req: express.Request, res: express.Response) =>
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
     if (!prompt) {
-      return res.status(400).json({ error: "Prompt is required" });
+      res.status(400).json({ error: "Prompt is required" });
+      return;
     }
 
     const images = await generateImage(prompt, negativePrompt, numImages);
