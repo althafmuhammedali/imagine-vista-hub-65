@@ -14,10 +14,7 @@ app.use(cors({
 app.use(express.json());
 
 // Define route handler
-const generateHandler = async (
-  req: express.Request,
-  res: express.Response
-): Promise<express.Response> => {
+app.post("/api/generate", async (req: express.Request, res: express.Response) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
@@ -31,10 +28,7 @@ const generateHandler = async (
     console.error("Image generation error:", error);
     return res.status(500).json({ error: "Failed to generate image" });
   }
-};
-
-// Register routes
-app.post("/api/generate", (req, res) => generateHandler(req, res));
+});
 
 // Start server
 app.listen(port, () => {
