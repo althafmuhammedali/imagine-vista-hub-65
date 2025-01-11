@@ -11,6 +11,9 @@ interface GenerateResponse {
   error?: string;
 }
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000;
+
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
   const [negativePrompt, setNegativePrompt] = useState("");
@@ -19,6 +22,8 @@ export function ImageGenerator() {
   const [numImages, setNumImages] = useState(1);
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const { toast } = useToast();
+
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   const handleGenerate = async () => {
     if (!prompt) {
@@ -30,54 +35,72 @@ export function ImageGenerator() {
       return;
     }
 
-    try {
-      setIsLoading(true);
-      const translatedPrompt = await translateToEnglish(prompt, selectedLanguage);
-      const translatedNegativePrompt = negativePrompt 
-        ? await translateToEnglish(negativePrompt, selectedLanguage)
-        : '';
+    let retries = 0;
+    
+    while (retries < MAX_RETRIES) {
+      try {
+        setIsLoading(true);
+        const translatedPrompt = await translateToEnglish(prompt, selectedLanguage);
+        const translatedNegativePrompt = negativePrompt 
+          ? await translateToEnglish(negativePrompt, selectedLanguage)
+          : '';
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/generate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt: translatedPrompt,
-          negativePrompt: translatedNegativePrompt,
-          numImages,
-        }),
-      });
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/generate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompt: translatedPrompt,
+            negativePrompt: translatedNegativePrompt,
+            numImages,
+          }),
+        });
 
-      const data: GenerateResponse = await response.json();
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        }
 
-      if (!response.ok) {
-        let errorMessage = data.error || "Failed to generate image";
+        const data: GenerateResponse = await response.json();
+        setGeneratedImages(data.images);
+        toast({
+          title: "Success",
+          description: "Image generated successfully!",
+        });
+        break; // Success, exit retry loop
         
-        // Handle specific error cases
-        if (response.status === 401) {
-          errorMessage = "API configuration error. Please check your settings.";
-        } else if (response.status === 504) {
-          errorMessage = "Request timed out. Please try again with a simpler prompt.";
+      } catch (error) {
+        console.error('Generation error:', error);
+        
+        if (retries === MAX_RETRIES - 1) {
+          // Final retry failed
+          let errorMessage = "Failed to generate image. Please try again.";
+          
+          if (error instanceof Error) {
+            if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+              errorMessage = "Network error. Please check your internet connection and try again.";
+            } else if (error.message.includes("timeout")) {
+              errorMessage = "Request timed out. Please try again with a simpler prompt.";
+            }
+          }
+          
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        } else {
+          // Wait before retrying
+          await sleep(RETRY_DELAY * Math.pow(2, retries)); // Exponential backoff
         }
         
-        throw new Error(errorMessage);
+        retries++;
+      } finally {
+        if (retries === MAX_RETRIES) {
+          setIsLoading(false);
+        }
       }
-
-      setGeneratedImages(data.images);
-      toast({
-        title: "Success",
-        description: "Image generated successfully!",
-      });
-    } catch (error) {
-      console.error('Generation error:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to generate image",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
     }
   };
 
