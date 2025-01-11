@@ -15,19 +15,21 @@ app.use(express.json());
 
 // Define route handler
 app.post("/api/generate", async (req, res) => {
+  const { prompt, negativePrompt, numImages = 1 } = req.body;
+
+  if (!prompt) {
+    res.status(400).json({ error: "Prompt is required" });
+    return;
+  }
+
   try {
-    const { prompt, negativePrompt, numImages = 1 } = req.body;
-
-    if (!prompt) {
-      res.status(400).json({ error: "Prompt is required" });
-      return;
-    }
-
     const images = await generateImage(prompt, negativePrompt, numImages);
     res.json({ images });
   } catch (error) {
     console.error("Image generation error:", error);
-    res.status(500).json({ error: "Failed to generate image" });
+    res.status(500).json({ 
+      error: error instanceof Error ? error.message : "Failed to generate image" 
+    });
   }
 });
 

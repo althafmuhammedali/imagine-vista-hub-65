@@ -6,6 +6,11 @@ import { PromptSuggestions } from "./image-generator/PromptSuggestions";
 import { VoiceInput } from "./VoiceInput";
 import { translateToEnglish } from "@/lib/api/translation";
 
+interface GenerateResponse {
+  images: string[];
+  error?: string;
+}
+
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
   const [negativePrompt, setNegativePrompt] = useState("");
@@ -44,17 +49,22 @@ export function ImageGenerator() {
         }),
       });
 
+      const data: GenerateResponse = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to generate image");
+        throw new Error(data.error || "Failed to generate image");
       }
 
-      const data = await response.json();
       setGeneratedImages(data.images);
+      toast({
+        title: "Success",
+        description: "Image generated successfully!",
+      });
     } catch (error) {
       console.error('Generation error:', error);
       toast({
         title: "Error",
-        description: "Failed to generate image",
+        description: error instanceof Error ? error.message : "Failed to generate image",
         variant: "destructive",
       });
     } finally {
