@@ -52,7 +52,16 @@ export function ImageGenerator() {
       const data: GenerateResponse = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to generate image");
+        let errorMessage = data.error || "Failed to generate image";
+        
+        // Handle specific error cases
+        if (response.status === 401) {
+          errorMessage = "API configuration error. Please check your settings.";
+        } else if (response.status === 504) {
+          errorMessage = "Request timed out. Please try again with a simpler prompt.";
+        }
+        
+        throw new Error(errorMessage);
       }
 
       setGeneratedImages(data.images);
