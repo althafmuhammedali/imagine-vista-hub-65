@@ -1,3 +1,4 @@
+
 import { HfInference } from '@huggingface/inference';
 
 const TIMEOUT = 180000; // 3 minutes
@@ -29,10 +30,15 @@ export async function generateImage(
       for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
         try {
           const response = await hf.textToImage({
-            model: "black-forest-labs/FLUX.1-dev",
+            model: "strangerzonehf/Flux-Super-Realism-LoRA",
             inputs: prompt,
             parameters: {
               negative_prompt: negativePrompt || "",
+              num_inference_steps: 30,
+              guidance_scale: 7.5,
+              scheduler: "DPMSolverMultistepScheduler",
+              use_karras_sigmas: true,
+              clip_skip: 1,
             }
           });
 
@@ -41,8 +47,7 @@ export async function generateImage(
           }
 
           // Convert blob to base64 URL
-          const blob = new Blob([response], { type: 'image/jpeg' });
-          const url = URL.createObjectURL(blob);
+          const url = URL.createObjectURL(response);
           images.push(url);
           break; // Success, exit retry loop
           
