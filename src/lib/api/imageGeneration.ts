@@ -36,9 +36,6 @@ export async function generateImage(
               negative_prompt: negativePrompt || "",
               num_inference_steps: 30,
               guidance_scale: 7.5,
-              scheduler: "DPMSolverMultistepScheduler",
-              use_karras_sigmas: true,
-              clip_skip: 1,
             }
           });
 
