@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ImageSettings } from "./image-generator/ImageSettings";
@@ -12,7 +13,7 @@ interface GenerateResponse {
 }
 
 const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000;
+const RETRY_DELAY = 2000; // Increased to 2 seconds
 
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
@@ -25,6 +26,15 @@ export function ImageGenerator() {
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+  const checkNetworkConnectivity = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/health`);
+      return response.ok;
+    } catch {
+      return false;
+    }
+  };
+
   const handleGenerate = async () => {
     if (!prompt) {
       toast({
@@ -35,27 +45,44 @@ export function ImageGenerator() {
       return;
     }
 
+    // Check network connectivity first
+    const isConnected = await checkNetworkConnectivity();
+    if (!isConnected) {
+      toast({
+        title: "Network Error",
+        description: "Please check your internet connection and try again",
+        variant: "destructive",
+      });
+      return;
+    }
+
     let retries = 0;
+    setIsLoading(true);
     
     while (retries < MAX_RETRIES) {
       try {
-        setIsLoading(true);
         const translatedPrompt = await translateToEnglish(prompt, selectedLanguage);
         const translatedNegativePrompt = negativePrompt 
           ? await translateToEnglish(negativePrompt, selectedLanguage)
           : '';
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/generate`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          signal: controller.signal,
           body: JSON.stringify({
             prompt: translatedPrompt,
             negativePrompt: translatedNegativePrompt,
             numImages,
           }),
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
           const data = await response.json();
@@ -68,40 +95,47 @@ export function ImageGenerator() {
           title: "Success",
           description: "Image generated successfully!",
         });
-        break; // Success, exit retry loop
+        break;
         
       } catch (error) {
         console.error('Generation error:', error);
         
-        if (retries === MAX_RETRIES - 1) {
-          // Final retry failed
-          let errorMessage = "Failed to generate image. Please try again.";
-          
-          if (error instanceof Error) {
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            toast({
+              title: "Timeout",
+              description: "Request timed out. Please try again.",
+              variant: "destructive",
+            });
+            break;
+          }
+
+          if (retries === MAX_RETRIES - 1) {
+            let errorMessage = "Failed to generate image. Please try again.";
+            
             if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
               errorMessage = "Network error. Please check your internet connection and try again.";
             } else if (error.message.includes("timeout")) {
               errorMessage = "Request timed out. Please try again with a simpler prompt.";
             }
+            
+            toast({
+              title: "Error",
+              description: errorMessage,
+              variant: "destructive",
+            });
+          } else {
+            // Wait before retrying with exponential backoff
+            const delay = RETRY_DELAY * Math.pow(2, retries);
+            await sleep(delay);
           }
-          
-          toast({
-            title: "Error",
-            description: errorMessage,
-            variant: "destructive",
-          });
-        } else {
-          // Wait before retrying
-          await sleep(RETRY_DELAY * Math.pow(2, retries)); // Exponential backoff
         }
         
         retries++;
-      } finally {
-        if (retries === MAX_RETRIES) {
-          setIsLoading(false);
-        }
       }
     }
+    
+    setIsLoading(false);
   };
 
   const handleVoiceInput = (text: string) => {

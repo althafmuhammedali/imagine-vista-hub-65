@@ -1,3 +1,4 @@
+
 import express from "express";
 import cors from "cors";
 import { generateImage } from "./lib/api/imageGeneration";
@@ -7,9 +8,12 @@ const port = 3001;
 
 // Middleware
 app.use(cors({
-  origin: '*', // Be more restrictive in production
+  origin: process.env.NODE_ENV === 'production' 
+    ? [/\.lovableproject\.com$/] 
+    : '*',
   methods: ['POST', 'GET', 'OPTIONS'],
-  allowedHeaders: ['Content-Type']
+  allowedHeaders: ['Content-Type'],
+  maxAge: 86400 // 24 hours
 }));
 app.use(express.json());
 
@@ -47,6 +51,10 @@ app.post("/api/generate", async (req, res) => {
         res.status(504).json({ error: "Request timed out" });
         return;
       }
+      if (error.message.includes("rate limit")) {
+        res.status(429).json({ error: "Rate limit exceeded. Please try again later." });
+        return;
+      }
     }
     
     res.status(500).json({ 
@@ -55,10 +63,14 @@ app.post("/api/generate", async (req, res) => {
   }
 });
 
-// Error handling middleware
+// Global error handler
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
-  res.status(500).json({ error: "Internal server error" });
+  res.status(500).json({ 
+    error: process.env.NODE_ENV === 'production' 
+      ? "Internal server error" 
+      : err.message 
+  });
 });
 
 // Start server
