@@ -5,8 +5,6 @@ const TIMEOUT = 180000; // 3 minutes
 const MAX_RETRIES = 2;
 const RETRY_DELAY = 1000; // 1 second
 
-const hf = new HfInference(import.meta.env.VITE_HUGGINGFACE_API_KEY);
-
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function generateImage(
@@ -18,10 +16,9 @@ export async function generateImage(
     throw new Error("Hugging Face API key is not configured");
   }
 
+  const hf = new HfInference(import.meta.env.VITE_HUGGINGFACE_API_KEY);
   const images: string[] = [];
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
-
+  
   try {
     for (let i = 0; i < numImages; i++) {
       let lastError: Error | null = null;
@@ -29,7 +26,15 @@ export async function generateImage(
       // Implement retry logic
       for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
         try {
-          const response = await hf.textToImage({
+          console.log(`Generating image ${i+1}/${numImages}, attempt ${attempt+1}/${MAX_RETRIES+1}`);
+          
+          // Create a promise that will reject after TIMEOUT
+          const timeoutPromise = new Promise<never>((_, reject) => {
+            setTimeout(() => reject(new Error('Request timed out')), TIMEOUT);
+          });
+          
+          // Create the image generation promise
+          const imagePromise = hf.textToImage({
             model: "strangerzonehf/Flux-Super-Realism-LoRA",
             inputs: prompt,
             parameters: {
@@ -38,22 +43,28 @@ export async function generateImage(
               guidance_scale: 7.5,
             }
           });
-
+          
+          // Race the timeout against the image generation
+          const response = await Promise.race([imagePromise, timeoutPromise]);
+          
           if (!response) {
             throw new Error("No response from image generation API");
           }
-
-          // Convert blob to base64 URL
+          
+          // Convert blob to base64 data URL for consistent handling
           const url = URL.createObjectURL(response);
           images.push(url);
+          console.log(`Successfully generated image ${i+1}`);
           break; // Success, exit retry loop
           
         } catch (error) {
+          console.error(`Attempt ${attempt + 1} failed:`, error);
           lastError = error instanceof Error ? error : new Error('Unknown error');
           
           if (attempt < MAX_RETRIES) {
-            console.log(`Attempt ${attempt + 1} failed, retrying...`);
-            await delay(RETRY_DELAY * (attempt + 1)); // Exponential backoff
+            const retryDelay = RETRY_DELAY * Math.pow(2, attempt); // Exponential backoff
+            console.log(`Retrying in ${retryDelay}ms...`);
+            await delay(retryDelay);
             continue;
           }
           
@@ -61,15 +72,14 @@ export async function generateImage(
         }
       }
     }
-
-    clearTimeout(timeoutId);
+    
     return images;
     
   } catch (error) {
-    clearTimeout(timeoutId);
+    console.error('Final generation error:', error);
     
     if (error instanceof Error) {
-      if (error.name === 'AbortError') {
+      if (error.message === 'Request timed out') {
         throw new Error('Request timed out after 3 minutes');
       }
       
@@ -77,7 +87,7 @@ export async function generateImage(
       if (error.message.includes("rate limit")) {
         throw new Error('Rate limit exceeded. Please try again later.');
       }
-      if (error.message.includes("model_busy")) {
+      if (error.message.includes("model_busy") || error.message.includes("loading")) {
         throw new Error('Model is currently busy. Please try again in a few moments.');
       }
       

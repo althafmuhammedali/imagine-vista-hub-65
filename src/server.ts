@@ -13,31 +13,40 @@ app.use(cors({
     : '*',
   methods: ['POST', 'GET', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
+  credentials: true,
   maxAge: 86400 // 24 hours
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // Health check endpoint
 app.get("/health", (_, res) => {
-  res.json({ status: "ok" });
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
 // Define route handler
 app.post("/api/generate", async (req, res) => {
+  console.log("Received generation request");
   const { prompt, negativePrompt, numImages = 1 } = req.body;
 
   if (!prompt) {
+    console.log("Error: Missing prompt");
     res.status(400).json({ error: "Prompt is required" });
     return;
   }
 
   if (numImages < 1 || numImages > 4) {
+    console.log("Error: Invalid number of images");
     res.status(400).json({ error: "Number of images must be between 1 and 4" });
     return;
   }
 
   try {
+    console.log(`Starting image generation with prompt: "${prompt.substring(0, 30)}..."`);
+    console.log(`Negative prompt: "${negativePrompt ? negativePrompt.substring(0, 30) + '...' : 'none'}"`);
+    console.log(`Number of images: ${numImages}`);
+    
     const images = await generateImage(prompt, negativePrompt, numImages);
+    console.log(`Generated ${images.length} images successfully`);
     res.json({ images });
   } catch (error) {
     console.error("Image generation error:", error);
@@ -65,7 +74,7 @@ app.post("/api/generate", async (req, res) => {
 
 // Global error handler
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
+  console.error("Global error handler:", err.stack);
   res.status(500).json({ 
     error: process.env.NODE_ENV === 'production' 
       ? "Internal server error" 
@@ -76,4 +85,5 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 // Start server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
+  console.log(`Health check: http://localhost:${port}/health`);
 });

@@ -13,7 +13,7 @@ interface GenerateResponse {
 }
 
 const MAX_RETRIES = 3;
-const RETRY_DELAY = 2000; // Increased to 2 seconds
+const RETRY_DELAY = 2000; // 2 seconds
 
 export function ImageGenerator() {
   const [prompt, setPrompt] = useState("");
@@ -28,9 +28,15 @@ export function ImageGenerator() {
 
   const checkNetworkConnectivity = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/health`);
+      console.log("Checking network connectivity...");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/health`, { 
+        cache: 'no-cache',
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+      console.log("Network check response:", response.ok);
       return response.ok;
-    } catch {
+    } catch (error) {
+      console.error("Network connectivity check failed:", error);
       return false;
     }
   };
@@ -58,21 +64,31 @@ export function ImageGenerator() {
 
     let retries = 0;
     setIsLoading(true);
+    setGeneratedImages([]);
     
     while (retries < MAX_RETRIES) {
       try {
+        console.log("Translating prompt if needed...");
         const translatedPrompt = await translateToEnglish(prompt, selectedLanguage);
         const translatedNegativePrompt = negativePrompt 
           ? await translateToEnglish(negativePrompt, selectedLanguage)
           : '';
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        console.log("Translated prompt:", translatedPrompt);
+        console.log("Translated negative prompt:", translatedNegativePrompt);
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+
+        console.log("Sending generate request...");
+        console.log("API URL:", import.meta.env.VITE_API_URL);
+        
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/generate`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache"
           },
           signal: controller.signal,
           body: JSON.stringify({
@@ -83,13 +99,21 @@ export function ImageGenerator() {
         });
 
         clearTimeout(timeoutId);
+        console.log("Generate response status:", response.status);
 
         if (!response.ok) {
           const data = await response.json();
+          console.error("API Error:", data);
           throw new Error(data.error || `HTTP error! status: ${response.status}`);
         }
 
         const data: GenerateResponse = await response.json();
+        console.log("Generated images:", data.images?.length || 0);
+        
+        if (!data.images || data.images.length === 0) {
+          throw new Error("No images were generated");
+        }
+        
         setGeneratedImages(data.images);
         toast({
           title: "Success",
@@ -113,10 +137,18 @@ export function ImageGenerator() {
           if (retries === MAX_RETRIES - 1) {
             let errorMessage = "Failed to generate image. Please try again.";
             
-            if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+            if (error.message.includes("Failed to fetch") || 
+                error.message.includes("NetworkError") || 
+                error.message.includes("network")) {
               errorMessage = "Network error. Please check your internet connection and try again.";
             } else if (error.message.includes("timeout")) {
               errorMessage = "Request timed out. Please try again with a simpler prompt.";
+            } else if (error.message.includes("API key") || error.message.includes("401")) {
+              errorMessage = "API configuration error. Please check your API key.";
+            } else if (error.message.includes("busy") || error.message.includes("loading")) {
+              errorMessage = "The AI model is currently busy. Please try again in a few moments.";
+            } else if (error.message.includes("rate limit") || error.message.includes("429")) {
+              errorMessage = "Rate limit exceeded. Please try again later.";
             }
             
             toast({
@@ -127,6 +159,7 @@ export function ImageGenerator() {
           } else {
             // Wait before retrying with exponential backoff
             const delay = RETRY_DELAY * Math.pow(2, retries);
+            console.log(`Retrying in ${delay}ms...`);
             await sleep(delay);
           }
         }
