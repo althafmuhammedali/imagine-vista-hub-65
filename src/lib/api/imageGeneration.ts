@@ -2,8 +2,8 @@
 import { HfInference } from '@huggingface/inference';
 
 const TIMEOUT = 180000; // 3 minutes
-const MAX_RETRIES = 2;
-const RETRY_DELAY = 1000; // 1 second
+const MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY = 2000; // 2 seconds
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -12,18 +12,24 @@ export async function generateImage(
   negativePrompt?: string,
   numImages: number = 1
 ): Promise<string[]> {
-  if (!import.meta.env.VITE_HUGGINGFACE_API_KEY) {
+  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
+  if (!apiKey) {
     throw new Error("Hugging Face API key is not configured");
   }
 
-  const hf = new HfInference(import.meta.env.VITE_HUGGINGFACE_API_KEY);
+  console.log("Using Hugging Face API key:", apiKey.substring(0, 5) + "..." + apiKey.substring(apiKey.length - 4));
+  
+  const hf = new HfInference(apiKey);
   const images: string[] = [];
+  
+  // Create a more descriptive prompt if needed
+  const enhancedPrompt = enhancePrompt(prompt);
   
   try {
     for (let i = 0; i < numImages; i++) {
       let lastError: Error | null = null;
       
-      // Implement retry logic
+      // Implement retry logic with exponential backoff
       for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
         try {
           console.log(`Generating image ${i+1}/${numImages}, attempt ${attempt+1}/${MAX_RETRIES+1}`);
@@ -33,14 +39,14 @@ export async function generateImage(
             setTimeout(() => reject(new Error('Request timed out')), TIMEOUT);
           });
           
-          // Create the image generation promise
+          // Create the image generation promise with supported parameters only
           const imagePromise = hf.textToImage({
-            model: "strangerzonehf/Flux-Super-Realism-LoRA",
-            inputs: prompt,
+            model: "stabilityai/stable-diffusion-xl-base-1.0", // More reliable model
+            inputs: enhancedPrompt,
             parameters: {
               negative_prompt: negativePrompt || "",
               num_inference_steps: 30,
-              guidance_scale: 7.5,
+              guidance_scale: 7.5
             }
           });
           
@@ -51,8 +57,9 @@ export async function generateImage(
             throw new Error("No response from image generation API");
           }
           
-          // Convert blob to base64 data URL for consistent handling
-          const url = URL.createObjectURL(response);
+          // Convert blob to base64 data URL
+          const blob = new Blob([response], { type: 'image/png' });
+          const url = URL.createObjectURL(blob);
           images.push(url);
           console.log(`Successfully generated image ${i+1}`);
           break; // Success, exit retry loop
@@ -61,9 +68,17 @@ export async function generateImage(
           console.error(`Attempt ${attempt + 1} failed:`, error);
           lastError = error instanceof Error ? error : new Error('Unknown error');
           
+          // Check for specific errors that shouldn't be retried
+          if (error instanceof Error) {
+            if (error.message.includes("API key") || error.message.includes("401")) {
+              throw new Error("Invalid API key or authentication error");
+            }
+          }
+          
           if (attempt < MAX_RETRIES) {
-            const retryDelay = RETRY_DELAY * Math.pow(2, attempt); // Exponential backoff
-            console.log(`Retrying in ${retryDelay}ms...`);
+            // Calculate exponential backoff with jitter
+            const retryDelay = INITIAL_RETRY_DELAY * Math.pow(2, attempt) + Math.random() * 1000;
+            console.log(`Retrying in ${Math.round(retryDelay)}ms...`);
             await delay(retryDelay);
             continue;
           }
@@ -80,13 +95,14 @@ export async function generateImage(
     
     if (error instanceof Error) {
       if (error.message === 'Request timed out') {
-        throw new Error('Request timed out after 3 minutes');
+        throw new Error('Request timed out after 3 minutes. Please try with a simpler prompt.');
       }
       
       // Handle specific API errors
-      if (error.message.includes("rate limit")) {
-        throw new Error('Rate limit exceeded. Please try again later.');
+      if (error.message.includes("rate limit") || error.message.includes("429")) {
+        throw new Error('Rate limit exceeded. Please try again after a few minutes.');
       }
+      
       if (error.message.includes("model_busy") || error.message.includes("loading")) {
         throw new Error('Model is currently busy. Please try again in a few moments.');
       }
@@ -96,4 +112,25 @@ export async function generateImage(
     
     throw new Error('Failed to generate image');
   }
+}
+
+// Helper function to enhance prompts with quality descriptors
+function enhancePrompt(prompt: string): string {
+  const qualityDescriptors = [
+    "high quality",
+    "detailed",
+    "sharp",
+    "4k",
+    "high resolution"
+  ];
+  
+  // Only add descriptors if they're not already in the prompt
+  const lowerPrompt = prompt.toLowerCase();
+  const descriptorsToAdd = qualityDescriptors.filter(desc => !lowerPrompt.includes(desc.toLowerCase()));
+  
+  if (descriptorsToAdd.length > 0) {
+    return `${prompt}, ${descriptorsToAdd.join(", ")}`;
+  }
+  
+  return prompt;
 }

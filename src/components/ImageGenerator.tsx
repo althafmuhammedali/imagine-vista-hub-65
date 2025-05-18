@@ -1,11 +1,13 @@
 
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useState, useCallback } from "react";
+import { toast } from "@/hooks/use-toast";
 import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImageDisplay } from "@/components/ImageDisplay";
 import { PromptSuggestions } from "./image-generator/PromptSuggestions";
 import { VoiceInput } from "./VoiceInput";
 import { translateToEnglish } from "@/lib/api/translation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface GenerateResponse {
   images: string[];
@@ -22,26 +24,38 @@ export function ImageGenerator() {
   const [isLoading, setIsLoading] = useState(false);
   const [numImages, setNumImages] = useState(1);
   const [selectedLanguage, setSelectedLanguage] = useState("en");
-  const { toast } = useToast();
-
+  const [error, setError] = useState<string | null>(null);
+  
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  const checkNetworkConnectivity = async () => {
+  const checkNetworkConnectivity = useCallback(async () => {
     try {
       console.log("Checking network connectivity...");
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/health`, { 
+        signal: controller.signal,
         cache: 'no-cache',
         headers: { 'Cache-Control': 'no-cache' }
       });
-      console.log("Network check response:", response.ok);
+      
+      clearTimeout(timeoutId);
+      console.log("Network check response:", response.status, response.ok);
+      
+      if (!response.ok) {
+        const data = await response.json();
+        console.error("Health check failed:", data);
+      }
+      
       return response.ok;
     } catch (error) {
       console.error("Network connectivity check failed:", error);
       return false;
     }
-  };
+  }, []);
 
-  const handleGenerate = async () => {
+  const handleGenerate = useCallback(async () => {
     if (!prompt) {
       toast({
         title: "Error",
@@ -51,12 +65,26 @@ export function ImageGenerator() {
       return;
     }
 
+    setError(null);
+    
+    // Check if API key is configured
+    if (!import.meta.env.VITE_HUGGINGFACE_API_KEY) {
+      setError("Hugging Face API key is not configured. Please add it to your environment variables.");
+      toast({
+        title: "Configuration Error",
+        description: "API key is missing. Check the console for details.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Check network connectivity first
     const isConnected = await checkNetworkConnectivity();
     if (!isConnected) {
+      setError("Network connection issue. Please check your internet connection and try again.");
       toast({
         title: "Network Error",
-        description: "Please check your internet connection and try again",
+        description: "Cannot connect to the server. Please check your connection.",
         variant: "destructive",
       });
       return;
@@ -69,16 +97,19 @@ export function ImageGenerator() {
     while (retries < MAX_RETRIES) {
       try {
         console.log("Translating prompt if needed...");
-        const translatedPrompt = await translateToEnglish(prompt, selectedLanguage);
-        const translatedNegativePrompt = negativePrompt 
+        const translatedPrompt = selectedLanguage !== "en" 
+          ? await translateToEnglish(prompt, selectedLanguage)
+          : prompt;
+          
+        const translatedNegativePrompt = negativePrompt && selectedLanguage !== "en" 
           ? await translateToEnglish(negativePrompt, selectedLanguage)
-          : '';
+          : negativePrompt;
 
         console.log("Translated prompt:", translatedPrompt);
         console.log("Translated negative prompt:", translatedNegativePrompt);
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 190000); // 3 minutes + buffer
 
         console.log("Sending generate request...");
         console.log("API URL:", import.meta.env.VITE_API_URL);
@@ -104,7 +135,19 @@ export function ImageGenerator() {
         if (!response.ok) {
           const data = await response.json();
           console.error("API Error:", data);
-          throw new Error(data.error || `HTTP error! status: ${response.status}`);
+          
+          // Handle different error status codes
+          if (response.status === 429) {
+            throw new Error("Rate limit exceeded. Please try again later.");
+          } else if (response.status === 401) {
+            throw new Error("API configuration error. Please check your API key.");
+          } else if (response.status === 503) {
+            throw new Error("The AI model is currently busy. Please try again in a few moments.");
+          } else if (response.status === 504) {
+            throw new Error("Request timed out. Please try again with a simpler prompt.");
+          } else {
+            throw new Error(data.error || `HTTP error! status: ${response.status}`);
+          }
         }
 
         const data: GenerateResponse = await response.json();
@@ -115,6 +158,7 @@ export function ImageGenerator() {
         }
         
         setGeneratedImages(data.images);
+        setError(null);
         toast({
           title: "Success",
           description: "Image generated successfully!",
@@ -126,61 +170,66 @@ export function ImageGenerator() {
         
         if (error instanceof Error) {
           if (error.name === 'AbortError') {
+            setError("Request timed out. Please try again with a simpler prompt.");
             toast({
               title: "Timeout",
-              description: "Request timed out. Please try again.",
+              description: "Request timed out. Please try again with a simpler prompt.",
               variant: "destructive",
             });
             break;
           }
 
-          if (retries === MAX_RETRIES - 1) {
-            let errorMessage = "Failed to generate image. Please try again.";
-            
-            if (error.message.includes("Failed to fetch") || 
-                error.message.includes("NetworkError") || 
-                error.message.includes("network")) {
-              errorMessage = "Network error. Please check your internet connection and try again.";
-            } else if (error.message.includes("timeout")) {
-              errorMessage = "Request timed out. Please try again with a simpler prompt.";
-            } else if (error.message.includes("API key") || error.message.includes("401")) {
-              errorMessage = "API configuration error. Please check your API key.";
-            } else if (error.message.includes("busy") || error.message.includes("loading")) {
-              errorMessage = "The AI model is currently busy. Please try again in a few moments.";
-            } else if (error.message.includes("rate limit") || error.message.includes("429")) {
-              errorMessage = "Rate limit exceeded. Please try again later.";
+          if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+            if (retries < MAX_RETRIES - 1) {
+              console.log(`Network error, retrying (${retries + 1}/${MAX_RETRIES})...`);
+              await sleep(RETRY_DELAY * Math.pow(2, retries));
+              retries++;
+              continue;
+            } else {
+              setError("Network error. Please check your internet connection and try again.");
             }
-            
-            toast({
-              title: "Error",
-              description: errorMessage,
-              variant: "destructive",
-            });
           } else {
-            // Wait before retrying with exponential backoff
-            const delay = RETRY_DELAY * Math.pow(2, retries);
-            console.log(`Retrying in ${delay}ms...`);
-            await sleep(delay);
+            setError(error.message);
           }
+          
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          setError("An unexpected error occurred");
+          toast({
+            title: "Error",
+            description: "An unexpected error occurred",
+            variant: "destructive",
+          });
         }
         
-        retries++;
+        break;
       }
     }
     
     setIsLoading(false);
-  };
+  }, [prompt, negativePrompt, numImages, selectedLanguage, checkNetworkConnectivity]);
 
-  const handleVoiceInput = (text: string) => {
+  const handleVoiceInput = useCallback((text: string) => {
     setPrompt(text);
-  };
+  }, []);
 
-  const handleSuggestionClick = (suggestion: string) => {
+  const handleSuggestionClick = useCallback((suggestion: string) => {
     setPrompt(suggestion);
-  };
+  }, []);
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-4">
+      {error && (
+        <Alert variant="destructive" className="animate-in fade-in slide-in-from-top-5 duration-300">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-4">
           <ImageSettings
@@ -205,4 +254,4 @@ export function ImageGenerator() {
       </div>
     </div>
   );
-}
+}, []);
