@@ -1,84 +1,16 @@
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Heart, AlertTriangle } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { UPIDonationDialog } from "./payments/UPIDonationDialog";
 
 export function DonationNotification() {
   const { toast: uiToast } = useToast();
+  const [showUpiDialog, setShowUpiDialog] = useState(false);
 
   const handleDonateClick = () => {
-    if (typeof window.Razorpay === 'undefined') {
-      console.error('Razorpay SDK not loaded');
-      uiToast({
-        title: "Error",
-        description: "Payment system is not ready. Please refresh the page.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const options = {
-      key: "rzp_live_5JYQnqKRnKhB5y",
-      amount: 399 * 100,
-      currency: "INR",
-      name: "Support ComicForge AI",
-      description: "Support our AI service",
-      handler: function(response: any) {
-        if (response.razorpay_payment_id) {
-          console.log('Payment successful:', response.razorpay_payment_id);
-          uiToast({
-            title: "Thank you for your support!",
-            description: `Payment successful! ID: ${response.razorpay_payment_id}`,
-          });
-        }
-      },
-      prefill: {
-        name: "",
-        email: "",
-        contact: "",
-      },
-      theme: {
-        color: "#F59E0B",
-      },
-      modal: {
-        ondismiss: function() {
-          console.log('Payment modal closed');
-          uiToast({
-            title: "Payment Cancelled",
-            description: "You cancelled the payment. Feel free to try again!",
-          });
-        }
-      }
-    };
-
-    try {
-      const rzp = new window.Razorpay(options);
-      
-      rzp.on('payment.failed', function (response: any) {
-        console.error('Payment failed:', response.error);
-        uiToast({
-          title: "Payment Failed",
-          description: response.error.description || "Something went wrong with your payment. Please try again.",
-          variant: "destructive",
-        });
-      });
-
-      // Show payment warning toast
-      uiToast({
-        title: "Important Payment Information",
-        description: "Make sure you pay the amount quickly; otherwise, the payment will fail, and you'll have to wait 7 days to get the amount credited back to your account.",
-        variant: "destructive", // Changed from "warning" to "destructive" since it's not a supported variant
-      });
-
-      rzp.open();
-    } catch (error) {
-      console.error("Razorpay error:", error);
-      uiToast({
-        title: "Error",
-        description: "Failed to initialize payment. Please try again.",
-        variant: "destructive",
-      });
-    }
+    setShowUpiDialog(true);
   };
 
   useEffect(() => {
@@ -106,5 +38,9 @@ export function DonationNotification() {
     };
   }, []);
 
-  return null;
+  return (
+    <>
+      <UPIDonationDialog open={showUpiDialog} onOpenChange={setShowUpiDialog} />
+    </>
+  );
 }

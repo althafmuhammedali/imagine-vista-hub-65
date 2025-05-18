@@ -1,14 +1,11 @@
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Heart, IndianRupee } from "lucide-react";
-import { UPIDialog } from "./UPIDialog";
 import { useState } from "react";
+import { UPIDonationDialog } from "./UPIDonationDialog";
 
-interface PaymentDialogProps {
-  handleRazorpayClick: () => void;
-}
-
-export function PaymentDialog({ handleRazorpayClick }: PaymentDialogProps) {
+export function PaymentDialog() {
   const [showUPIDialog, setShowUPIDialog] = useState(false);
 
   return (
@@ -32,23 +29,15 @@ export function PaymentDialog({ handleRazorpayClick }: PaymentDialogProps) {
         <div className="flex justify-center gap-4 pt-4">
           <Button
             variant="outline"
-            onClick={handleRazorpayClick}
-            className="flex items-center gap-2 hover:bg-amber-500/20"
-          >
-            <IndianRupee className="h-4 w-4" />
-            Support (₹399)
-          </Button>
-          <Button
-            variant="outline"
             onClick={() => setShowUPIDialog(true)}
             className="flex items-center gap-2 hover:bg-amber-500/20"
           >
             <IndianRupee className="h-4 w-4" />
-            UPI Direct
+            Donate via UPI
           </Button>
         </div>
       </DialogContent>
-      <UPIDialog open={showUPIDialog} onOpenChange={setShowUPIDialog} />
+      <UPIDonationDialog open={showUPIDialog} onOpenChange={setShowUPIDialog} />
     </Dialog>
   );
 }
