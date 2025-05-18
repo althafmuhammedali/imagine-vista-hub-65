@@ -1,5 +1,6 @@
 
 import { HfInference } from '@huggingface/inference';
+import { generateNebiusImage } from './nebius';
 
 const TIMEOUT = 180000; // 3 minutes
 const MAX_RETRIES = 3;
@@ -7,11 +8,33 @@ const INITIAL_RETRY_DELAY = 2000; // 2 seconds
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+// Flag to control which API to use
+const USE_NEBIUS_API = true;
+
 export async function generateImage(
   prompt: string,
   negativePrompt?: string,
   numImages: number = 1
 ): Promise<string[]> {
+  // Use the Nebius API if flag is enabled
+  if (USE_NEBIUS_API) {
+    try {
+      console.log("Using Nebius API for image generation");
+      const images: string[] = [];
+      
+      for (let i = 0; i < numImages; i++) {
+        const imageUrl = await generateNebiusImage(enhancePrompt(prompt), negativePrompt);
+        images.push(imageUrl);
+      }
+      
+      return images;
+    } catch (error) {
+      console.error("Nebius API error, falling back to HuggingFace:", error);
+      // Fall back to original method if Nebius fails
+    }
+  }
+
+  // Original HuggingFace method
   const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
   if (!apiKey) {
     throw new Error("Hugging Face API key is not configured");
