@@ -1,29 +1,32 @@
+
 export const API_CONFIG = {
-  BASE_URL: "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev",
-  TIMEOUT: 180000, // 3 minutes
+  BASE_URL: "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
   HEADERS: {
-    "Content-Type": "application/json",
     "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
-    "Cache-Control": "no-cache",
-    "Pragma": "no-cache"
+    "Content-Type": "application/json",
   },
+  TIMEOUT: 180000, // 3 minutes
   DEFAULT_PARAMS: {
-    num_inference_steps: 30,
+    num_inference_steps: 50,
     guidance_scale: 7.5,
-    scheduler: "DPMSolverMultistepScheduler",
-    use_karras_sigmas: true,
-    clip_skip: 1,
-    tiling: false,
-    use_safetensors: true,
-    image_format: "png",
-    output_format: "png",
-    high_noise_frac: 0.8,
-    options: {
-      wait_for_model: true,
-      use_gpu: true,
-      quality: "maximum",
-      stream_output: false,
-      use_cache: false
-    }
-  }
+    scheduler: "DPMSolverMultistep",
+    safetensor: true,
+  },
+  DEFAULT_MODEL: "stabilityai/stable-diffusion-xl-base-1.0",
+  FALLBACK_MODEL: "runwayml/stable-diffusion-v1-5",
+};
+
+export const TRANSLATION_API = {
+  BASE_URL: "https://api-inference.huggingface.co/models/facebook/m2m100_418M",
+  HEADERS: {
+    "Authorization": `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+  TIMEOUT: 30000,
+};
+
+export const RATE_LIMIT = {
+  MAX_REQUESTS: 10,
+  TIME_WINDOW: 60 * 60 * 1000, // 1 hour
+  RESET_TIME: 60 * 60 * 1000, // 1 hour
 };

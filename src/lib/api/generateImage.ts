@@ -1,6 +1,7 @@
+
 import { RateLimiter } from './rateLimit/RateLimiter';
 import { RateLimitError } from './rateLimit/errors';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { API_CONFIG } from './config';
 import type { GenerateImageParams } from './types';
 
@@ -9,6 +10,7 @@ export async function generateImage({
   width = 1024,
   height = 1024,
   negativePrompt = "",
+  model = API_CONFIG.DEFAULT_MODEL,
 }: GenerateImageParams): Promise<string> {
   const userId = localStorage.getItem('userId') || 'anonymous';
   
@@ -35,6 +37,7 @@ export async function generateImage({
           negative_prompt: negativePrompt,
           width,
           height,
+          model: model,
         },
       }),
     });
@@ -52,8 +55,14 @@ export async function generateImage({
             description: "Model too busy, retrying with fallback model...",
             variant: "destructive",
           });
-          // Could implement fallback model logic here
-          throw new Error("Model too busy");
+          // Use fallback model
+          return generateImage({
+            prompt,
+            width,
+            height,
+            negativePrompt,
+            model: API_CONFIG.FALLBACK_MODEL,
+          });
         }
         
         throw new RateLimitError(30000); // 30 seconds default
