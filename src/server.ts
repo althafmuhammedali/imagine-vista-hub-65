@@ -1,5 +1,5 @@
 
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import { generateImage } from "./lib/api/imageGeneration";
 import path from "path";
@@ -22,12 +22,12 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Health check endpoint
-app.get("/health", (req, res) => {
+app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
 // Generate image endpoint
-app.post("/api/generate", async (req, res) => {
+app.post("/api/generate", async (req: Request, res: Response) => {
   try {
     const { prompt, negativePrompt, numImages = 1 } = req.body;
 
