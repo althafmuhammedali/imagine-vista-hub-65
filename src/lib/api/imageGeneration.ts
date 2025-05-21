@@ -19,7 +19,7 @@ export async function generateImage(
   // Use the Nebius API if flag is enabled
   if (USE_NEBIUS_API) {
     try {
-      console.log("Using Nebius API for image generation");
+      console.log("Using Nebius API for image generation with FLUX.1-schnell model");
       const images: string[] = [];
       
       for (let i = 0; i < numImages; i++) {

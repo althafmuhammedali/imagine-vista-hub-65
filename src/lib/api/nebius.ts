@@ -47,7 +47,7 @@ export async function generateNebiusImage(
     const imageBlob = await query({
       response_format: "b64_json",
       prompt: userPrompt,
-      model: "black-forest-labs/flux-dev",
+      model: "black-forest-labs/FLUX.1-schnell", // Updated to use FLUX.1-schnell
       negative_prompt: negativePrompt,
     });
 

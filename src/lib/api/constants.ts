@@ -1,5 +1,6 @@
+
 export const API_ENDPOINTS = {
-  PRIMARY: "black-forest-labs/FLUX.1-dev",
+  PRIMARY: "black-forest-labs/FLUX.1-schnell", // Updated to use FLUX.1-schnell
   FALLBACK: "runwayml/stable-diffusion-v1-5",
 };
 

@@ -1,3 +1,4 @@
+
 import { generateImage } from "@/lib/api/imageGeneration";
 import type { Request, Response } from "express";
 
