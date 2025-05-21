@@ -16,7 +16,7 @@ export async function query(data: {
     "https://router.huggingface.co/nebius/v1/images/generations",
     {
       headers: {
-        Authorization: "Bearer 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",
+        Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_API_KEY}`,
         "Content-Type": "application/json",
       },
       method: "POST",
