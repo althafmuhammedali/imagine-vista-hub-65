@@ -1,47 +1,40 @@
 
-import express, { Request, Response } from "express";
-import cors from "cors";
-import { generateImage } from "./lib/api/imageGeneration";
-import path from "path";
-import rateLimit from "express-rate-limit";
+import express from 'express';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import * as path from 'path';
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(cors());
-app.use(express.json());
-
-// Rate limiting middleware
+// Configure rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  standardHeaders: true,
-  legacyHeaders: false,
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
+// Apply middleware
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
 app.use(limiter);
 
-// Health check endpoint
-app.get("/health", (req: Request, res: Response) => {
-  res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
+// Define API routes
+app.post('/api/generate', async (req, res) => {
+  // Implementation for image generation endpoint
+  res.json({ message: 'Image generation endpoint' });
 });
 
-// Generate image endpoint
-app.post("/api/generate", async (req: Request, res: Response) => {
-  try {
-    const { prompt, negativePrompt, numImages = 1 } = req.body;
-
-    if (!prompt) {
-      return res.status(400).json({ error: "Prompt is required" });
-    }
-
-    const images = await generateImage(prompt, negativePrompt, numImages);
-    return res.status(200).json({ images });
-  } catch (error) {
-    console.error("Image generation error:", error);
-    return res.status(500).json({ error: "Failed to generate image" });
-  }
-});
+// Serve static files from the 'dist' directory in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'dist')));
+  
+  // All other requests return the React app
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
+  });
+}
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

@@ -1,10 +1,10 @@
+
 import { ImageGenerator } from "@/components/ImageGenerator";
 import { SocialLinks } from "@/components/SocialLinks";
 import { AuthButtons } from "@/components/AuthButtons";
 import { ChatBot } from "@/components/chat/ChatBot";
 import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
-import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
 import { Info } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Hero } from "@/components/home/Hero";
@@ -86,8 +86,6 @@ const Index = () => {
           <ChatBot />
         </div>
       </div>
-      
-      <DynamicAdDisplay />
     </div>
   );
 };
