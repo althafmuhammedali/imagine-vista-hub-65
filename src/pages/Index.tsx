@@ -1,91 +1,61 @@
-
 import { ImageGenerator } from "@/components/ImageGenerator";
 import { SocialLinks } from "@/components/SocialLinks";
 import { AuthButtons } from "@/components/AuthButtons";
 import { ChatBot } from "@/components/chat/ChatBot";
 import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
-import { Info } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Hero } from "@/components/home/Hero";
-import { FeedbackForm } from "@/components/home/FeedbackForm";
-import { ImageHistory } from "@/components/image-generator/ImageHistory";
-import { ImageStats } from "@/components/image-generator/ImageStats";
-import { ImageShortcuts } from "@/components/image-generator/ImageShortcuts";
-import { Suspense } from "react";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { ProgramInfoPopup } from "@/components/ProgramInfoPopup";
+import { PlatformBudget } from "@/components/PlatformBudget";
+import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
+import { Sparkles, Heart } from "lucide-react";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/90 to-background animate-gradient-x">
-      <Alert className="sticky top-0 z-50 rounded-none border-none bg-amber-500/10 backdrop-blur-sm">
-        <Info className="h-4 w-4 text-amber-400" />
-        <AlertDescription className="text-amber-200 text-xs sm:text-sm">
-         The platform is currently facing some issues with generating AI images. Your support can help make it a more powerful tool, accessible to everyone. Any donation, no matter the amount, will make a difference
-        </AlertDescription>
-      </Alert>
-      
+    <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a] animate-gradient-x">
       <div className="min-h-screen bg-black/5 backdrop-blur-sm">
-        <div className="fixed top-4 right-4 z-40 flex items-center gap-2">
-          <ProgramInfoPopup />
-          <AuthButtons />
+        <AuthButtons />
+        <div className="container max-w-6xl py-4 sm:py-6 md:py-12 px-4 sm:px-6 lg:px-8">
+          <div className="space-y-4 md:space-y-6 text-center mb-6 sm:mb-8 md:mb-16 animate-fade-in">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold tracking-tighter bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent animate-gradient-x">
+                ComicForge AI
+              </h1>
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-amber-400 animate-pulse" />
+            </div>
+            <div className="flex items-center justify-center gap-2 transition-all hover:scale-105">
+              <Heart className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-red-500 animate-pulse" />
+              <span className="text-xs sm:text-sm text-gray-400">Standing with Palestine</span>
+            </div>
+            <p className="text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed text-gray-400 px-4">
+              Transform your imagination into stunning masterpieces with our state-of-the-art AI technology
+            </p>
+          </div>
+
+          <div className="space-y-6 sm:space-y-8 md:space-y-12 lg:space-y-16">
+            <div className="transition-all duration-500 hover:scale-[1.01]">
+              <ImageGenerator />
+            </div>
+
+            <div className="transition-all duration-500 hover:scale-[1.01]">
+              <FAQ />
+            </div>
+
+            <div className="transition-all duration-500 hover:scale-[1.01]">
+              <Documentation />
+            </div>
+
+            <div className="transition-all duration-500 hover:scale-[1.01]">
+              <PlatformBudget />
+            </div>
+
+            <div>
+              <SocialLinks />
+            </div>
+          </div>
         </div>
-
-        <div className="container max-w-7xl mx-auto py-4 sm:py-6 md:py-8 lg:py-12 px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12 md:space-y-16">
-          <Suspense fallback={<LoadingSpinner />}>
-            <Hero />
-          </Suspense>
-
-          <section className="space-y-8 sm:space-y-12">
-            <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-              <Suspense fallback={<LoadingSpinner />}>
-                <ImageGenerator />
-              </Suspense>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Suspense fallback={<LoadingSpinner />}>
-                <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all">
-                  <ImageHistory />
-                </div>
-                <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all">
-                  <ImageStats />
-                </div>
-                <div className="bg-black/20 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all">
-                  <ImageShortcuts />
-                </div>
-              </Suspense>
-            </div>
-
-            <div className="grid gap-8 sm:gap-12">
-              <Suspense fallback={<LoadingSpinner />}>
-                <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-                  <FAQ />
-                </div>
-
-                <div className="transition-all duration-500 hover:scale-[1.01] shadow-xl">
-                  <Documentation />
-                </div>
-              </Suspense>
-            </div>
-
-            <div className="bg-black/10 backdrop-blur-sm rounded-lg p-6 shadow-lg">
-              <Suspense fallback={<LoadingSpinner />}>
-                <FeedbackForm />
-              </Suspense>
-            </div>
-          </section>
-
-          <footer>
-            <SocialLinks />
-          </footer>
-        </div>
-
-        <div className="fixed bottom-4 right-4 z-40">
-          <ChatBot />
-        </div>
+        <ChatBot />
       </div>
+      <DynamicAdDisplay />
     </div>
   );
 };

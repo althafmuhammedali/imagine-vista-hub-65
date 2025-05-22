@@ -1,17 +1,12 @@
-import React, { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App';
+import { lazy, Suspense } from 'react';
 import './index.css';
 
-// Initialize root element
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error('Failed to find the root element');
-}
+// Lazy load the main App component
+const App = lazy(() => import('./App'));
 
-const root = createRoot(rootElement);
-
-root.render(
+// Create root and render with Suspense
+createRoot(document.getElementById('root')!).render(
   <Suspense fallback={
     <div className="min-h-screen flex items-center justify-center">
       <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-amber-500"></div>

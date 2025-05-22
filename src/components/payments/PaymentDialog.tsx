@@ -1,11 +1,14 @@
-
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Heart, IndianRupee } from "lucide-react";
+import { UPIDialog } from "./UPIDialog";
 import { useState } from "react";
-import { UPIDonationDialog } from "./UPIDonationDialog";
 
-export function PaymentDialog() {
+interface PaymentDialogProps {
+  handleRazorpayClick: () => void;
+}
+
+export function PaymentDialog({ handleRazorpayClick }: PaymentDialogProps) {
   const [showUPIDialog, setShowUPIDialog] = useState(false);
 
   return (
@@ -21,23 +24,31 @@ export function PaymentDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Support ComicForge AI</DialogTitle>
+          <DialogTitle>Choose Payment Method</DialogTitle>
           <DialogDescription>
-            Choose your preferred payment method to support our service
+            Support ComicForge AI by making a donation
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-center gap-4 pt-4">
           <Button
             variant="outline"
-            onClick={() => setShowUPIDialog(true)}
-            className="flex items-center gap-2 hover:bg-amber-500/20"
+            onClick={handleRazorpayClick}
+            className="flex items-center gap-2"
           >
             <IndianRupee className="h-4 w-4" />
-            Donate via UPI
+            Razorpay (₹100)
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowUPIDialog(true)}
+            className="flex items-center gap-2"
+          >
+            <IndianRupee className="h-4 w-4" />
+            UPI Direct
           </Button>
         </div>
       </DialogContent>
-      <UPIDonationDialog open={showUPIDialog} onOpenChange={setShowUPIDialog} />
+      <UPIDialog open={showUPIDialog} onOpenChange={setShowUPIDialog} />
     </Dialog>
   );
 }

@@ -6,8 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { ResponsiveContainer } from "@/components/ResponsiveContainer";
-import { DonationNotification } from "@/components/DonationNotification";
 
 // Lazy load components
 const Index = lazy(() => import("./pages/Index"));
@@ -36,36 +34,33 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <DonationNotification />
         <BrowserRouter>
-          <ResponsiveContainer>
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <Suspense fallback={<LoadingSpinner />}>
-                    <Index />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="/sign-in/*"
-                element={
-                  <Suspense fallback={<LoadingSpinner />}>
-                    <SignIn routing="path" path="/sign-in" />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="/sign-up/*"
-                element={
-                  <Suspense fallback={<LoadingSpinner />}>
-                    <SignUp routing="path" path="/sign-up" />
-                  </Suspense>
-                }
-              />
-            </Routes>
-          </ResponsiveContainer>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Index />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/sign-in/*"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <SignIn routing="path" path="/sign-in" />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/sign-up/*"
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <SignUp routing="path" path="/sign-up" />
+                </Suspense>
+              }
+            />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

@@ -1,49 +1,17 @@
-import { ImageIcon, Download, Upload } from "lucide-react";
+import { ImageIcon, Download } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { SocialShareButton } from "./SocialShareButton";
-import { useMemo } from "react";
 
 interface ImagePreviewProps {
   generatedImage: string | null;
   isLoading: boolean;
   error?: string;
-  prompt?: string;
 }
 
-export function ImagePreview({ generatedImage, isLoading, error, prompt = "" }: ImagePreviewProps) {
-  const getStyleFromPrompt = useMemo(() => {
-    const promptLower = prompt.toLowerCase();
-    
-    const styles = {
-      fantasy: promptLower.includes('fantasy') || promptLower.includes('magical') || promptLower.includes('dragon'),
-      scifi: promptLower.includes('sci-fi') || promptLower.includes('futuristic') || promptLower.includes('cyber'),
-      nature: promptLower.includes('nature') || promptLower.includes('landscape') || promptLower.includes('forest'),
-      portrait: promptLower.includes('portrait') || promptLower.includes('character') || promptLower.includes('person'),
-      abstract: promptLower.includes('abstract') || promptLower.includes('surreal') || promptLower.includes('artistic'),
-    };
-
-    if (styles.fantasy) {
-      return "bg-gradient-to-br from-purple-900/40 via-indigo-900/40 to-blue-900/40 border-indigo-800/50";
-    }
-    if (styles.scifi) {
-      return "bg-gradient-to-br from-cyan-900/40 via-blue-900/40 to-purple-900/40 border-cyan-800/50";
-    }
-    if (styles.nature) {
-      return "bg-gradient-to-br from-green-900/40 via-emerald-900/40 to-teal-900/40 border-green-800/50";
-    }
-    if (styles.portrait) {
-      return "bg-gradient-to-br from-amber-900/40 via-orange-900/40 to-red-900/40 border-amber-800/50";
-    }
-    if (styles.abstract) {
-      return "bg-gradient-to-br from-pink-900/40 via-purple-900/40 to-indigo-900/40 border-pink-800/50";
-    }
-    
-    return "bg-black/20 border-gray-800/50";
-  }, [prompt]);
-
+export function ImagePreview({ generatedImage, isLoading, error }: ImagePreviewProps) {
   const handleDownload = async () => {
     if (!generatedImage) return;
 
@@ -72,95 +40,42 @@ export function ImagePreview({ generatedImage, isLoading, error, prompt = "" }: 
     }
   };
 
-  const handleUpload = async () => {
-    if (!generatedImage) return;
-
-    try {
-      toast({
-        title: "Uploading",
-        description: "Please wait while we upload your image...",
-      });
-
-      const response = await fetch(generatedImage);
-      const blob = await response.blob();
-      const formData = new FormData();
-      formData.append('image', blob, `comicforgeai_${Date.now()}.png`);
-      formData.append('key', '73ffc7abc53c74281c83c278d6a9a82b');
-
-      const uploadResponse = await fetch('https://api.imgbb.com/1/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await uploadResponse.json();
-
-      if (data.success) {
-        toast({
-          title: "Success",
-          description: "Image uploaded successfully!",
-        });
-      } else {
-        throw new Error(data.error?.message || 'Upload failed');
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to upload image",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
-    <Card className={`relative overflow-hidden backdrop-blur-xl shadow-2xl min-h-[300px] sm:min-h-[400px] md:min-h-[450px] group transition-all duration-700 hover:shadow-amber-500/20 ${getStyleFromPrompt}`}>
+    <Card className="relative overflow-hidden backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl min-h-[300px] md:min-h-[400px] group transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
       {error && (
-        <Alert variant="destructive" className="m-2 sm:m-4 animate-fade-in">
+        <Alert variant="destructive" className="m-4 animate-fade-in">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       
       {isLoading ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="text-amber-400 animate-pulse text-sm sm:text-base md:text-lg">Creating your masterpiece...</div>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="text-amber-400 animate-pulse">Generating your masterpiece...</div>
         </div>
       ) : generatedImage ? (
-        <div className="h-full p-3 sm:p-4 md:p-6 animate-fade-in relative">
+        <div className="h-full p-4 animate-fade-in relative">
           <img
             src={generatedImage}
             alt="Generated artwork"
-            className="w-full h-full object-contain rounded-lg transition-all duration-700 group-hover:scale-105 pointer-events-none shadow-2xl"
-            loading="lazy"
-            decoding="async"
+            className="w-full h-full object-contain rounded-lg transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 right-4 sm:right-6 md:right-8 flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <Button
-              onClick={handleUpload}
-              className="bg-black/70 hover:bg-black/90 backdrop-blur-sm transition-all duration-300 text-xs sm:text-sm"
-              size="sm"
-            >
-              <Upload className="w-4 h-4 mr-1 sm:mr-2" />
-              Upload
-            </Button>
-            <Button
-              onClick={handleDownload}
-              className="bg-black/70 hover:bg-black/90 backdrop-blur-sm transition-all duration-300 text-xs sm:text-sm"
-              size="sm"
-            >
-              <Download className="w-4 h-4 mr-1 sm:mr-2" />
-              Download
-            </Button>
-          </div>
+          <Button
+            onClick={handleDownload}
+            className="absolute bottom-6 right-6 bg-black/50 hover:bg-black/70 backdrop-blur-sm"
+            size="sm"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Download PNG
+          </Button>
           <SocialShareButton imageUrl={generatedImage} />
         </div>
       ) : !error && (
-        <div className="flex items-center justify-center h-full min-h-[300px] sm:min-h-[400px] md:min-h-[450px] text-gray-400">
-          <div className="text-center space-y-4 sm:space-y-6 p-4 sm:p-6 animate-fade-in">
-            <ImageIcon className="w-12 h-12 sm:w-16 sm:h-16 mx-auto opacity-50 text-amber-400" />
+        <div className="flex items-center justify-center h-full min-h-[300px] md:min-h-[400px] text-gray-400">
+          <div className="text-center space-y-4 p-4 animate-fade-in">
+            <ImageIcon className="w-12 h-12 mx-auto opacity-50" />
             <div>
-              <p className="text-xl sm:text-2xl font-medium text-amber-400 mb-2">Your Canvas Awaits</p>
-              <p className="text-sm sm:text-base text-gray-500 max-w-md mx-auto">
-                Enter your prompt and let our AI bring your vision to life with stunning detail
-              </p>
+              <p className="text-lg font-medium text-amber-400">Your Canvas Awaits</p>
+              <p className="text-sm text-gray-500 max-w-md mx-auto">Enter your prompt and let our AI bring your vision to life</p>
             </div>
           </div>
         </div>

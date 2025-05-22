@@ -2,28 +2,22 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
       center: true,
-      padding: {
-        DEFAULT: 'clamp(1rem, 5vw, 2rem)',
-      },
+      padding: "2rem",
       screens: {
-        xs: '360px',
-        sm: '640px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
-        '2xl': '1400px',
+        "2xl": "1400px",
       },
     },
     extend: {
-      fontFamily: {
-        sans: ['Roboto', 'sans-serif'],
-        heading: ['Montserrat', 'sans-serif'],
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -58,42 +52,35 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-      },
-      spacing: {
-        'safe-top': 'env(safe-area-inset-top)',
-        'safe-bottom': 'env(safe-area-inset-bottom)',
-        'safe-left': 'env(safe-area-inset-left)',
-        'safe-right': 'env(safe-area-inset-right)',
-        'touch-target': '44px', // Minimum touch target size
-      },
-      fontSize: {
-        'fluid-xs': 'clamp(0.75rem, 1.5vw, 0.875rem)',
-        'fluid-sm': 'clamp(0.875rem, 2vw, 1rem)',
-        'fluid-base': 'clamp(1rem, 2.5vw, 1.125rem)',
-        'fluid-lg': 'clamp(1.125rem, 3vw, 1.25rem)',
-        'fluid-xl': 'clamp(1.25rem, 3.5vw, 1.5rem)',
-        'fluid-2xl': 'clamp(1.5rem, 4vw, 2rem)',
-        'fluid-3xl': 'clamp(1.875rem, 5vw, 2.25rem)',
+        gradient: {
+          start: "#8B5CF6",
+          end: "#6366F1",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      height: {
-        screen: ['100vh', '100dvh'],
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        shimmer: {
+          "100%": {
+            transform: "translateX(100%)",
+          },
+        },
       },
-      minHeight: {
-        screen: ['100vh', '100dvh'],
-        'touch-target': '44px',
-      },
-      maxHeight: {
-        screen: ['100vh', '100dvh'],
-      },
-      screens: {
-        'xs': '360px',
-        'touch': {'raw': '(hover: none) and (pointer: coarse)'},
-        'hover': {'raw': '(hover: hover)'},
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        shimmer: "shimmer 2s infinite",
       },
     },
   },

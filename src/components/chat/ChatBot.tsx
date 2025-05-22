@@ -30,13 +30,14 @@ async function getChatResponse(message: string): Promise<string> {
     throw new Error("Missing Hugging Face API key");
   }
 
+  // Enhance the prompt with art-specific context
   const enhancedMessage = `As an AI art assistant, help with this request: ${message}. 
     If it's about prompts, suggest specific details and artistic elements.
     If it's about techniques, explain clearly with examples.
     If it's troubleshooting, provide step-by-step solutions.`;
 
   const response = await fetch(
-    "https://api-inference.huggingface.co/models/HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
     {
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -46,19 +47,13 @@ async function getChatResponse(message: string): Promise<string> {
       body: JSON.stringify({ 
         inputs: enhancedMessage,
         options: {
-          wait_for_model: true,
-          use_cache: true,
-          temperature: 0.7,
-          max_new_tokens: 250
+          wait_for_model: true
         }
       }),
     }
   );
 
   if (!response.ok) {
-    if (response.status === 429) {
-      throw new Error("Server is currently at full capacity. Please try again in a few moments.");
-    }
     throw new Error("Failed to get response from AI");
   }
 
@@ -98,6 +93,7 @@ export function ChatBot() {
     setIsLoading(true);
 
     try {
+      // First check for quick suggestions
       const quickResponse = getQuickSuggestion(userMessage);
       if (quickResponse) {
         setMessages((prev) => [...prev, { text: quickResponse, isBot: true }]);
@@ -108,7 +104,7 @@ export function ChatBot() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to get AI response. Please try again.",
+        description: "Failed to get AI response. Please try again.",
         variant: "destructive",
       });
       console.error("Chat error:", error);

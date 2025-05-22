@@ -1,57 +1,34 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { QrCodeIcon, Copy, AlertTriangle } from "lucide-react";
+import { QrCodeIcon } from "lucide-react";
 
 interface UPIDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const UPI_ID = "adnanmuhammad4393@okicici";
-
 export function UPIDialog({ open, onOpenChange }: UPIDialogProps) {
   const { toast } = useToast();
+  const UPI_ID = "adnanmuhammad4393@okicici";
 
-  const handleQRClick = async () => {
+  const handleUPIClick = async () => {
     try {
-      const response = await fetch("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + UPI_ID);
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'upi-qr.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        
+      const upiUrl = `upi://pay?pa=${UPI_ID}&pn=ComicForge%20AI&tn=Donation`;
+      
+      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        window.location.href = upiUrl;
+      } else {
+        await navigator.clipboard.writeText(UPI_ID);
         toast({
-          title: "QR Code Downloaded",
-          description: "You can now scan it with your UPI app.",
+          title: "UPI ID Copied!",
+          description: "Open your UPI app and paste the ID to donate.",
         });
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate QR code. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleCopyClick = async () => {
-    try {
-      await navigator.clipboard.writeText(UPI_ID);
-      toast({
-        title: "UPI ID Copied!",
-        description: "You can now paste it in your UPI app.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to copy UPI ID. Please try manually.",
+        description: "Failed to process UPI payment. Please try again.",
         variant: "destructive",
       });
     }
@@ -59,49 +36,31 @@ export function UPIDialog({ open, onOpenChange }: UPIDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-black border border-gray-800">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-white">UPI Payment</DialogTitle>
-          <DialogDescription className="text-gray-400">
-            Make a direct UPI payment to support us
+          <DialogTitle>UPI Payment Details</DialogTitle>
+          <DialogDescription>
+            Support ComicForge AI with any amount you wish to donate
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="p-4 bg-gray-900 rounded-lg">
-            <p className="text-gray-400 mb-2">UPI ID:</p>
-            <div className="flex items-center justify-between gap-2 bg-black p-2 rounded border border-gray-800">
-              <p className="text-lg font-mono font-semibold text-white select-all">{UPI_ID}</p>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleCopyClick}
-                className="hover:bg-gray-800 text-white"
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-            </div>
+          <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">UPI ID:</p>
+            <p className="text-lg font-mono font-semibold">{UPI_ID}</p>
           </div>
-
-          <div className="flex items-start gap-2 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
-            <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
-            <div className="space-y-1 text-sm">
-              <p className="text-amber-500 font-medium">Important Payment Information</p>
-              <p className="text-gray-400">Make sure you pay the amount quickly; otherwise, the payment will fail, and you'll have to wait 7 days to get the amount credited back to your account.</p>
-              <p className="text-gray-400">Please ensure that you have made the payment through your UPI ID or number. Do not scan the QR code.</p>
-            </div>
-          </div>
-
-          <div className="text-sm text-gray-400 space-y-2">
+          <div className="text-sm text-gray-500 dark:text-gray-400 space-y-2">
             <p>• You can donate any amount you wish</p>
-            <p>• Your support helps us maintain and improve our services</p>
+            <p>• Your support helps maintain and improve ComicForge AI</p>
+            <p>• All donations are greatly appreciated</p>
           </div>
-          <Button
-            variant="outline"
-            onClick={handleQRClick}
-            className="w-full border-gray-800 text-white hover:bg-gray-800 hover:text-white"
+          <Button 
+            onClick={handleUPIClick} 
+            className="w-full flex items-center justify-center gap-2"
           >
-            <QrCodeIcon className="mr-2 h-4 w-4" />
-            Download QR Code
+            <QrCodeIcon className="h-4 w-4" />
+            {/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) 
+              ? "Open UPI App" 
+              : "Copy UPI ID"}
           </Button>
         </div>
       </DialogContent>
