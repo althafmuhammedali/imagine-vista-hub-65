@@ -1,3 +1,4 @@
+
 import { Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { PromptExampleCard } from "./prompt-examples/PromptExampleCard";
 import { ResolutionSelect } from "./settings/ResolutionSelect";
 import { GenerateButton } from "./settings/GenerateButton";
+import { ApiKeyInput } from "./settings/ApiKeyInput";
 
 const promptExamples = [
   {
@@ -69,10 +71,13 @@ export function ImageSettings({
     <Card className="backdrop-blur-sm bg-black/10 border-gray-800 shadow-xl">
       <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         <CardHeader className="p-0">
-          <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl text-amber-300">
-            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
-            Create Your Masterpiece
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl text-amber-300">
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+              Create Your Masterpiece
+            </CardTitle>
+            <ApiKeyInput />
+          </div>
           <CardDescription className="text-sm sm:text-base text-gray-400">
             Let your imagination run wild and create stunning artwork
           </CardDescription>

@@ -1,5 +1,6 @@
 
 import { toast } from "@/components/ui/use-toast";
+import { HfInference } from '@huggingface/inference';
 
 export interface GenerateImageParams {
   prompt: string;
@@ -12,6 +13,25 @@ export interface GenerateImageParams {
 const MODELS = {
   PRIMARY: "black-forest-labs/FLUX.1-dev",
   FALLBACK: "runwayml/stable-diffusion-v1-5",
+};
+
+// Create a storage key for the API key
+const HF_API_KEY_STORAGE = "huggingface_api_key";
+
+// Get stored API key or use the default one as fallback
+const getApiKey = (): string => {
+  const storedKey = localStorage.getItem(HF_API_KEY_STORAGE);
+  return storedKey || import.meta.env.VITE_HUGGINGFACE_API_KEY || "";
+};
+
+// Set API key in local storage
+export const setApiKey = (key: string): void => {
+  localStorage.setItem(HF_API_KEY_STORAGE, key);
+};
+
+// Check if user has set their own API key
+export const hasCustomApiKey = (): boolean => {
+  return !!localStorage.getItem(HF_API_KEY_STORAGE);
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -68,7 +88,7 @@ export async function generateImage({
   negativePrompt = "",
   seed,
 }: GenerateImageParams): Promise<string> {
-  const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
+  const apiKey = getApiKey();
   
   if (!apiKey) {
     throw new Error("Missing API key");
@@ -78,6 +98,9 @@ export async function generateImage({
   const timeoutId = setTimeout(() => controller.abort(), 60000);
 
   try {
+    // Initialize the InferenceClient with provider="auto"
+    const inference = new HfInference(apiKey, { provider: "auto" });
+
     // Enhanced prompt with art-specific elements
     const enhancedPrompt = `${prompt}, masterpiece, best quality, ultra detailed, photorealistic, 8k uhd, high quality, professional photography, cinematic lighting, dramatic atmosphere, hyperdetailed, octane render, unreal engine 5, ray tracing, subsurface scattering, volumetric lighting, high dynamic range, award winning photo`;
     const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers, watermark, signature, text, jpeg artifacts, compression artifacts`;
@@ -85,51 +108,41 @@ export async function generateImage({
     console.log("Generating image with prompt:", prompt);
     console.log("Using model:", MODELS.PRIMARY);
     
-    const makeRequest = (modelId: string) => fetch(
-      `https://api-inference.huggingface.co/models/${modelId}`,
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          inputs: enhancedPrompt,
-          parameters: {
-            negative_prompt: enhancedNegativePrompt,
-            width: Math.min(width, 1024),
-            height: Math.min(height, 1024),
-            num_inference_steps: 150,
-            guidance_scale: 15,
-            seed: seed || Math.floor(Math.random() * 1000000),
-            num_images_per_prompt: 1,
-            scheduler: "EulerAncestralDiscreteScheduler",
-            use_karras_sigmas: true,
-            clip_skip: 2,
-            tiling: false,
-            use_safetensors: true,
-            options: {
-              wait_for_model: true,
-              use_gpu: true,
-              high_quality_generation: true
-            }
-          }
-        }),
-        signal: controller.signal
-      }
-    );
-
     try {
-      console.log("Attempting primary model...");
-      const response = await retryWithBackoff(() => makeRequest(MODELS.PRIMARY));
-      const blob = await response.blob();
+      console.log("Attempting primary model with InferenceClient...");
+      const blob = await inference.textToImage({
+        model: MODELS.PRIMARY,
+        inputs: enhancedPrompt,
+        parameters: {
+          negative_prompt: enhancedNegativePrompt,
+          width: Math.min(width, 1024),
+          height: Math.min(height, 1024),
+          num_inference_steps: 150,
+          guidance_scale: 15,
+          seed: seed || Math.floor(Math.random() * 1000000),
+          num_images_per_prompt: 1,
+          scheduler: "EulerAncestralDiscreteScheduler",
+        }
+      });
+      
       return URL.createObjectURL(blob);
     } catch (primaryError) {
       console.error("Primary model error:", primaryError);
       
       console.log("Attempting fallback model...");
-      const response = await retryWithBackoff(() => makeRequest(MODELS.FALLBACK));
-      const blob = await response.blob();
+      const blob = await inference.textToImage({
+        model: MODELS.FALLBACK,
+        inputs: enhancedPrompt,
+        parameters: {
+          negative_prompt: enhancedNegativePrompt,
+          width: Math.min(width, 1024),
+          height: Math.min(height, 1024),
+          num_inference_steps: 50,
+          guidance_scale: 7.5,
+          seed: seed || Math.floor(Math.random() * 1000000)
+        }
+      });
+      
       return URL.createObjectURL(blob);
     }
   } catch (error) {
