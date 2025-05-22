@@ -1,3 +1,4 @@
+
 import { toast } from "@/components/ui/use-toast";
 
 export interface GenerateImageParams {
@@ -42,7 +43,7 @@ async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Pr
       }
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ error: "Failed to generate image" }));
         throw new Error(errorData.error || "Failed to generate image");
       }
 
@@ -77,9 +78,12 @@ export async function generateImage({
   const timeoutId = setTimeout(() => controller.abort(), 60000);
 
   try {
+    // Enhanced prompt with art-specific elements
     const enhancedPrompt = `${prompt}, masterpiece, best quality, ultra detailed, photorealistic, 8k uhd, high quality, professional photography, cinematic lighting, dramatic atmosphere, hyperdetailed, octane render, unreal engine 5, ray tracing, subsurface scattering, volumetric lighting, high dynamic range, award winning photo`;
     const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers, watermark, signature, text, jpeg artifacts, compression artifacts`;
 
+    console.log("Generating image with prompt:", prompt);
+    
     const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
       {
@@ -115,12 +119,14 @@ export async function generateImage({
     );
 
     try {
+      console.log("Attempting primary model...");
       const response = await retryWithBackoff(() => makeRequest(MODELS.PRIMARY));
       const blob = await response.blob();
       return URL.createObjectURL(blob);
     } catch (primaryError) {
       console.error("Primary model error:", primaryError);
       
+      console.log("Attempting fallback model...");
       const response = await retryWithBackoff(() => makeRequest(MODELS.FALLBACK));
       const blob = await response.blob();
       return URL.createObjectURL(blob);

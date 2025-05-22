@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,35 +31,44 @@ async function getChatResponse(message: string): Promise<string> {
     throw new Error("Missing Hugging Face API key");
   }
 
+  console.log("Sending chat request to Hugging Face API");
+
   // Enhance the prompt with art-specific context
   const enhancedMessage = `As an AI art assistant, help with this request: ${message}. 
     If it's about prompts, suggest specific details and artistic elements.
     If it's about techniques, explain clearly with examples.
     If it's troubleshooting, provide step-by-step solutions.`;
 
-  const response = await fetch(
-    "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({ 
-        inputs: enhancedMessage,
-        options: {
-          wait_for_model: true
-        }
-      }),
+  try {
+    const response = await fetch(
+      "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({ 
+          inputs: enhancedMessage,
+          options: {
+            wait_for_model: true
+          }
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error("API error:", errorData);
+      throw new Error(errorData.error || "Failed to get response from AI");
     }
-  );
 
-  if (!response.ok) {
-    throw new Error("Failed to get response from AI");
+    const result = await response.json();
+    return result[0].generated_text;
+  } catch (error) {
+    console.error("Chat response error:", error);
+    throw error;
   }
-
-  const result = await response.json();
-  return result[0].generated_text;
 }
 
 function getQuickSuggestion(message: string): string | null {
@@ -126,6 +136,7 @@ export function ChatBot() {
         <Button
           size="icon"
           className="fixed bottom-4 right-4 h-10 w-10 sm:h-12 sm:w-12 rounded-full shadow-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 z-50"
+          aria-label="Open AI assistant"
         >
           <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
         </Button>
@@ -163,6 +174,7 @@ export function ChatBot() {
               onClick={handleSend} 
               disabled={!input.trim() || isLoading}
               className="bg-amber-500 hover:bg-amber-600 min-w-[40px]"
+              aria-label="Send message"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

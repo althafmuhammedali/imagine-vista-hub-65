@@ -1,3 +1,4 @@
+
 import { Loader2, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,6 +14,7 @@ export function GenerateButton({ onGenerate, isLoading }: GenerateButtonProps) {
       size="lg"
       onClick={onGenerate}
       disabled={isLoading}
+      aria-label={isLoading ? "Generating image" : "Generate artwork"}
     >
       {isLoading ? (
         <>
