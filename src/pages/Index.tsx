@@ -7,10 +7,8 @@ import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
 import { Sparkles, Heart } from "lucide-react";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a] animate-gradient-x">
+  return <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a] animate-gradient-x">
       <div className="min-h-screen bg-black/5 backdrop-blur-sm">
         <AuthButtons />
         <div className="container max-w-6xl py-4 sm:py-6 md:py-12 px-4 sm:px-6 lg:px-8">
@@ -44,9 +42,7 @@ const Index = () => {
               <Documentation />
             </div>
 
-            <div className="transition-all duration-500 hover:scale-[1.01]">
-              <PlatformBudget />
-            </div>
+            
 
             <div>
               <SocialLinks />
@@ -56,8 +52,6 @@ const Index = () => {
         <ChatBot />
       </div>
       <DynamicAdDisplay />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
