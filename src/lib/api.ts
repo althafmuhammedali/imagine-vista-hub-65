@@ -1,159 +1,99 @@
+import { InferenceClient } from '@huggingface/inference';
 
-import { toast } from "@/components/ui/use-toast";
-import { HfInference } from '@huggingface/inference';
-
-export interface GenerateImageParams {
-  prompt: string;
+interface GenerationOptions {
   width?: number;
   height?: number;
-  negativePrompt?: string;
-  seed?: number;
+  negative_prompt?: string;
 }
 
-const MODELS = {
-  PRIMARY: "black-forest-labs/FLUX.1-dev",
-  FALLBACK: "runwayml/stable-diffusion-v1-5",
-};
-
-// Create a storage key for the API key
-const HF_API_KEY_STORAGE = "huggingface_api_key";
-
-// Get stored API key or use the default one as fallback
-const getApiKey = (): string => {
-  const storedKey = localStorage.getItem(HF_API_KEY_STORAGE);
-  return storedKey || import.meta.env.VITE_HUGGINGFACE_API_KEY || "";
-};
-
-// Set API key in local storage
-export const setApiKey = (key: string): void => {
-  localStorage.setItem(HF_API_KEY_STORAGE, key);
-};
-
-// Check if user has set their own API key
-export const hasCustomApiKey = (): boolean => {
-  return !!localStorage.getItem(HF_API_KEY_STORAGE);
-};
-
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-async function retryWithBackoff(fn: () => Promise<Response>, maxRetries = 3): Promise<Response> {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      const response = await fn();
-      
-      if (response.status === 503) {
-        const data = await response.json();
-        if (data.error?.includes("is currently loading")) {
-          const waitTime = Math.min((data.estimated_time || 20) * 1000, 20000);
-          toast({
-            title: "Please wait",
-            description: "Model is warming up...",
-          });
-          await delay(waitTime);
-          continue;
-        }
-      }
-
-      if (response.status === 429) {
-        toast({
-          title: "Rate limit reached",
-          description: "Switching to backup model...",
-        });
-        throw new Error("rate_limit");
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: "Failed to generate image" }));
-        throw new Error(errorData.error || "Failed to generate image");
-      }
-
-      return response;
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message === "rate_limit") throw error;
-        if (i === maxRetries - 1) throw error;
-      }
-      
-      const waitTime = Math.pow(2, i) * 1000;
-      await delay(waitTime);
-    }
-  }
-  throw new Error("Failed after maximum retries");
+interface ImageResult {
+  success: boolean;
+  image: string | null;
+  error: string | null;
 }
 
-export async function generateImage({
-  prompt,
-  width = 512,
-  height = 512,
-  negativePrompt = "",
-  seed,
-}: GenerateImageParams): Promise<string> {
-  const apiKey = getApiKey();
-  
-  if (!apiKey) {
-    throw new Error("Missing API key");
-  }
+const blobToBase64 = (blob: Blob): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000);
-
+export async function generateImage(
+  prompt: string,
+  apiKey: string,
+  options: GenerationOptions = {}
+): Promise<ImageResult> {
   try {
-    // Initialize the InferenceClient with provider="auto"
-    const inference = new HfInference(apiKey, { provider: "auto" });
-
-    // Enhanced prompt with art-specific elements
-    const enhancedPrompt = `${prompt}, masterpiece, best quality, ultra detailed, photorealistic, 8k uhd, high quality, professional photography, cinematic lighting, dramatic atmosphere, hyperdetailed, octane render, unreal engine 5, ray tracing, subsurface scattering, volumetric lighting, high dynamic range, award winning photo`;
-    const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers, watermark, signature, text, jpeg artifacts, compression artifacts`;
-
     console.log("Generating image with prompt:", prompt);
-    console.log("Using model:", MODELS.PRIMARY);
+    console.log("Options:", options);
+
+    // Use the InferenceClient from HuggingFace Hub
+    const inference = new InferenceClient({
+      apiToken: apiKey,
+    });
+
+    // Set defaults
+    const width = options.width || 1024;
+    const height = options.height || 1024;
+    const negativePrompt = options.negative_prompt || "";
+
+    // Attempt to generate image with retry logic
+    let attempt = 0;
+    const maxAttempts = 3;
     
-    try {
-      console.log("Attempting primary model with InferenceClient...");
-      const blob = await inference.textToImage({
-        model: MODELS.PRIMARY,
-        inputs: enhancedPrompt,
-        parameters: {
-          negative_prompt: enhancedNegativePrompt,
-          width: Math.min(width, 1024),
-          height: Math.min(height, 1024),
-          num_inference_steps: 150,
-          guidance_scale: 15,
-          seed: seed || Math.floor(Math.random() * 1000000),
-          num_images_per_prompt: 1,
-          scheduler: "EulerAncestralDiscreteScheduler",
+    while (attempt < maxAttempts) {
+      try {
+        attempt++;
+        console.log(`Attempt ${attempt} of ${maxAttempts}`);
+
+        const result = await inference.textToImage({
+          inputs: prompt,
+          model: "black-forest-labs/FLUX.1-dev",
+          parameters: {
+            negative_prompt: negativePrompt,
+            height: height,
+            width: width,
+            // Remove 'seed' as it's not in the allowed parameters
+            // Remove 'provider' as it's not in the allowed options
+          }
+        });
+
+        console.log("Generation successful!");
+
+        // Handle the result based on its type
+        if (result instanceof Blob) {
+          const base64 = await blobToBase64(result);
+          return {
+            success: true,
+            image: base64,
+            error: null
+          };
+        } else {
+          throw new Error("Unexpected response format from API");
         }
-      });
-      
-      return URL.createObjectURL(blob);
-    } catch (primaryError) {
-      console.error("Primary model error:", primaryError);
-      
-      console.log("Attempting fallback model...");
-      const blob = await inference.textToImage({
-        model: MODELS.FALLBACK,
-        inputs: enhancedPrompt,
-        parameters: {
-          negative_prompt: enhancedNegativePrompt,
-          width: Math.min(width, 1024),
-          height: Math.min(height, 1024),
-          num_inference_steps: 50,
-          guidance_scale: 7.5,
-          seed: seed || Math.floor(Math.random() * 1000000)
+      } catch (error) {
+        console.error(`Attempt ${attempt} failed:`, error);
+
+        if (attempt >= maxAttempts) {
+          throw error; // Rethrow if we've exhausted our attempts
         }
-      });
-      
-      return URL.createObjectURL(blob);
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        throw new Error('Request timed out');
+        
+        // Wait before retrying (exponential backoff)
+        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt - 1)));
       }
-      throw error;
     }
-    throw new Error('Failed to generate image');
-  } finally {
-    clearTimeout(timeoutId);
+
+    throw new Error("Failed after maximum retry attempts");
+  } catch (error) {
+    console.error("Error generating image:", error);
+    return {
+      success: false,
+      image: null,
+      error: error instanceof Error ? error.message : "Unknown error"
+    };
   }
 }
+

@@ -1,3 +1,4 @@
+
 import { ImageGenerator } from "@/components/ImageGenerator";
 import { SocialLinks } from "@/components/SocialLinks";
 import { AuthButtons } from "@/components/AuthButtons";
@@ -6,7 +7,9 @@ import { FAQ } from "@/components/FAQ";
 import { Documentation } from "@/components/Documentation";
 import { PlatformBudget } from "@/components/PlatformBudget";
 import { DynamicAdDisplay } from "@/components/DynamicAdDisplay";
+import { LinkedInWidget } from "@/components/LinkedInWidget";
 import { Sparkles, Heart } from "lucide-react";
+
 const Index = () => {
   return <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a] animate-gradient-x">
       <div className="min-h-screen bg-black/5 backdrop-blur-sm">
@@ -42,14 +45,13 @@ const Index = () => {
               <Documentation />
             </div>
 
-            
-
             <div>
               <SocialLinks />
             </div>
           </div>
         </div>
         <ChatBot />
+        <LinkedInWidget />
       </div>
       <DynamicAdDisplay />
     </div>;
