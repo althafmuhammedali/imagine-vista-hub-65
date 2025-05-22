@@ -14,17 +14,17 @@ export function GenerateButton({ onGenerate, isLoading }: GenerateButtonProps) {
       size="lg"
       onClick={onGenerate}
       disabled={isLoading}
-      aria-label={isLoading ? "Generating image" : "Generate artwork"}
+      aria-label={isLoading ? "Generating image" : "Generate artwork with FLUX.1"}
     >
       {isLoading ? (
         <>
           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          Creating Magic...
+          Creating with FLUX.1...
         </>
       ) : (
         <>
           <Wand2 className="w-4 h-4 mr-2" />
-          Generate Artwork
+          Generate with FLUX.1
         </>
       )}
     </Button>

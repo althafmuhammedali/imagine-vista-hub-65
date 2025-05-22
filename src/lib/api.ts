@@ -10,7 +10,7 @@ export interface GenerateImageParams {
 }
 
 const MODELS = {
-  PRIMARY: "stabilityai/stable-diffusion-xl-base-1.0",
+  PRIMARY: "black-forest-labs/FLUX.1-dev",
   FALLBACK: "runwayml/stable-diffusion-v1-5",
 };
 
@@ -83,6 +83,7 @@ export async function generateImage({
     const enhancedNegativePrompt = `${negativePrompt}, blur, noise, grain, low quality, low resolution, oversaturated, overexposed, bad anatomy, deformed, disfigured, poorly drawn face, distorted face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, out of focus, long neck, long body, mutated hands and fingers, watermark, signature, text, jpeg artifacts, compression artifacts`;
 
     console.log("Generating image with prompt:", prompt);
+    console.log("Using model:", MODELS.PRIMARY);
     
     const makeRequest = (modelId: string) => fetch(
       `https://api-inference.huggingface.co/models/${modelId}`,
