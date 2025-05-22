@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { generateImage, GenerateImageParams } from "@/lib/api";
+import { generateImage } from "@/lib/api";
 import { ImageSettings } from "./image-generator/ImageSettings";
 import { ImagePreview } from "./image-generator/ImagePreview";
 
@@ -46,15 +47,14 @@ export function ImageGenerator() {
         URL.revokeObjectURL(generatedImage);
       }
 
-      const params: GenerateImageParams = {
-        prompt: prompt.trim(),
+      const params = {
         width: selectedResolution.width,
         height: selectedResolution.height,
-        negativePrompt: negativePrompt.trim(),
+        negative_prompt: negativePrompt.trim(),
         seed: seed ? parseInt(seed) : undefined,
       };
 
-      const imageUrl = await generateImage(params);
+      const imageUrl = await generateImage(prompt.trim(), params);
       setGeneratedImage(imageUrl);
       toast({
         title: "Success",

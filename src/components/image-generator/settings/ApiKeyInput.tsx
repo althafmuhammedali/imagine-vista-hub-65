@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -10,7 +10,11 @@ import { setApiKey, hasCustomApiKey } from "@/lib/api";
 export function ApiKeyInput() {
   const [apiKey, setApiKeyState] = useState("");
   const [open, setOpen] = useState(false);
-  const [hasCustomKey, setHasCustomKey] = useState(hasCustomApiKey());
+  const [hasCustomKey, setHasCustomKey] = useState(false);
+
+  useEffect(() => {
+    setHasCustomKey(hasCustomApiKey());
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
