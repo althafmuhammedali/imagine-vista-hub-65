@@ -60,21 +60,19 @@ export async function generateImage(
   options: GenerationOptions = {}
 ): Promise<string> {
   try {
-    console.log("Generating image with prompt:", prompt);
+    console.log("Starting image generation with prompt:", prompt);
     console.log("Options:", options);
 
     const apiKey = getApiKey();
     if (!apiKey) {
-      throw new Error("No API key provided. Please set your Hugging Face API key.");
+      throw new Error("No API key provided. Please set your Hugging Face API key in the settings.");
     }
 
-    // Use the HfInference from HuggingFace Hub
-    const inference = new HfInference(apiKey);
+    const hf = new HfInference(apiKey);
 
     // Set defaults
     const width = options.width || 1024;
     const height = options.height || 1024;
-    const negativePrompt = options.negative_prompt || "";
     
     // Attempt to generate image with retry logic
     let attempt = 0;
@@ -83,30 +81,34 @@ export async function generateImage(
     while (attempt < maxAttempts) {
       try {
         attempt++;
-        console.log(`Attempt ${attempt} of ${maxAttempts}`);
+        console.log(`Generation attempt ${attempt} of ${maxAttempts}`);
 
+        // Build parameters object
         const params: any = {
-          negative_prompt: negativePrompt,
+          negative_prompt: options.negative_prompt || "",
           height: height,
           width: width,
         };
 
-        // Only add seed if it's provided
-        if (options.seed !== undefined) {
+        // Only add seed if it's provided and valid
+        if (options.seed !== undefined && !isNaN(options.seed)) {
           params.seed = options.seed;
         }
 
-        const result = await inference.textToImage({
+        console.log("Sending request to Hugging Face API with params:", params);
+
+        const result = await hf.textToImage({
           inputs: prompt,
           model: "black-forest-labs/FLUX.1-dev",
           parameters: params,
         });
 
-        console.log("Generation successful!");
+        console.log("Generation successful! Converting to base64...");
 
         // Handle the result based on its type
         if (result instanceof Blob) {
           const base64 = await blobToBase64(result);
+          console.log("Image converted to base64 successfully");
           return base64;
         } else {
           throw new Error("Unexpected response format from API");
@@ -115,17 +117,37 @@ export async function generateImage(
         console.error(`Attempt ${attempt} failed:`, error);
 
         if (attempt >= maxAttempts) {
-          throw error; // Rethrow if we've exhausted our attempts
+          // If it's the last attempt, throw a more user-friendly error
+          if (error instanceof Error) {
+            if (error.message.includes('401')) {
+              throw new Error("Invalid API key. Please check your Hugging Face API key.");
+            } else if (error.message.includes('429')) {
+              throw new Error("Rate limit exceeded. Please try again in a few minutes.");
+            } else if (error.message.includes('503')) {
+              throw new Error("Service temporarily unavailable. Please try again later.");
+            }
+          }
+          throw error;
         }
         
         // Wait before retrying (exponential backoff)
-        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt - 1)));
+        const delay = 1000 * Math.pow(2, attempt - 1);
+        console.log(`Waiting ${delay}ms before retry...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
 
     throw new Error("Failed after maximum retry attempts");
   } catch (error) {
     console.error("Error generating image:", error);
+    
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      if (error.message.includes('fetch')) {
+        throw new Error("Network error. Please check your internet connection and try again.");
+      }
+    }
+    
     throw error;
   }
 }

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { generateImage } from "@/lib/api";
@@ -32,7 +31,7 @@ export function ImageGenerator() {
     if (!prompt.trim()) {
       toast({
         title: "Error",
-        description: "Please enter a prompt",
+        description: "Please enter a prompt to generate an image",
         variant: "destructive",
       });
       return;
@@ -43,28 +42,37 @@ export function ImageGenerator() {
     const selectedResolution = resolutions.find((r) => r.value === resolution)!;
 
     try {
+      // Clear previous image
       if (generatedImage) {
         URL.revokeObjectURL(generatedImage);
+        setGeneratedImage(null);
       }
+
+      console.log("Starting image generation...");
 
       const params = {
         width: selectedResolution.width,
         height: selectedResolution.height,
-        negative_prompt: negativePrompt.trim(),
-        seed: seed ? parseInt(seed) : undefined,
+        negative_prompt: negativePrompt.trim() || undefined,
+        seed: seed && !isNaN(parseInt(seed)) ? parseInt(seed) : undefined,
       };
 
       const imageUrl = await generateImage(prompt.trim(), params);
       setGeneratedImage(imageUrl);
+      
       toast({
-        title: "Success",
-        description: "Image generated successfully!",
+        title: "Success!",
+        description: "Your masterpiece has been created successfully!",
       });
+      
+      console.log("Image generation completed successfully");
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to generate image";
+      console.error("Image generation failed:", error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate image. Please try again.";
       setError(errorMessage);
+      
       toast({
-        title: "Error",
+        title: "Generation Failed",
         description: errorMessage,
         variant: "destructive",
       });
