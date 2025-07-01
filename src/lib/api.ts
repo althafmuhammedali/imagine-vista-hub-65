@@ -142,8 +142,8 @@ export async function generateImage(
         }
       }
       
-      // Re-throw the original error if it's already an Error object
-      if (apiError instanceof Error) {
+      // Re-throw the original error if it's an Error object
+      if (apiError && typeof apiError === 'object' && apiError instanceof Error) {
         throw apiError;
       }
       
@@ -152,7 +152,7 @@ export async function generateImage(
     }
   } catch (error: unknown) {
     console.error("Error generating image:", error);
-    if (error instanceof Error) {
+    if (error && typeof error === 'object' && error instanceof Error) {
       throw error;
     }
     throw new Error("An unexpected error occurred while generating the image.");
