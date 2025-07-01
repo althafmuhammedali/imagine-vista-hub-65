@@ -65,8 +65,10 @@ export async function generateImage(
 
     const apiKey = getApiKey();
     if (!apiKey) {
-      throw new Error("No API key provided. Please set your Hugging Face API key in the settings.");
+      throw new Error("No API key provided. Please set your Hugging Face API key to generate images.");
     }
+
+    console.log("API key available:", apiKey.substring(0, 10) + "...");
 
     const hf = new HfInference(apiKey);
 
@@ -74,80 +76,71 @@ export async function generateImage(
     const width = options.width || 1024;
     const height = options.height || 1024;
     
-    // Attempt to generate image with retry logic
-    let attempt = 0;
-    const maxAttempts = 3;
-    
-    while (attempt < maxAttempts) {
-      try {
-        attempt++;
-        console.log(`Generation attempt ${attempt} of ${maxAttempts}`);
+    console.log(`Generating image with dimensions: ${width}x${height}`);
 
-        // Build parameters object
-        const params: any = {
-          negative_prompt: options.negative_prompt || "",
-          height: height,
-          width: width,
-        };
+    // Build parameters object for FLUX.1-dev model
+    const params: any = {
+      height: height,
+      width: width,
+    };
 
-        // Only add seed if it's provided and valid
-        if (options.seed !== undefined && !isNaN(options.seed)) {
-          params.seed = options.seed;
-        }
-
-        console.log("Sending request to Hugging Face API with params:", params);
-
-        const result = await hf.textToImage({
-          inputs: prompt,
-          model: "black-forest-labs/FLUX.1-dev",
-          parameters: params,
-        });
-
-        console.log("Generation successful! Converting to base64...");
-
-        // Handle the result based on its type
-        if (result instanceof Blob) {
-          const base64 = await blobToBase64(result);
-          console.log("Image converted to base64 successfully");
-          return base64;
-        } else {
-          throw new Error("Unexpected response format from API");
-        }
-      } catch (error) {
-        console.error(`Attempt ${attempt} failed:`, error);
-
-        if (attempt >= maxAttempts) {
-          // If it's the last attempt, throw a more user-friendly error
-          if (error instanceof Error) {
-            if (error.message.includes('401')) {
-              throw new Error("Invalid API key. Please check your Hugging Face API key.");
-            } else if (error.message.includes('429')) {
-              throw new Error("Rate limit exceeded. Please try again in a few minutes.");
-            } else if (error.message.includes('503')) {
-              throw new Error("Service temporarily unavailable. Please try again later.");
-            }
-          }
-          throw error;
-        }
-        
-        // Wait before retrying (exponential backoff)
-        const delay = 1000 * Math.pow(2, attempt - 1);
-        console.log(`Waiting ${delay}ms before retry...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
+    // Add negative prompt if provided
+    if (options.negative_prompt && options.negative_prompt.trim()) {
+      params.negative_prompt = options.negative_prompt.trim();
     }
 
-    throw new Error("Failed after maximum retry attempts");
-  } catch (error) {
-    console.error("Error generating image:", error);
-    
-    // Provide more specific error messages
-    if (error instanceof Error) {
-      if (error.message.includes('fetch')) {
+    // Add seed if provided and valid
+    if (options.seed !== undefined && !isNaN(options.seed) && options.seed > 0) {
+      params.seed = options.seed;
+    }
+
+    console.log("API request parameters:", params);
+
+    try {
+      const result = await hf.textToImage({
+        inputs: prompt,
+        model: "black-forest-labs/FLUX.1-dev",
+        parameters: params,
+      });
+
+      console.log("API response received, type:", typeof result);
+
+      // Handle the result based on its type
+      if (result instanceof Blob) {
+        console.log("Converting blob to base64...");
+        const base64 = await blobToBase64(result);
+        console.log("Image conversion successful, base64 length:", base64.length);
+        return base64;
+      } else if (result instanceof ArrayBuffer) {
+        console.log("Converting ArrayBuffer to blob...");
+        const blob = new Blob([result], { type: 'image/png' });
+        const base64 = await blobToBase64(blob);
+        console.log("Image conversion successful, base64 length:", base64.length);
+        return base64;
+      } else {
+        console.error("Unexpected response format:", result);
+        throw new Error("Unexpected response format from API");
+      }
+    } catch (apiError: any) {
+      console.error("API Error details:", apiError);
+      
+      // Handle specific API errors
+      if (apiError.message?.includes('401') || apiError.status === 401) {
+        throw new Error("Invalid API key. Please check your Hugging Face API key and try again.");
+      } else if (apiError.message?.includes('429') || apiError.status === 429) {
+        throw new Error("Rate limit exceeded. Please wait a moment and try again.");
+      } else if (apiError.message?.includes('503') || apiError.status === 503) {
+        throw new Error("The AI model is currently loading. Please wait a moment and try again.");
+      } else if (apiError.message?.includes('500') || apiError.status === 500) {
+        throw new Error("Server error occurred. Please try again in a few moments.");
+      } else if (apiError.message?.includes('network') || apiError.message?.includes('fetch')) {
         throw new Error("Network error. Please check your internet connection and try again.");
       }
+      
+      throw apiError instanceof Error ? apiError : new Error("Failed to generate image. Please try again.");
     }
-    
-    throw error;
+  } catch (error) {
+    console.error("Error generating image:", error);
+    throw error instanceof Error ? error : new Error("An unexpected error occurred while generating the image.");
   }
 }

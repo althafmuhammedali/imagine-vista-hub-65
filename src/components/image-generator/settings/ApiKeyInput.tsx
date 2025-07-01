@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,7 +40,7 @@ export function ApiKeyInput() {
       return;
     }
 
-    if (trimmedKey.length < 20) {
+    if (trimmedKey.length < 30) {
       toast({
         title: "Invalid Key",
         description: "The API key appears to be too short. Please check and try again.",
@@ -48,6 +49,7 @@ export function ApiKeyInput() {
       return;
     }
 
+    console.log("Setting API key:", trimmedKey.substring(0, 10) + "...");
     setApiKey(trimmedKey);
     setHasCustomKey(true);
     setOpen(false);
@@ -59,69 +61,77 @@ export function ApiKeyInput() {
     });
   };
 
+  const testGeneration = () => {
+    console.log("Current API key status:", hasCustomApiKey());
+    console.log("Environment API key available:", !!import.meta.env.VITE_HUGGINGFACE_API_KEY);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button 
-          variant="outline" 
-          size="sm"
-          className={`gap-2 text-xs transition-all ${
-            hasCustomKey 
-              ? "bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-400" 
-              : "bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-400"
-          }`}
-        >
-          {hasCustomKey ? (
-            <>
-              <Check className="w-3 h-3" />
-              API Key Active
-            </>
-          ) : (
-            <>
-              <Key className="w-3 h-3" />
-              Set API Key
-            </>
-          )}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md bg-gray-900 border-gray-800">
-        <DialogHeader>
-          <DialogTitle className="text-amber-400">Hugging Face API Key</DialogTitle>
-          <DialogDescription className="text-gray-400">
-            Enter your Hugging Face API key to use your own account for image generation.
-            <br />
-            <a 
-              href="https://huggingface.co/settings/tokens" 
-              target="_blank" 
-              rel="noreferrer" 
-              className="text-amber-500 hover:underline inline-flex items-center gap-1 mt-2"
-            >
-              Get your API key here →
-            </a>
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Input
-              id="hf-api-key"
-              type="password"
-              placeholder="hf_********************************"
-              value={apiKey}
-              onChange={(e) => setApiKeyState(e.target.value)}
-              className="col-span-3 bg-black/20 border-gray-700 focus:border-amber-500 text-white"
-            />
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <AlertCircle className="w-3 h-3" />
-              Your API key is stored locally and never shared
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className={`gap-2 text-xs transition-all ${
+              hasCustomKey 
+                ? "bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-400" 
+                : "bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-400"
+            }`}
+            onClick={testGeneration}
+          >
+            {hasCustomKey ? (
+              <>
+                <Check className="w-3 h-3" />
+                API Key Active
+              </>
+            ) : (
+              <>
+                <Key className="w-3 h-3" />
+                Set API Key
+              </>
+            )}
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md bg-gray-900 border-gray-800">
+          <DialogHeader>
+            <DialogTitle className="text-amber-400">Hugging Face API Key</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Enter your Hugging Face API key to use your own account for image generation.
+              <br />
+              <a 
+                href="https://huggingface.co/settings/tokens" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="text-amber-500 hover:underline inline-flex items-center gap-1 mt-2"
+              >
+                Get your API key here →
+              </a>
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Input
+                id="hf-api-key"
+                type="password"
+                placeholder="hf_********************************"
+                value={apiKey}
+                onChange={(e) => setApiKeyState(e.target.value)}
+                className="col-span-3 bg-black/20 border-gray-700 focus:border-amber-500 text-white"
+              />
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <AlertCircle className="w-3 h-3" />
+                Your API key is stored locally and never shared
+              </div>
             </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" className="bg-amber-500 hover:bg-amber-600 text-white">
-              Save API Key
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+            <DialogFooter>
+              <Button type="submit" className="bg-amber-500 hover:bg-amber-600 text-white">
+                Save API Key
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

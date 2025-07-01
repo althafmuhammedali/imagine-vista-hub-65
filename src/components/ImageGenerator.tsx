@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { generateImage } from "@/lib/api";
@@ -21,11 +22,16 @@ export function ImageGenerator() {
 
   useEffect(() => {
     return () => {
-      if (generatedImage) {
-        URL.revokeObjectURL(generatedImage);
+      if (generatedImage && generatedImage.startsWith('data:')) {
+        // Clean up blob URLs if any
+        try {
+          URL.revokeObjectURL(generatedImage);
+        } catch (e) {
+          // Ignore cleanup errors
+        }
       }
     };
-  }, []);
+  }, [generatedImage]);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -37,18 +43,24 @@ export function ImageGenerator() {
       return;
     }
 
+    console.log("Starting image generation process...");
     setIsLoading(true);
     setError(undefined);
+    
     const selectedResolution = resolutions.find((r) => r.value === resolution)!;
 
     try {
       // Clear previous image
       if (generatedImage) {
-        URL.revokeObjectURL(generatedImage);
+        try {
+          URL.revokeObjectURL(generatedImage);
+        } catch (e) {
+          // Ignore cleanup errors
+        }
         setGeneratedImage(null);
       }
 
-      console.log("Starting image generation...");
+      console.log("Calling generateImage API...");
 
       const params = {
         width: selectedResolution.width,
@@ -57,7 +69,11 @@ export function ImageGenerator() {
         seed: seed && !isNaN(parseInt(seed)) ? parseInt(seed) : undefined,
       };
 
+      console.log("Generation parameters:", params);
+
       const imageUrl = await generateImage(prompt.trim(), params);
+      
+      console.log("Image generation successful, setting image...");
       setGeneratedImage(imageUrl);
       
       toast({
