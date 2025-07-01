@@ -121,7 +121,7 @@ export async function generateImage(
         console.error("Unexpected response format:", result);
         throw new Error("Unexpected response format from API");
       }
-    } catch (apiError) {
+    } catch (apiError: unknown) {
       console.error("API Error details:", apiError);
       
       // Handle specific API errors with proper type checking
@@ -150,7 +150,7 @@ export async function generateImage(
       // Default error message for unknown error types
       throw new Error("Failed to generate image. Please try again.");
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error generating image:", error);
     if (error instanceof Error) {
       throw error;
