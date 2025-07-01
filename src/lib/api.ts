@@ -121,26 +121,40 @@ export async function generateImage(
         console.error("Unexpected response format:", result);
         throw new Error("Unexpected response format from API");
       }
-    } catch (apiError: any) {
+    } catch (apiError) {
       console.error("API Error details:", apiError);
       
-      // Handle specific API errors
-      if (apiError.message?.includes('401') || apiError.status === 401) {
-        throw new Error("Invalid API key. Please check your Hugging Face API key and try again.");
-      } else if (apiError.message?.includes('429') || apiError.status === 429) {
-        throw new Error("Rate limit exceeded. Please wait a moment and try again.");
-      } else if (apiError.message?.includes('503') || apiError.status === 503) {
-        throw new Error("The AI model is currently loading. Please wait a moment and try again.");
-      } else if (apiError.message?.includes('500') || apiError.status === 500) {
-        throw new Error("Server error occurred. Please try again in a few moments.");
-      } else if (apiError.message?.includes('network') || apiError.message?.includes('fetch')) {
-        throw new Error("Network error. Please check your internet connection and try again.");
+      // Handle specific API errors with proper type checking
+      if (apiError && typeof apiError === 'object' && 'message' in apiError) {
+        const errorMessage = (apiError as any).message;
+        const status = (apiError as any).status;
+        
+        if (errorMessage?.includes('401') || status === 401) {
+          throw new Error("Invalid API key. Please check your Hugging Face API key and try again.");
+        } else if (errorMessage?.includes('429') || status === 429) {
+          throw new Error("Rate limit exceeded. Please wait a moment and try again.");
+        } else if (errorMessage?.includes('503') || status === 503) {
+          throw new Error("The AI model is currently loading. Please wait a moment and try again.");
+        } else if (errorMessage?.includes('500') || status === 500) {
+          throw new Error("Server error occurred. Please try again in a few moments.");
+        } else if (errorMessage?.includes('network') || errorMessage?.includes('fetch')) {
+          throw new Error("Network error. Please check your internet connection and try again.");
+        }
       }
       
-      throw apiError instanceof Error ? apiError : new Error("Failed to generate image. Please try again.");
+      // Re-throw the original error if it's already an Error object
+      if (apiError instanceof Error) {
+        throw apiError;
+      }
+      
+      // Default error message for unknown error types
+      throw new Error("Failed to generate image. Please try again.");
     }
   } catch (error) {
     console.error("Error generating image:", error);
-    throw error instanceof Error ? error : new Error("An unexpected error occurred while generating the image.");
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("An unexpected error occurred while generating the image.");
   }
 }
